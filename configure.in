@@ -15,11 +15,6 @@ SDL_VERSION=1.2.8
 AM_PATH_SDL($SDL_VERSION, :,
             AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 
-AC_CHECK_LIB(SDL_image, IMG_LoadPNG_RW, , AC_MSG_ERROR([
-*** Unable to find SDL_image libary with PNG support
-(http://www.libsdl.org/projects/SDL_image/)
-]))
-
 AC_ARG_WITH(sdl-gfx-prefix,
             [  --with-sdl-gfx-prefix=DIR       specify where SDL_gfx library is installed],
             [SDL_GFX_PREFIX="$withval"])
