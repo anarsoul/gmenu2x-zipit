@@ -15,6 +15,12 @@ SDL_VERSION=1.2.8
 AM_PATH_SDL($SDL_VERSION, :,
             AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 
+AC_ARG_WITH(sdl-image-prefix,
+            [  --with-sdl-image-prefix=DIR       specify where SDL_image library is installed],
+            [SDL_IMAGE_PREFIX="$withval"])
+
+AC_CHECK_LIB(SDL_image, IMG_LoadPNG_RW,,check_sdl_image="no")
+
 AC_ARG_WITH(sdl-gfx-prefix,
             [  --with-sdl-gfx-prefix=DIR       specify where SDL_gfx library is installed],
             [SDL_GFX_PREFIX="$withval"])
