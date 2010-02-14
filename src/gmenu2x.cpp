@@ -1869,8 +1869,7 @@ string GMenu2X::getDiskFree() {
 	string df = "";
 	struct statvfs b;
 
-// 	int ret = statvfs("/card/gmenu2x", &b);
-  int ret = statvfs("/home/vegyraupe/work/qi/NanoNote/Ben/sw/gmenu2x/pandora/gmenu2x", &b);
+	int ret = statvfs("/card/gmenu2x", &b);
 	if (ret==0) {
 		/*unsigned long free = b.f_bfree*b.f_frsize/1048576;
 		unsigned long total = b.f_blocks*b.f_frsize/1048576;
