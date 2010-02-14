@@ -36,10 +36,13 @@ void SurfaceCollection::setSkin(string skin) {
 }
 
 string SurfaceCollection::getSkinFilePath(string file) {
+	string prefix = "/usr/share/gmenu2x/";
 	if (fileExists("skins/"+skin+"/"+file))
 		return "skins/"+skin+"/"+file;
 	else if (fileExists("skins/Default/"+file))
 		return "skins/Default/"+file;
+	else if (fileExists(prefix+"skins/Default/"+file))
+		return prefix+"skins/Default/"+file;
 	else
 		return "";
 }
