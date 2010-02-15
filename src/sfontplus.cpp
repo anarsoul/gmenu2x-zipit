@@ -108,7 +108,6 @@ cout << "check 2" << endl;
 		}
 	}
 	cout << "check 4" << endl;
-	SDL_UnlockSurface(surface);
 	cout << "check 5x" << endl;
 	Uint32 colKey = getPixel(0,surface->h-1);
 	cout << "check 5.1" << endl;
@@ -128,6 +127,7 @@ cout << "check 2" << endl;
 			nonKeyFound = getPixel(x+srcrect.x,y+srcrect.y) != colKey;
 	}
 	lineHeight = y+1;
+	SDL_UnlockSurface(surface);
 }
 
 void SFontPlus::freeFont() {
