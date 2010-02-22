@@ -72,10 +72,8 @@ void SFontPlus::initFont(SDL_Surface *font, string characters) {
 	freeFont();
 	this->characters = characters;
 	if (font==NULL) return;
-cout << "check 1" << endl;
 	surface = font;
 	Uint32 pink = SDL_MapRGB(surface->format, 255,0,255);
-cout << "check 2" << endl;
 #ifdef _DEBUG
 	bool utf8 = false;
 	for (uint x=0; x<characters.length(); x++) {
@@ -87,7 +85,6 @@ cout << "check 2" << endl;
 	uint c = 0;
 
 	SDL_LockSurface(surface);
-	cout << "check 3" << endl;
 	for (uint x=0; x<(uint)surface->w && c<characters.length(); x++) {
 		if (getPixel(x,0) == pink) {
 			uint startx = x;
@@ -107,27 +104,19 @@ cout << "check 2" << endl;
 			c++;
 		}
 	}
-	cout << "check 4" << endl;
-	cout << "check 5x" << endl;
+	SDL_UnlockSurface(surface);
 	Uint32 colKey = getPixel(0,surface->h-1);
-	cout << "check 5.1" << endl;
 	SDL_SetColorKey(surface, SDL_SRCCOLORKEY, colKey);
-	cout << "check 5.2" << endl;
 	string::size_type pos = characters.find("0")*2;
-	cout << "check 5.3" << endl;
 	SDL_Rect srcrect = {charpos[pos], 1, charpos[pos+2] - charpos[pos], surface->h-1};
-	cout << "check 5.4" << endl;
 	uint y = srcrect.h+1;
-	cout << "check 5.5" << endl;
 	bool nonKeyFound = false;
-	cout << "check 6" << endl;
 	while (y-->0 && !nonKeyFound) {
 		uint x = srcrect.w+1;
 		while (x-->0 && !nonKeyFound)
 			nonKeyFound = getPixel(x+srcrect.x,y+srcrect.y) != colKey;
 	}
 	lineHeight = y+1;
-	SDL_UnlockSurface(surface);
 }
 
 void SFontPlus::freeFont() {
