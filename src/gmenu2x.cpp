@@ -341,13 +341,10 @@ void GMenu2X::initBG() {
 	Surface cpu("imgs/cpu.png", confStr["skin"]);
 	Surface volume("imgs/volume.png", confStr["skin"]);
 	string df = getDiskFree();
-
-  cout << "after diskfree" << endl;
   
 	sd.blit( sc["bgmain"], 3, bottomBarIconY );
 	sc["bgmain"]->write( font, df, 22, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
 	volumeX = 27+font->getTextWidth(df);
-  cout << "3 lines after diskfree" << endl;
 	volume.blit( sc["bgmain"], volumeX, bottomBarIconY );
 	volumeX += 19;
 	cpuX = volumeX+font->getTextWidth("100")+5;
@@ -373,7 +370,6 @@ void GMenu2X::initBG() {
 			serviceX -= 19;
 		}
 	}
-  cout << "after usbnet if" << endl;
 }
 
 void GMenu2X::initFont() {
