@@ -8,8 +8,8 @@ AM_CFLAGS= @CFLAGS@ @SDL_CFLAGS@
 
 AM_CXXFLAGS = @CXXFLAGS@ @SDL_CFLAGS@ 
 
-gmenu2x_LDADD = @LIBS@ @SDL_LIBS@ 
+gmenu2x_LDADD = @LIBS@ @SDL_LIBS@ -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
 
-gmenu2x_LDFLAGS = -L/home/vegyraupe/work/qi/NanoNote/Ben/sw/tinyxml
+gmenu2x_LDFLAGS = -L./tinyxml -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
 
-gmenu2x_LIBS = @LIBS@ @SDL_LIBS@ -L./sparsehash/ -I./obj/gp2x/tinyxml/
+gmenu2x_LIBS = @LIBS@ @SDL_LIBS@ -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
