@@ -71,10 +71,6 @@ int evalIntConf (int *val, int def, int imin, int imax);
 string evalStrConf (string val, string def);
 string evalStrConf (string *val, string def);
 
-float max (float a, float b);
-float min (float a, float b);
-float constrain (float x, float imin, float imax);
-
 bool split (vector<string> &vec, const string &str, const string &delim, bool destructive=true);
 
 int intTransition(int from, int to, long int tickStart, long duration=500, long tickNow=-1);

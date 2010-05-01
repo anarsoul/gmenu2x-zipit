@@ -123,16 +123,6 @@ string evalStrConf (string *val, string def) {
 	return *val;
 }
 
-float max (float a, float b) {
-	return a>b ? a : b;
-}
-float min (float a, float b) {
-	return a<b ? a : b;
-}
-float constrain (float x, float imin, float imax) {
-	return min( imax, max(imin,x) );
-}
-
 bool split (vector<string> &vec, const string &str, const string &delim, bool destructive) {
 	vec.clear();
 
@@ -188,7 +178,6 @@ string cmdclean (string cmdline) {
 
 int intTransition(int from, int to, long tickStart, long duration, long tickNow) {
 	if (tickNow<0) tickNow = SDL_GetTicks();
-	float elapsed = (float)(tickNow-tickStart)/duration;
+	return constrain(((tickNow-tickStart) * (to-from)) / duration, from, to);
 	//                    elapsed                 increments
-	return constrain(round(elapsed*(to-from)),from,to);
 }

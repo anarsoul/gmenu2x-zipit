@@ -364,10 +364,13 @@ void Menu::linkRight() {
 		setLinkIndex(iLink+1);
 }
 
+#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
+
 void Menu::linkUp() {
 	int l = iLink-gmenu2x->linkColumns;
 	if (l<0) {
-		uint rows = (uint)ceil(sectionLinks()->size()/(double)gmenu2x->linkColumns);
+		unsigned int rows;
+		rows = DIV_ROUND_UP(sectionLinks()->size(), gmenu2x->linkColumns);
 		l = (rows*gmenu2x->linkColumns)+l;
 		if (l >= (int)sectionLinks()->size())
 			l -= gmenu2x->linkColumns;
@@ -378,8 +381,9 @@ void Menu::linkUp() {
 void Menu::linkDown() {
 	uint l = iLink+gmenu2x->linkColumns;
 	if (l >= sectionLinks()->size()) {
-		uint rows = (uint)ceil(sectionLinks()->size()/(double)gmenu2x->linkColumns);
-		uint curCol = (uint)ceil((iLink+1)/(double)gmenu2x->linkColumns);
+		unsigned int rows, curCol;
+		rows = DIV_ROUND_UP(sectionLinks()->size(), gmenu2x->linkColumns);
+		curCol = DIV_ROUND_UP(iLink + 1, gmenu2x->linkColumns);
 		if (rows > curCol)
 			l = sectionLinks()->size()-1;
 		else
