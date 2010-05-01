@@ -1777,7 +1777,7 @@ void GMenu2X::setClock(unsigned mhz) {
 		v=mdiv | pdiv | scale;
 		MEM_REG[0x910>>1]=v;
 	}*/
-	jz_cpuspeed(mhz);
+	/*jz_cpuspeed(mhz);*/
 #endif
 }
 
