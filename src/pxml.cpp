@@ -1,6 +1,8 @@
 #include "pxml.h"
 #include "tinyxml/tinyxml.h"
 
+#include <sstream>
+
 using namespace std;
 
 PXml::PXml(string file) {
@@ -8,7 +10,7 @@ PXml::PXml(string file) {
 	error = title = description = authorName = authorWebsite = category = exec = icon = "";
 	version = osVersion = (SoftwareVersion){0,0,0,0};
 
-	TiXmlDocument doc(file);
+	TiXmlDocument doc(file.c_str());
 	if (doc.LoadFile()) {
 		TiXmlHandle hDoc(&doc);
 		TiXmlElement* pElem;
