@@ -39,7 +39,7 @@ private:
 	void dec();
 
 public:
-	MenuSettingInt(GMenu2X *gmenu2x, string name, string description, int *value, int min, int max);
+	MenuSettingInt(GMenu2X *gmenu2x, const string &name, const string &description, int *value, int min, int max);
 	virtual ~MenuSettingInt() {};
 
 	virtual void draw(int y);

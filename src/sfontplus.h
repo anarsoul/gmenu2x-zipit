@@ -24,18 +24,18 @@ private:
 public:
 	SFontPlus();
 	SFontPlus(SDL_Surface *font);
-	SFontPlus(string font);
+	SFontPlus(const string &font);
 	~SFontPlus();
 
 	bool utf8Code(unsigned char c);
 
-	void initFont(SDL_Surface *font, string characters = SFONTPLUS_CHARSET);
-	void initFont(string font, string characters = SFONTPLUS_CHARSET);
+	void initFont(SDL_Surface *font, const string &characters = SFONTPLUS_CHARSET);
+	void initFont(const string &font, const string &characters = SFONTPLUS_CHARSET);
 	void freeFont();
 
-	void write(SDL_Surface *s, string text, int x, int y);
+	void write(SDL_Surface *s, const string &text, int x, int y);
 
-	uint getTextWidth(string text);
+	uint getTextWidth(const string &text);
 	uint getHeight();
 	uint getLineHeight();
 };

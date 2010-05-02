@@ -24,7 +24,7 @@ class ASFont {
 public:
 	ASFont(SDL_Surface* font);
 	ASFont(Surface* font);
-	ASFont(string font);
+	ASFont(const string &font);
 	~ASFont();
 
 	bool utf8Code(unsigned char c);

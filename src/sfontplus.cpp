@@ -46,7 +46,7 @@ SFontPlus::SFontPlus(SDL_Surface* font) {
 	initFont(font);
 }
 
-SFontPlus::SFontPlus(string font) {
+SFontPlus::SFontPlus(const string &font) {
 	surface = NULL;
 	initFont(font);
 }
@@ -60,7 +60,7 @@ bool SFontPlus::utf8Code(unsigned char c) {
 	//return c>=194;
 }
 
-void SFontPlus::initFont(string font, string characters) {
+void SFontPlus::initFont(const string &font, const string &characters) {
 	SDL_Surface *buf = IMG_Load(font.c_str());
 	if (buf!=NULL) {
 		initFont( SDL_DisplayFormatAlpha(buf), characters );
@@ -68,7 +68,7 @@ void SFontPlus::initFont(string font, string characters) {
 	}
 }
 
-void SFontPlus::initFont(SDL_Surface *font, string characters) {
+void SFontPlus::initFont(SDL_Surface *font, const string &characters) {
 	freeFont();
 	this->characters = characters;
 	if (font==NULL) return;
@@ -126,7 +126,7 @@ void SFontPlus::freeFont() {
 	}
 }
 
-void SFontPlus::write(SDL_Surface *s, string text, int x, int y) {
+void SFontPlus::write(SDL_Surface *s, const string &text, int x, int y) {
 	if (text.empty()) return;
 
 	string::size_type pos;
@@ -161,7 +161,7 @@ void SFontPlus::write(SDL_Surface *s, string text, int x, int y) {
 	}
 }
 
-uint SFontPlus::getTextWidth(string text) {
+uint SFontPlus::getTextWidth(const string &text) {
 	string::size_type pos;
 	int width = 0;
 

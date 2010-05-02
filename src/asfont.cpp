@@ -18,7 +18,7 @@ ASFont::ASFont(Surface* font) {
 	halfLineHeight = getLineHeight()/2;
 }
 
-ASFont::ASFont(string font) {
+ASFont::ASFont(const string &font) {
 	this->font.initFont(font);
 	halfHeight = getHeight()/2;
 	halfLineHeight = getLineHeight()/2;
