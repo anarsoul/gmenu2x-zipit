@@ -919,8 +919,8 @@ int GMenu2X::main() {
 			re.x = 0; re.y = 0; re.h = skinConfInt["topBarHeight"]; re.w = resX;
 			if (ts.pressed() && ts.inRect(re)) {
 				re.w = skinConfInt["linkWidth"];
+				sectionsCoordX = halfX - (constrain((uint)menu->sections.size(), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
 				for (i=menu->firstDispSection(); !ts.handled() && i<menu->sections.size() && i<menu->firstDispSection()+linkColumns; i++) {
-					sectionsCoordX = halfX - (constrain((uint)(linkColumns-menu->sections.size()), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
 					re.x = (i-menu->firstDispSection())*re.w+sectionsCoordX;
 
 					if (ts.inRect(re)) {
