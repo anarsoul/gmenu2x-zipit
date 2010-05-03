@@ -30,31 +30,40 @@
 
 using namespace std;
 
-FileLister::FileLister(const string &startPath, bool showDirectories, bool showFiles) {
-	this->showDirectories = showDirectories;
-	this->showFiles = showFiles;
-	setPath(startPath,false);
+FileLister::FileLister(const string &startPath, bool showDirectories,
+	bool showFiles) : showDirectories(showDirectories), showFiles(showFiles)
+{
+	setPath(startPath, false);
 }
 
-const string &FileLister::getPath() {
+const string &FileLister::getPath()
+{
 	return path;
 }
-void FileLister::setPath(const string &path, bool doBrowse) {
+
+void FileLister::setPath(const string &path, bool doBrowse)
+{
 	this->path = path;
-	if (this->path[path.length()-1]!='/')
+
+	if (this->path[path.length() - 1]!='/')
 		this->path += "/";
+
 	if (doBrowse)
 		browse();
 }
 
-const string &FileLister::getFilter() {
+const string &FileLister::getFilter()
+{
 	return filter;
 }
-void FileLister::setFilter(const string &filter) {
+
+void FileLister::setFilter(const string &filter)
+{
 	this->filter = filter;
 }
 
-void FileLister::browse() {
+void FileLister::browse()
+{
 	directories.clear();
 	files.clear();
 
@@ -66,7 +75,7 @@ void FileLister::browse() {
 		}
 
 		vector<string> vfilter;
-		split(vfilter,getFilter(),",");
+		split(vfilter, getFilter(), ",");
 
 		string filepath, file;
 		struct stat st;
@@ -74,8 +83,11 @@ void FileLister::browse() {
 
 		while ((dptr = readdir(dirp))) {
 			file = dptr->d_name;
-			if (file[0]=='.' && file!="..") continue;
-			filepath = path+file;
+
+			if (file[0] == '.' && file != "..")
+				continue;
+
+			filepath = path + file;
 			int statRet = stat(filepath.c_str(), &st);
 			if (statRet == -1) {
 				cout << "\033[0;34mGMENU2X:\033[0;31m stat failed on '" << filepath << "' with error '" << strerror(errno) << "'\033[0m" << endl;
@@ -86,52 +98,63 @@ void FileLister::browse() {
 				continue;
 
 			if (S_ISDIR(st.st_mode)) {
-				if (!showDirectories) continue;
-#ifdef TARGET_GP2X
-//				if (!(path=="/card/" && (file!="sd" && file!="ext" && file!="nand")))
-#endif
-					directories.push_back(file);
+				if (!showDirectories)
+					continue;
+				directories.push_back(file);
 			} else {
-				if (!showFiles) continue;
-				bool filterOk = false;
-				for (uint i = 0; i<vfilter.size() && !filterOk; i++)
-					if (vfilter[i].length()<=file.length())
-						filterOk = file.substr(file.length()-vfilter[i].length(),vfilter[i].length())==vfilter[i];
-				if (filterOk) files.push_back(file);
+				if (!showFiles)
+					continue;
+				for (vector<string>::iterator it = vfilter.begin(); it != vfilter.end(); ++it) {
+					if (it->length() <= file.length()) {
+						if (file.compare(file.length() - it->length(), it->length(), *it) == 0) {
+							files.push_back(file);
+							break;
+						}
+					}
+				}
 			}
 		}
 
 		closedir(dirp);
-		sort(files.begin(),files.end(),case_less());
-		sort(directories.begin(),directories.end(),case_less());
+		sort(files.begin(), files.end(), case_less());
+		sort(directories.begin(), directories.end(), case_less());
 	}
 }
 
-uint FileLister::size() {
-	return files.size()+directories.size();
+unsigned int FileLister::size()
+{
+	return files.size() + directories.size();
 }
-uint FileLister::dirCount() {
+
+unsigned int FileLister::dirCount()
+{
 	return directories.size();
 }
-uint FileLister::fileCount() {
+
+unsigned int FileLister::fileCount()
+{
 	return files.size();
 }
 
-string FileLister::operator[](uint x) {
+string FileLister::operator[](uint x)
+{
 	return at(x);
 }
 
-string FileLister::at(uint x) {
-	if (x<directories.size())
+string FileLister::at(uint x)
+{
+	if (x < directories.size())
 		return directories[x];
 	else
 		return files[x-directories.size()];
 }
 
-bool FileLister::isFile(uint x) {
-	return x>=directories.size() && x<size();
+bool FileLister::isFile(unsigned int x)
+{
+	return x >= directories.size() && x < size();
 }
 
-bool FileLister::isDirectory(uint x) {
-	return x<directories.size();
+bool FileLister::isDirectory(unsigned int x)
+{
+	return x < directories.size();
 }
