@@ -35,7 +35,7 @@ bool BrowseDialog::exec()
 		return false;
 
 	string path = fl->getPath();
-	if (path.empty() || !fileExists(path))
+	if (path.empty() || !fileExists(path) || path.compare(0, 5, "/card") != 0)
 		setPath("/card");
 
 	fl->browse();
@@ -169,7 +169,12 @@ void BrowseDialog::directoryUp()
 
 void BrowseDialog::directoryEnter()
 {
-	setPath(fl->getPath() + "/" + fl->at(selected));
+	string path = fl->getPath();
+	if (path[path.size()-1] != '/')
+		path += "/";
+
+	setPath(path + fl->at(selected));
+
 	selected = 0;
 }
 
