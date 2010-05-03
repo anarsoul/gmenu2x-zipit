@@ -9,6 +9,8 @@ using namespace std;
 Uint32 SFontPlus::getPixel(Sint32 x, Sint32 y) {
 	assert(x>=0);
 	assert(x<surface->w);
+	assert(y>=0);
+	assert(y<surface->h);
 
 	Uint32 Bpp = surface->format->BytesPerPixel;
 
@@ -108,12 +110,12 @@ void SFontPlus::initFont(SDL_Surface *font, const string &characters) {
 	Uint32 colKey = getPixel(0,surface->h-1);
 	SDL_SetColorKey(surface, SDL_SRCCOLORKEY, colKey);
 	string::size_type pos = characters.find("0")*2;
-	SDL_Rect srcrect = {charpos[pos], 1, charpos[pos+2] - charpos[pos], surface->h-1};
-	uint y = srcrect.h+1;
+	SDL_Rect srcrect = {charpos[pos], 1, charpos[pos+2] - charpos[pos], surface->h - 1};
+	uint y = srcrect.h;
 	bool nonKeyFound = false;
-	while (y-->0 && !nonKeyFound) {
-		uint x = srcrect.w+1;
-		while (x-->0 && !nonKeyFound)
+	while (y-- > 0 && !nonKeyFound) {
+		uint x = srcrect.w;
+		while (x-- > 0 && !nonKeyFound)
 			nonKeyFound = getPixel(x+srcrect.x,y+srcrect.y) != colKey;
 	}
 	lineHeight = y+1;
