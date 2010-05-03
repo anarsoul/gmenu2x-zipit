@@ -142,6 +142,10 @@ bool BrowseDialog::handleInput()
 	default:
 		break;
 	}
+
+	btnUp->handleTS();
+	btnEnter->handleTS();
+	btnConfirm->handleTS();
 }
 
 #include <iostream>
