@@ -340,7 +340,7 @@ void GMenu2X::initBG() {
 	Surface cpu("imgs/cpu.png", confStr["skin"]);
 	Surface volume("imgs/volume.png", confStr["skin"]);
 	string df = getDiskFree();
-  
+
 	sd.blit( sc["bgmain"], 3, bottomBarIconY );
 	sc["bgmain"]->write( font, df, 22, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
 	volumeX = 27+font->getTextWidth(df);
@@ -1904,7 +1904,7 @@ string GMenu2X::getDiskFree() {
 	string df = "";
 	struct statvfs b;
 
-	int ret = statvfs("/card/gmenu2x", &b);
+	int ret = statvfs("/card", &b);
 	if (ret==0) {
 		unsigned long long free = b.f_bfree * b.f_bsize / 1048576;
 		unsigned long long total = b.f_blocks * b.f_frsize / 1048576;
