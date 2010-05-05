@@ -11,7 +11,7 @@ gmenu2x_SOURCES = asfont.cpp button.cpp cpu.cpp dirdialog.cpp filedialog.cpp \
 	textdialog.cpp textmanualdialog.cpp touchscreen.cpp translator.cpp \
 	utilities.cpp wallpaperdialog.cpp listview.cpp tinyxml/tinystr.cpp \
 	tinyxml/tinyxml.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp \
-	browsedialog.cpp buttonbox.cpp
+	browsedialog.cpp buttonbox.cpp dialog.cpp
 
 noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 	filedialog.h filelister.h gmenu2x.h gp2x.h iconbutton.h imagedialog.h \
@@ -22,7 +22,7 @@ noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 	messagebox.h pxml.h selectordetector.h selector.h settingsdialog.h \
 	sfontplus.h surfacecollection.h surface.h textdialog.h textmanualdialog.h \
 	touchscreen.h translator.h utilities.h wallpaperdialog.h \
-	tinyxml/tinystr.h tinyxml/tinyxml.h browsedialog.h buttonbox.h
+	tinyxml/tinystr.h tinyxml/tinyxml.h browsedialog.h buttonbox.h dialog.h
 
 AM_CFLAGS= @CFLAGS@ @SDL_CFLAGS@
 

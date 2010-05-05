@@ -8,8 +8,8 @@
 using namespace fastdelegate;
 
 BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
-	const string &subtitle) :
-	gmenu2x(gmenu2x), title(title), subtitle(subtitle), buttonBox(gmenu2x)
+	const string &subtitle) : Dialog(gmenu2x),
+	title(title), subtitle(subtitle), buttonBox(gmenu2x)
 {
 	IconButton *btn;
 
@@ -190,9 +190,9 @@ void BrowseDialog::paint()
 	Surface *icon;
 
 	gmenu2x->bg->blit(gmenu2x->s, 0, 0);
-	gmenu2x->drawTitleIcon("icons/explorer.png", true);
-	gmenu2x->writeTitle(title);
-	gmenu2x->writeSubTitle(subtitle);
+	drawTitleIcon("icons/explorer.png", true);
+	writeTitle(title);
+	writeSubTitle(subtitle);
 
 	buttonBox.paint(5);
 

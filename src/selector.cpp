@@ -33,8 +33,9 @@
 
 using namespace std;
 
-Selector::Selector(GMenu2X *gmenu2x, LinkApp *link, const string &selectorDir) {
-	this->gmenu2x = gmenu2x;
+Selector::Selector(GMenu2X *gmenu2x, LinkApp *link, const string &selectorDir) :
+	Dialog(gmenu2x)
+{
 	this->link = link;
 	loadAliases();
 	selRow = 0;
@@ -54,9 +55,9 @@ int Selector::exec(int startSelection) {
 	fl.browse();
 
 	Surface bg(gmenu2x->bg);
-	gmenu2x->drawTitleIcon(link->getIconPath(),true,&bg);
-	gmenu2x->writeTitle(link->getTitle(),&bg);
-	gmenu2x->writeSubTitle(link->getDescription(),&bg);
+	drawTitleIcon(link->getIconPath(), true, &bg);
+	writeTitle(link->getTitle(), &bg);
+	writeSubTitle(link->getDescription(), &bg);
 
 	if (link->getSelectorBrowser()) {
 		gmenu2x->drawButton(&bg, "start", gmenu2x->tr["Exit"],
