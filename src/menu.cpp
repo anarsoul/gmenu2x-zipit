@@ -30,7 +30,6 @@
 #include "menu.h"
 #include "filelister.h"
 #include "utilities.h"
-#include "pxml.h"
 
 using namespace std;
 
@@ -185,7 +184,7 @@ bool Menu::addLink(string path, string file, string section) {
 	}
 
 	//if the extension is not equal to gpu or dge then enable the wrapepr by default
-	bool wrapper = false, pxml = false;
+	bool wrapper = false;
 
 	//strip the extension from the filename
 	string title = file;
@@ -194,7 +193,6 @@ bool Menu::addLink(string path, string file, string section) {
 		string ext = title.substr(pos, title.length());
 		transform(ext.begin(), ext.end(), ext.begin(), (int(*)(int)) tolower);
 		if (ext == ".gpu" || ext == ".dge") wrapper = false;
-		else if (ext == ".pxml") pxml = true;
 		title = title.substr(0, pos);
 	}
 
@@ -246,29 +244,7 @@ bool Menu::addLink(string path, string file, string section) {
 	cout << "\033[0;34mGMENU2X:\033[0m Manual: " << manual << endl;
 #endif
 
-	// Read pxml
-	string shorttitle="", description="", exec="", icon="";
-	if (pxml) {
-		PXml pxmlDoc(path+file);
-		if (pxmlDoc.isValid()) {
-			shorttitle = pxmlDoc.getTitle();
-			description = pxmlDoc.getDescription();
-			exec = pxmlDoc.getExec();
-			if (!exec.empty() && exec[0]!='/')
-				exec = path+exec;
-			icon = pxmlDoc.getIcon();
-			if (!icon.empty() && icon[0]!='/')
-				icon = path+icon;
-		} else {
-#ifdef DEBUG
-			cout << "\033[0;34mGMENU2X:\033[0m Error loading pxml " << file << ": " << pxmlDoc.getError() << endl;
-#endif
-			return false;
-		}
-	} else {
-		shorttitle = title;
-		exec = path+file;
-	}
+	string shorttitle=title, description="", exec=path+file, icon="";
 
 	//Reduce title lenght to fit the link width
 	if (gmenu2x->font->getTextWidth(shorttitle)>gmenu2x->skinConfInt["linkWidth"]) {
