@@ -237,7 +237,7 @@ void Selector::loadAliases() {
 }
 
 string Selector::getAlias(const string &key) {
-	hash_map<string, string>::iterator i = aliases.find(key);
+	unordered_map<string, string>::iterator i = aliases.find(key);
 	if (i == aliases.end())
 		return "";
 	else

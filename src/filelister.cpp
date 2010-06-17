@@ -24,6 +24,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <iostream>
+#include <algorithm>
 
 #include "filelister.h"
 #include "utilities.h"
@@ -93,7 +94,6 @@ void FileLister::browse()
 				cout << "\033[0;34mGMENU2X:\033[0;31m stat failed on '" << filepath << "' with error '" << strerror(errno) << "'\033[0m" << endl;
 				continue;
 			}
-
 			if (find(exclude.begin(), exclude.end(), file) != exclude.end())
 				continue;
 
