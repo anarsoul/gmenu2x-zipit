@@ -1907,8 +1907,11 @@ string GMenu2X::getDiskFree() {
 
 	int ret = statvfs("/card", &b);
 	if (ret==0) {
-		unsigned long long free = b.f_bfree * b.f_bsize / 1048576;
-		unsigned long long total = b.f_blocks * b.f_frsize / 1048576;
+		// Make sure that the multiplication happens in 64 bits.
+		unsigned long long free =
+			((unsigned long long)b.f_bfree * b.f_bsize) / 1048576;
+		unsigned long long total =
+			((unsigned long long)b.f_blocks * b.f_frsize) / 1048576;
 		ss << free << "/" << total << "MB";
 		ss >> df;
 	} else cout << "\033[0;34mGMENU2X:\033[0;31m statvfs failed with error '" << strerror(errno) << "'\033[0m" << endl;
