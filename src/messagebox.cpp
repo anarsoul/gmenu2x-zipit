@@ -65,7 +65,7 @@ int MessageBox::exec() {
 	Surface bg(gmenu2x->s);
 	//Darken background
 	bg.box(0, 0, gmenu2x->resX, gmenu2x->resY, 0,0,0,200);
-	
+
 	SDL_Rect box;
 	box.h = gmenu2x->font->getHeight()*3 +4;
 	box.w = gmenu2x->font->getTextWidth(text) + 24 + (gmenu2x->sc[icon] != NULL ? 37 : 0);
@@ -87,9 +87,9 @@ int MessageBox::exec() {
 		if (buttons[i] != "") {
 			buttonPositions[i].y = box.y+box.h-4;
 			buttonPositions[i].w = btnX;
-			
+
 			btnX = gmenu2x->drawButtonRight(&bg, buttonLabels[i], buttons[i], btnX, buttonPositions[i].y);
-			
+
 			buttonPositions[i].x = btnX;
 			buttonPositions[i].w = buttonPositions[i].x-btnX-6;
 		}
@@ -113,7 +113,7 @@ int MessageBox::exec() {
 		gmenu2x->input.update();
 		for (uint i=0; i<buttons.size(); i++)
 			if (buttons[i]!="" && gmenu2x->input[i]) result = i;
-		
+
 		usleep(LOOP_DELAY);
 	}
 

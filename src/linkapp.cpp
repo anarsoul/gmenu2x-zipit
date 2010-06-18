@@ -237,7 +237,7 @@ bool LinkApp::save() {
 		if (ivolume>0          ) f << "volume="          << ivolume         << endl;
 		//G
 		if (igamma!=0          ) f << "gamma="           << igamma          << endl;
-		if (ibacklight!=0      ) f << "backlight="       << ibacklight      << endl;		
+		if (ibacklight!=0      ) f << "backlight="       << ibacklight      << endl;
 		if (selectordir!=""    ) f << "selectordir="     << selectordir     << endl;
 		if (selectorbrowser    ) f << "selectorbrowser=true"                << endl;
 		if (selectorfilter!="" ) f << "selectorfilter="  << selectorfilter  << endl;

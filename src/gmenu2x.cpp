@@ -112,7 +112,7 @@ void GMenu2X::gp2x_deinit() {
 		gp2x_memregs[0x290C>>1]=640;
 		close(gp2x_mem);
 	}
-	
+
 	if (f200) ts.deinit();*/
 #endif
 	if (batteryHandle) fclose(batteryHandle);
@@ -743,7 +743,7 @@ void GMenu2X::setBacklight(int val)
 		{
 			stringstream valsstr;
 			string valstr = "";
-			if (val < 10) 
+			if (val < 10)
 				valsstr << "00";
 			else if (val < 100)
 				valsstr << "0" ;
@@ -789,7 +789,7 @@ int GMenu2X::main() {
 	int drawn_frames = 0;
 	string fps = "";
 #endif
-	
+
 	IconButton btnContextMenu(this,"skin:imgs/menu.png");
 	btnContextMenu.setPosition(resX-38, bottomBarIconY);
 	btnContextMenu.setAction(MakeDelegate(this, &GMenu2X::contextMenu));
@@ -880,7 +880,7 @@ int GMenu2X::main() {
 
 		if(input[ACTION_A] )
 			helpDisplayed = ! helpDisplayed;
-				
+
 		if (helpDisplayed) {
 			s->box(10,50,300,143, skinConfColors[COLOR_MESSAGE_BOX_BG]);
 			s->rectangle( 12,52,296,helpBoxHeight,
@@ -894,7 +894,7 @@ int GMenu2X::main() {
 			s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
 			s->write( font, tr["START: Show options menu"], 20, 170 );
 			if (fwType=="open2x") s->write( font, tr["X: Toggle speaker mode"], 20, 185 );
-			
+
 		}
 
 #ifdef DEBUG
@@ -1841,7 +1841,7 @@ int GMenu2X::getVolume() {
     	int basevolume = -1;
 	mixer = open("/dev/mixer", O_RDONLY);
 	if(mixer)
-	{	
+	{
 		if (ioctl(mixer, SOUND_MIXER_READ_VOLUME, &basevolume) == -1) {
 			fprintf(stderr, "Failed opening mixer for read - VOLUME\n");
 		}
@@ -1864,7 +1864,7 @@ void GMenu2X::setVolume(int vol) {
 		}
 		close(mixer);
 	}
-	
+
 }
 
 void GMenu2X::setVolumeScaler(int scale) {

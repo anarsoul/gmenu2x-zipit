@@ -130,14 +130,14 @@ void InputManager::setActionsCount(int count) {
 
 void InputManager::update() {
 	SDL_JoystickUpdate();
-	
+
 	events.clear();
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		SDL_Event evcopy = event;
 		events.push_back(evcopy);
 	}
-	
+
 	Uint32 tick = SDL_GetTicks();
 	for (uint x=0; x<actions.size(); x++) {
 		actions[x] = false;
