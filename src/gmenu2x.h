@@ -23,8 +23,8 @@
 
 #include <string>
 #include <iostream>
-#include <google/dense_hash_map>
 
+#include "google/dense_hash_map"
 #include "surfacecollection.h"
 #include "iconbutton.h"
 #include "translator.h"

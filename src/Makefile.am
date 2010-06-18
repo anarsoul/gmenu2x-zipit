@@ -25,7 +25,7 @@ noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 
 AM_CFLAGS= @CFLAGS@ @SDL_CFLAGS@
 
-AM_CXXFLAGS = @CXXFLAGS@ @SDL_CFLAGS@
+AM_CXXFLAGS = @CXXFLAGS@ @SDL_CFLAGS@ -Isparsehash-1.6/src
 
 gmenu2x_LDADD = @LIBS@ @SDL_LIBS@ -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
 
