@@ -79,13 +79,13 @@
 using namespace std;
 using namespace fastdelegate;
 
-int main(int argc, char *argv[]) {
+int main(int /*argc*/, char */*argv*/[]) {
 	cout << "----" << endl;
 	cout << "GMenu2X starting: If you read this message in the logs, check http://gmenu2x.sourceforge.net/page/Troubleshooting for a solution" << endl;
 	cout << "----" << endl;
 
 	signal(SIGINT,&exit);
-	GMenu2X app(argc,argv);
+	GMenu2X app();
 	return 0;
 }
 
@@ -121,7 +121,7 @@ void GMenu2X::gp2x_deinit() {
 	if (acHandle) fclose(acHandle);
 }
 
-void GMenu2X::gp2x_tvout_on(bool pal) {
+void GMenu2X::gp2x_tvout_on(bool /*pal*/) {
 #ifdef TARGET_GP2X
 /*	if (gp2x_mem!=0) {
 //		Ioctl_Dummy_t *msg;
@@ -148,7 +148,7 @@ void GMenu2X::gp2x_tvout_off() {
 #endif
 }
 
-GMenu2X::GMenu2X(int argc, char *argv[]) {
+GMenu2X::GMenu2X() {
 	//Detect firmware version and type
 	if (fileExists("/etc/open2x")) {
 		fwType = "open2x";
@@ -761,7 +761,7 @@ int GMenu2X::getBackLight()
 	if (backlightHandle)
 	{
 		char valcstring[4];
-		fscanf(backlightHandle,"%s",&valcstring);
+		fscanf(backlightHandle, "%s", &valcstring[0]);
 		rewind(backlightHandle);
 		val = atoi(valcstring);
 	}
@@ -1434,7 +1434,7 @@ void GMenu2X::editLink() {
 	int linkClock = menu->selLinkApp()->clock();
 	int linkVolume = menu->selLinkApp()->volume();
 	//G
-	int linkGamma = menu->selLinkApp()->gamma();
+	//int linkGamma = menu->selLinkApp()->gamma();
 	int linkBacklight = menu->selLinkApp()->backlight();
 
 	string diagTitle = tr.translate("Edit link: $1",linkTitle.c_str(),NULL);
@@ -1739,7 +1739,7 @@ unsigned short GMenu2X::getBatteryLevel() {
 	if (!batteryHandle) return 0;
 	int battval = 0;
 	char battvalcstr[5];
-	fscanf(batteryHandle,"%s",&battvalcstr);
+	fscanf(batteryHandle, "%s", &battvalcstr[0]);
 	rewind(batteryHandle);
 	battval = atoi(battvalcstr);
 	if (battval>90) return 5;
@@ -1751,7 +1751,7 @@ unsigned short GMenu2X::getBatteryLevel() {
         if (!usbHandle) return 0;
         int usbval = 0;
         char usbvalcstr[5];
-        fscanf(usbHandle,"%s",&usbvalcstr);
+        fscanf(usbHandle, "%s", &usbvalcstr[0]);
         rewind(usbHandle);
         usbval = atoi(usbvalcstr);
         if (usbval==1) return 6;
@@ -1820,7 +1820,7 @@ void GMenu2X::setClock(unsigned mhz) {
 #endif
 }
 
-void GMenu2X::setGamma(int gamma) {
+void GMenu2X::setGamma(int /*gamma*/) {
 #ifdef TARGET_GP2X
 /*	float fgamma = (float)constrain(gamma,1,100)/10;
 	fgamma = 1 / fgamma;

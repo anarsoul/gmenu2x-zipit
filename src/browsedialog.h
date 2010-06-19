@@ -83,7 +83,7 @@ private:
 	ButtonBox buttonBox;
 
 	Action getAction();
-	bool handleInput();
+	void handleInput();
 
 	void paint();
 

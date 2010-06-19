@@ -71,7 +71,7 @@ void pll_init(unsigned int clock)
   	}else
   	{
   	printf("sdram init fail!\n");
-  	while(1);
+  	while(1) {}
   	}
 
 }

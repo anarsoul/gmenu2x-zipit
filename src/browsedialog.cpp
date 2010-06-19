@@ -82,7 +82,7 @@ BrowseDialog::Action BrowseDialog::getAction()
 	return action;
 }
 
-bool BrowseDialog::handleInput()
+void BrowseDialog::handleInput()
 {
 	BrowseDialog::Action action;
 
@@ -196,6 +196,9 @@ void BrowseDialog::paint()
 
 	buttonBox.paint(5);
 
+	// TODO(MtH): I have no idea what the right value of firstElement would be,
+	//            but originally it was undefined and that is never a good idea.
+	firstElement = 0;
 	if (selected>firstElement+numRows-1)
 		firstElement = selected-numRows+1;
 	else if (selected < firstElement)

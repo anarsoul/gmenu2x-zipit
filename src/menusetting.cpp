@@ -20,8 +20,11 @@
 #include "menusetting.h"
 
 MenuSetting::MenuSetting(GMenu2X *gmenu2x, const string &name,
-	const string &description) :  gmenu2x(gmenu2x), name(name),
-	description(description), buttonBox(gmenu2x)
+		const string &description)
+	: gmenu2x(gmenu2x)
+	, buttonBox(gmenu2x)
+	, name(name)
+	, description(description)
 {
 }
 
