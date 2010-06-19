@@ -3,8 +3,8 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "jz4740.h"
 #include "cpu.h"
+#include "jz4740.h"
 
 inline int sdram_convert(unsigned int pllin,unsigned int *sdram_freq)
 {
