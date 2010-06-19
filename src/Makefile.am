@@ -28,8 +28,8 @@ AM_CFLAGS= @CFLAGS@ @SDL_CFLAGS@
 AM_CXXFLAGS = @CXXFLAGS@ @SDL_CFLAGS@ -Isparsehash-1.6/src -DTARGET_GP2X \
 	-Wall -Wextra -Wundef -Wunused-macros
 
-gmenu2x_LDADD = @LIBS@ @SDL_LIBS@ -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
+gmenu2x_LDADD = @LIBS@ @SDL_LIBS@ -lSDL_image -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
 
-gmenu2x_LDFLAGS = -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
+gmenu2x_LDFLAGS = -lSDL_image -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
 
-gmenu2x_LIBS = @LIBS@ @SDL_LIBS@ -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
+gmenu2x_LIBS = @LIBS@ @SDL_LIBS@ -lSDL_image -lSDL_gfx -lSDL -ljpeg -lpng12 -lz -ldl -lpthread
