@@ -193,7 +193,7 @@ public:
 	ASFont *font;
 
 	//Status functions
-	int main();
+	void main();
 	void options();
 	void settingsOpen2x();
 	void skinMenu();
