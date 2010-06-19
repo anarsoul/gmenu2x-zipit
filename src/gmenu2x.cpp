@@ -1549,7 +1549,7 @@ void GMenu2X::renameSection() {
 				string oldicon = sc.getSkinFilePath(oldpng), newicon = sc.getSkinFilePath(newpng);
 				if (!oldicon.empty() && newicon.empty()) {
 					newicon = oldicon;
-          				newicon.replace(newicon.find(oldpng), oldpng.length(), newpng);
+					newicon.replace(newicon.find(oldpng), oldpng.length(), newpng);
 
 					if (!fileExists(newicon)) {
 						rename(oldicon.c_str(), "tmpsectionicon");
@@ -1745,13 +1745,13 @@ unsigned short GMenu2X::getBatteryLevel() {
 	if (battval>30) return 2;
 	if (battval>10) return 1;
 
-        if (!usbHandle) return 0;
-        int usbval = 0;
-        char usbvalcstr[5];
-        fscanf(usbHandle, "%s", &usbvalcstr[0]);
-        rewind(usbHandle);
-        usbval = atoi(usbvalcstr);
-        if (usbval==1) return 6;
+	if (!usbHandle) return 0;
+	int usbval = 0;
+	char usbvalcstr[5];
+	fscanf(usbHandle, "%s", &usbvalcstr[0]);
+	rewind(usbHandle);
+	usbval = atoi(usbvalcstr);
+	if (usbval==1) return 6;
 
 	return 0;
 //#else

@@ -15,7 +15,7 @@ inline int sdram_convert(unsigned int pllin,unsigned int *sdram_freq)
 	tmp = SDRAM_TREF/ns;
 	tmp = tmp/64 + 1;
 	if (tmp > 0xff) tmp = 0xff;
-        *sdram_freq = tmp;
+	*sdram_freq = tmp;
 
 	return 0;
 
