@@ -6,7 +6,7 @@ gmenu2x_SOURCES = asfont.cpp button.cpp cpu.cpp dirdialog.cpp filedialog.cpp \
 	menu.cpp menusettingbool.cpp menusetting.cpp menusettingdir.cpp \
 	menusettingfile.cpp menusettingimage.cpp menusettingint.cpp \
 	menusettingmultistring.cpp menusettingrgba.cpp menusettingstring.cpp \
-	messagebox.cpp selector.cpp selectordetector.cpp \
+	messagebox.cpp selector.cpp \
 	settingsdialog.cpp sfontplus.cpp surfacecollection.cpp surface.cpp \
 	textdialog.cpp textmanualdialog.cpp touchscreen.cpp translator.cpp \
 	utilities.cpp wallpaperdialog.cpp \
@@ -18,7 +18,7 @@ noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 	menu.h menusettingbool.h menusettingdir.h \
 	menusettingfile.h menusetting.h menusettingimage.h menusettingint.h \
 	menusettingmultistring.h menusettingrgba.h menusettingstring.h \
-	messagebox.h selectordetector.h selector.h settingsdialog.h \
+	messagebox.h selector.h settingsdialog.h \
 	sfontplus.h surfacecollection.h surface.h textdialog.h textmanualdialog.h \
 	touchscreen.h translator.h utilities.h wallpaperdialog.h \
 	browsedialog.h buttonbox.h dialog.h
