@@ -215,8 +215,6 @@ void BrowseDialog::paint()
 
 	offsetY = gmenu2x->skinConfInt["topBarHeight"]+1;
 
-	beforeFileList();
-
 	//Files & Directories
 	gmenu2x->s->setClipRect(clipRect);
 	for (i = firstElement; i < lastElement; i++) {

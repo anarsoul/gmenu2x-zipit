@@ -34,6 +34,16 @@ using std::vector;
 
 class BrowseDialog : protected Dialog {
 protected:
+	BrowseDialog(GMenu2X *gmenu2x, const string &title, const string &subtitle);
+
+	void setPath(const string &path) {
+		fl->setPath(path);
+	}
+
+	FileLister *fl;
+	unsigned int selected;
+
+private:
 	enum Action {
 		ACT_NONE,
 		ACT_SELECT,
@@ -46,27 +56,10 @@ protected:
 		ACT_CONFIRM,
 	};
 
-	BrowseDialog(GMenu2X *gmenu2x, const string &title, const string &subtitle);
-
-	virtual void beforeFileList() {};
-	virtual void onChangeDir() {};
-
-	void setPath(const string &path) {
-		fl->setPath(path);
-		onChangeDir();
-	}
-
-	FileLister *fl;
-	unsigned int selected;
-
-private:
-	int selRow;
 	bool close, result;
 
 	string title;
 	string subtitle;
-
-	IconButton *btnUp, *btnEnter, *btnConfirm;
 
 	SDL_Rect clipRect;
 	SDL_Rect touchRect;
@@ -92,7 +85,6 @@ private:
 	void confirm();
 
 public:
-
 	bool exec();
 
 	const std::string &getPath()
