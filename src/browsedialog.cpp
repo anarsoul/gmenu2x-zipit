@@ -4,6 +4,7 @@
 
 #include "FastDelegate.h"
 #include "filelister.h"
+#include "gmenu2x.h"
 
 using namespace fastdelegate;
 
@@ -40,8 +41,8 @@ bool BrowseDialog::exec()
 		return false;
 
 	string path = fl->getPath();
-	if (path.empty() || !fileExists(path) || path.compare(0, 5, "/card") != 0)
-		setPath("/card");
+	if (path.empty() || !fileExists(path) || path.compare(0, 5, CARD_ROOT) != 0)
+		setPath(CARD_ROOT);
 
 	fl->browse();
 
@@ -161,7 +162,7 @@ void BrowseDialog::directoryUp()
 	if (p == path.size() - 1)
 		p = path.rfind("/", p - 1);
 
-	if (p == string::npos || p < 4 || path.compare(0, 5, "/card") != 0) {
+	if (p == string::npos || p < 4 || path.compare(0, 5, CARD_ROOT) != 0) {
 		close = true;
 		result = false;
 	} else {

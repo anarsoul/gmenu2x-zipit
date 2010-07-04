@@ -76,6 +76,8 @@
 //#include <pnd_discovery.h>
 #endif
 
+const char *CARD_ROOT = "/card";
+
 using namespace std;
 using namespace fastdelegate;
 
@@ -420,7 +422,7 @@ void GMenu2X::initMenu() {
 	menu->loadIcons();
 
 	//DEBUG
-	//menu->addLink( "/card", "sample.pxml", "applications" );
+	//menu->addLink( CARD_ROOT, "sample.pxml", "applications" );
 }
 
 void GMenu2X::about() {
@@ -1025,7 +1027,7 @@ void GMenu2X::options() {
 	int curGlobalVolume = confInt["globalVolume"];
 	//G
 	int prevbacklight = confInt["backlight"];
-	bool showRootFolder = fileExists("/card");
+	bool showRootFolder = fileExists(CARD_ROOT);
 
 	FileLister fl_tr("translations");
 	fl_tr.browse();
@@ -1055,10 +1057,10 @@ void GMenu2X::options() {
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) tr.setLang(lang);
-		if (fileExists("/card") && !showRootFolder)
-			unlink("/card");
-		else if (!fileExists("/card") && showRootFolder)
-			symlink("/","/card");
+		if (fileExists(CARD_ROOT) && !showRootFolder)
+			unlink(CARD_ROOT);
+		else if (!fileExists(CARD_ROOT) && showRootFolder)
+			symlink("/", CARD_ROOT);
 		writeConfig();
 	}
 }
@@ -1603,7 +1605,7 @@ void GMenu2X::scanner() {
 	lineY += 26;
 
 	vector<string> files;
-	scanPath("/card",&files);
+	scanPath(CARD_ROOT, &files);
 
 	//Onyl gph firmware has nand
 /*	if (fwType=="gph" && !f200) {
@@ -1890,7 +1892,7 @@ string GMenu2X::getDiskFree() {
 	string df = "";
 	struct statvfs b;
 
-	int ret = statvfs("/card", &b);
+	int ret = statvfs(CARD_ROOT, &b);
 	if (ret==0) {
 		// Make sure that the multiplication happens in 64 bits.
 		unsigned long long free =

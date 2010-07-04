@@ -45,6 +45,8 @@ const int BATTERY_READS = 10;
 
 const int LOOP_DELAY=30000;
 
+extern const char *CARD_ROOT;
+
 extern void jz_cpuspeed(unsigned clockspeed);
 
 enum color {

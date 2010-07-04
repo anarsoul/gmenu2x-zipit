@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "filedialog.h"
+#include "gmenu2x.h"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ FileDialog::FileDialog(GMenu2X *gmenu2x, const string &text,
 	const string &filter, const string &file, const string &title) :
 	BrowseDialog(gmenu2x, title, text)
 {
-	string path = "/card";
+	string path(CARD_ROOT);
 	if (!file.empty()) {
 		string::size_type pos = file.rfind("/");
 		if (pos != string::npos)
