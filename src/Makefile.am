@@ -14,7 +14,7 @@ gmenu2x_SOURCES = asfont.cpp button.cpp cpu.cpp dirdialog.cpp filedialog.cpp \
 
 noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 	filedialog.h filelister.h gmenu2x.h gp2x.h iconbutton.h imagedialog.h \
-	inputdialog.h inputmanager.h jz4740.h linkaction.h linkapp.h link.h \
+	inputdialog.h inputmanager.h linkaction.h linkapp.h link.h \
 	menu.h menusettingbool.h menusettingdir.h \
 	menusettingfile.h menusetting.h menusettingimage.h menusettingint.h \
 	menusettingmultistring.h menusettingrgba.h menusettingstring.h \

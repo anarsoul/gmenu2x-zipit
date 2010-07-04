@@ -526,8 +526,8 @@ void GMenu2X::readConfig() {
 	if (confStr["skin"].empty() || !fileExists("skins/"+confStr["skin"])) confStr["skin"] = "Default";
 
 	evalIntConf( &confInt["outputLogs"], 0, 0,1 );
-	evalIntConf( &confInt["maxClock"], 430, 200,430 );
-	evalIntConf( &confInt["menuClock"], 200, 200,430 );
+	evalIntConf( &confInt["maxClock"], 430, 30, 500 );
+	evalIntConf( &confInt["menuClock"], 200, 30, 430 );
 	evalIntConf( &confInt["globalVolume"], 67, 0,100 );
 	evalIntConf( &confInt["backlight"], 100, 5,100 );
 	evalIntConf( &confInt["videoBpp"], 32,32,32 ); // 8,16
@@ -1799,20 +1799,9 @@ void GMenu2X::applyDefaultTimings() {
 
 
 void GMenu2X::setClock(unsigned mhz) {
-	mhz = constrain(mhz,200,confInt["maxClock"]);
+	mhz = constrain(mhz, 30, confInt["maxClock"]);
 #ifdef TARGET_GP2X
-/*	if (gp2x_mem!=0) {
-		unsigned v;
-		unsigned mdiv,pdiv=3,scale=0;
-		mhz*=1000000;
-		mdiv=(mhz*pdiv)/GP2X_CLK_FREQ;
-		mdiv=((mdiv-8)<<8) & 0xff00;
-		pdiv=((pdiv-2)<<2) & 0xfc;
-		scale&=3;
-		v=mdiv | pdiv | scale;
-		MEM_REG[0x910>>1]=v;
-	}*/
-	/*jz_cpuspeed(mhz);*/
+	jz_cpuspeed(mhz);
 #endif
 }
 
