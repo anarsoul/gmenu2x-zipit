@@ -107,7 +107,8 @@ void GMenu2X::gp2x_init() {
 	batteryHandle = fopen("/sys/class/power_supply/battery/capacity", "r");
 	usbHandle = fopen("/sys/class/power_supply/usb/online", "r");
 	acHandle = fopen("/sys/class/power_supply/ac/online", "r");
-	backlightHandle = fopen("/proc/jz/lcd_backlight","w+");
+	backlightHandle =
+		fopen("/sys/class/backlight/pwm-backlight/brightness", "w+");
 #endif
 }
 
@@ -738,33 +739,21 @@ void GMenu2X::ledOff() {
 
 void GMenu2X::setBacklight(int val)
 {
-	if ((val >= 0) && (val <=100))
-	{
-		if (backlightHandle)
-		{
-			stringstream valsstr;
-			string valstr = "";
-			if (val < 10)
-				valsstr << "00";
-			else if (val < 100)
-				valsstr << "0" ;
-			valsstr << val;
-			valsstr >> valstr;
-			fprintf(backlightHandle,"%s",valstr.c_str());
-			rewind(backlightHandle);
-		}
+	if (backlightHandle) {
+		fprintf(backlightHandle, "%d", (val * 255) / 100);
+		fflush(backlightHandle);
+		rewind(backlightHandle);
 	}
 }
 
 int GMenu2X::getBackLight()
 {
-	int val = 100;
-	if (backlightHandle)
-	{
-		char valcstring[4];
-		fscanf(backlightHandle, "%s", &valcstring[0]);
+	int val = 255;
+	if (backlightHandle) {
+		fscanf(backlightHandle, "%d", &val);
 		rewind(backlightHandle);
-		val = atoi(valcstring);
+		val = (val * 100) / 255;
+		if (val < 0) val = 0; else if (val > 100) val = 100;
 	}
 	return val;
 }
