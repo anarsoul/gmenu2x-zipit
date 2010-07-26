@@ -1516,10 +1516,11 @@ void GMenu2X::addSection() {
 	InputDialog id(this,tr["Insert a name for the new section"]);
 	if (id.exec()) {
 		//only if a section with the same name does not exist
-		if (find(menu->sections.begin(),menu->sections.end(),id.input)==menu->sections.end()) {
+		if (find(menu->sections.begin(), menu->sections.end(), id.getInput())
+				== menu->sections.end()) {
 			//section directory doesn't exists
 			ledOn();
-			if (menu->addSection(id.input)) {
+			if (menu->addSection(id.getInput())) {
 				menu->setSectionIndex( menu->sections.size()-1 ); //switch to the new section
 				sync();
 			}
@@ -1532,10 +1533,12 @@ void GMenu2X::renameSection() {
 	InputDialog id(this,tr["Insert a new name for this section"],menu->selSection());
 	if (id.exec()) {
 		//only if a section with the same name does not exist & !samename
-		if (menu->selSection()!=id.input && find(menu->sections.begin(),menu->sections.end(),id.input)==menu->sections.end()) {
+		if (menu->selSection() != id.getInput()
+		 && find(menu->sections.begin(),menu->sections.end(), id.getInput())
+				== menu->sections.end()) {
 			//section directory doesn't exists
-			string newsectiondir = "sections/"+id.input;
-			string sectiondir = "sections/"+menu->selSection();
+			string newsectiondir = "sections/" + id.getInput();
+			string sectiondir = "sections/" + menu->selSection();
 			ledOn();
 			if (rename(sectiondir.c_str(), "tmpsection")==0 && rename("tmpsection", newsectiondir.c_str())==0) {
 				string oldpng = sectiondir+".png", newpng = newsectiondir+".png";
@@ -1550,7 +1553,7 @@ void GMenu2X::renameSection() {
 						sc.move("skin:"+oldpng, "skin:"+newpng);
 					}
 				}
-				menu->sections[menu->selSectionIndex()] = id.input;
+				menu->sections[menu->selSectionIndex()] = id.getInput();
 				sync();
 			}
 			ledOff();
