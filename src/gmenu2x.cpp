@@ -1332,10 +1332,12 @@ void GMenu2X::contextMenu() {
 			if (ts.released()) {
 				if (!ts.inRect(box))
 					close = true;
-				else if (ts.x>=selbox.x && ts.x<=selbox.x+selbox.w)
+				else if (ts.getX() >= selbox.x
+					  && ts.getX() <= selbox.x + selbox.w)
 					for (i=0; i<voices.size(); i++) {
 						selbox.y = box.y+4+(h+2)*i;
-						if (ts.y>=selbox.y && ts.y<=selbox.y+selbox.h) {
+						if (ts.getY() >= selbox.y
+						 && ts.getY() <= selbox.y + selbox.h) {
 							voices[i].action();
 							close = true;
 							i = voices.size();
@@ -1344,7 +1346,8 @@ void GMenu2X::contextMenu() {
 			} else if (ts.pressed() && ts.inRect(box)) {
 				for (i=0; i<voices.size(); i++) {
 					selbox.y = box.y+4+(h+2)*i;
-					if (ts.y>=selbox.y && ts.y<=selbox.y+selbox.h) {
+					if (ts.getY() >= selbox.y
+					 && ts.getY() <= selbox.y + selbox.h) {
 						sel = i;
 						i = voices.size();
 					}
