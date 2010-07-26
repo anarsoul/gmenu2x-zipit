@@ -184,7 +184,7 @@ bool Menu::addLink(string path, string file, string section) {
 			return false;
 	}
 
-	//if the extension is not equal to gpu or dge then enable the wrapepr by default
+	//if the extension is not equal to gpu or dge then enable the wrapper by default
 	bool wrapper = false;
 
 	//strip the extension from the filename
