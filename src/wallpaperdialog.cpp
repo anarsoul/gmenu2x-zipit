@@ -23,9 +23,10 @@
 
 using namespace std;
 
-WallpaperDialog::WallpaperDialog(GMenu2X *gmenu2x) : Dialog(gmenu2x)
+WallpaperDialog::WallpaperDialog(GMenu2X *gmenu2x)
+	: Dialog(gmenu2x)
+	, selRow(0)
 {
-	selRow = 0;
 }
 
 bool WallpaperDialog::exec()
