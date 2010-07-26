@@ -56,6 +56,7 @@ bool BrowseDialog::exec()
 	touchRect = (SDL_Rect){2, gmenu2x->skinConfInt["topBarHeight"]+4, gmenu2x->resX-12, clipRect.h};
 
 	selected = 0;
+	close = false;
 	while (!close) {
 		if (gmenu2x->f200) gmenu2x->ts.poll();
 
