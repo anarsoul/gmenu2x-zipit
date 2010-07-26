@@ -31,7 +31,6 @@ using std::vector;
 class WallpaperDialog : protected Dialog {
 private:
 	int selRow;
-	GMenu2X *gmenu2x;
 
 public:
 	WallpaperDialog(GMenu2X *gmenu2x);
