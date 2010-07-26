@@ -9,8 +9,12 @@
 using namespace fastdelegate;
 
 BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
-	const string &subtitle) : Dialog(gmenu2x),
-	title(title), subtitle(subtitle), buttonBox(gmenu2x)
+		const string &subtitle)
+	: Dialog(gmenu2x)
+	, title(title)
+	, subtitle(subtitle)
+	, ts_pressed(false)
+	, buttonBox(gmenu2x)
 {
 	IconButton *btn;
 
