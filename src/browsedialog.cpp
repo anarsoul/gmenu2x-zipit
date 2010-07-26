@@ -189,6 +189,7 @@ void BrowseDialog::directoryEnter()
 
 void BrowseDialog::confirm()
 {
+	result = true;
 	close = true;
 }
 
