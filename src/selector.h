@@ -38,18 +38,21 @@ class Selector : protected Dialog {
 private:
 	int selRow;
 	LinkApp *link;
-
+	string file, dir;
 	unordered_map<string, string> aliases;
+
 	void loadAliases();
 	string getAlias(const string &key);
 	void prepare(FileLister *fl, vector<string> *screens, vector<string> *titles);
 	void freeScreenshots(vector<string> *screens);
 
 public:
-	string file, dir;
 	Selector(GMenu2X *gmenu2x, LinkApp *link, const string &selectorDir="");
 
 	int exec(int startSelection=0);
+
+	const string &getFile() { return file; }
+	const string &getDir() { return dir; }
 };
 
 #endif /*SELECTOR_H_*/

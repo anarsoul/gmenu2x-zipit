@@ -376,8 +376,8 @@ void LinkApp::selector(int startSelection, const string &selectorDir) {
 	Selector sel(gmenu2x, this, selectorDir);
 	int selection = sel.exec(startSelection);
 	if (selection!=-1) {
-		gmenu2x->writeTmp(selection,sel.dir);
-		launch(sel.file, sel.dir);
+		gmenu2x->writeTmp(selection, sel.getDir());
+		launch(sel.getFile(), sel.getDir());
 	}
 }
 
