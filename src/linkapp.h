@@ -49,6 +49,10 @@ private:
 	void drawRun();
 
 	string aliasfile;
+	string file;
+
+	bool wrapper;
+	bool dontleave;
 
 public:
 	LinkApp(GMenu2X *gmenu2x, const char* linkfile);
@@ -75,8 +79,6 @@ public:
 	const string &getAliasFile();
 	void setAliasFile(const string &aliasfile);
 
-	string file;
-
 	int clock();
 	const string &clockStr(int maxClock);
 	void setClock(int mhz);
@@ -95,15 +97,17 @@ public:
 	void setBacklight(int val);
 // /G
 
-	bool wrapper;
-	bool dontleave;
-
 	bool save();
 	void run();
 	void showManual();
 	void selector(int startSelection=0, const string &selectorDir="");
 	void launch(const string &selectedFile="", const string &selectedDir="");
 	bool targetExists();
+
+	const string &getFile() { return file; }
+	void renameFile(const string &name);
+	bool &needsWrapperRef() { return wrapper; }
+	bool &runsInBackgroundRef() { return dontleave; }
 };
 
 #endif

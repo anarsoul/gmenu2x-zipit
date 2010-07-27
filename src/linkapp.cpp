@@ -575,3 +575,7 @@ void LinkApp::setAliasFile(const string &aliasfile) {
 		edited = true;
 	}
 }
+
+void LinkApp::renameFile(const string &name) {
+	file = name;
+}

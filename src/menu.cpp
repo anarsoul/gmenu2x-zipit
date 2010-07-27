@@ -299,7 +299,7 @@ void Menu::deleteSelectedLink() {
 	cout << "\033[0;34mGMENU2X:\033[0m Deleting link " << selLink()->getTitle() << endl;
 #endif
 	if (selLinkApp()!=NULL)
-		unlink(selLinkApp()->file.c_str());
+		unlink(selLinkApp()->getFile().c_str());
 	gmenu2x->sc.del(selLink()->getIconPath());
 	sectionLinks()->erase( sectionLinks()->begin() + selLinkIndex() );
 	setLinkIndex(selLinkIndex());

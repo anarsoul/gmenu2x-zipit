@@ -1404,7 +1404,7 @@ void GMenu2X::editLink() {
 	if (menu->selLinkApp()==NULL) return;
 
 	vector<string> pathV;
-	split(pathV,menu->selLinkApp()->file,"/");
+	split(pathV,menu->selLinkApp()->getFile(),"/");
 	string oldSection = "";
 	if (pathV.size()>1)
 		oldSection = pathV[pathV.size()-2];
@@ -1447,8 +1447,8 @@ void GMenu2X::editLink() {
 	sd.addSetting(new MenuSettingDir(this,tr["Selector Screenshots"],tr["Directory of the screenshots for the selector"],&linkSelScreens));
 	sd.addSetting(new MenuSettingFile(this,tr["Selector Aliases"],tr["File containing a list of aliases for the selector"],&linkSelAliases));
 	//G
-	sd.addSetting(new MenuSettingBool(this,tr["Wrapper"],tr["Explicitly relaunch GMenu2X after this link's execution ends"],&menu->selLinkApp()->wrapper));
-	sd.addSetting(new MenuSettingBool(this,tr["Don't Leave"],tr["Don't quit GMenu2X when launching this link"],&menu->selLinkApp()->dontleave));
+	sd.addSetting(new MenuSettingBool(this,tr["Wrapper"],tr["Explicitly relaunch GMenu2X after this link's execution ends"],&menu->selLinkApp()->needsWrapperRef()));
+	sd.addSetting(new MenuSettingBool(this,tr["Don't Leave"],tr["Don't quit GMenu2X when launching this link"],&menu->selLinkApp()->runsInBackgroundRef()));
 
 	if (sd.exec() && sd.edited()) {
 		ledOn();
@@ -1484,8 +1484,8 @@ void GMenu2X::editLink() {
 				newFileName = "sections/"+newSection+"/"+linkTitle+id;
 				x++;
 			}
-			rename(menu->selLinkApp()->file.c_str(),newFileName.c_str());
-			menu->selLinkApp()->file = newFileName;
+			rename(menu->selLinkApp()->getFile().c_str(),newFileName.c_str());
+			menu->selLinkApp()->renameFile(newFileName);
 #ifdef DEBUG
 			cout << "New section index: " << newSectionIndex - menu->getSections().begin() << endl;
 #endif
