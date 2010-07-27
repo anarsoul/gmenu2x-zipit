@@ -391,14 +391,14 @@ void GMenu2X::initFont() {
 void GMenu2X::initMenu() {
 	//Menu structure handler
 	menu = new Menu(this);
-	for (uint i=0; i<menu->sections.size(); i++) {
+	for (uint i=0; i<menu->getSections().size(); i++) {
 		//Add virtual links in the applications section
-		if (menu->sections[i]=="applications") {
+		if (menu->getSections()[i]=="applications") {
 			menu->addActionLink(i,"Explorer",MakeDelegate(this,&GMenu2X::explorer),tr["Launch an application"],"skin:icons/explorer.png");
 		}
 
 		//Add virtual links in the setting section
-		else if (menu->sections[i]=="settings") {
+		else if (menu->getSections()[i]=="settings") {
 			menu->addActionLink(i,"GMenu2X",MakeDelegate(this,&GMenu2X::options),tr["Configure GMenu2X's options"],"skin:icons/configure.png");
 			if (fwType=="open2x")
 				menu->addActionLink(i,"Open2x",MakeDelegate(this,&GMenu2X::settingsOpen2x),tr["Configure Open2x system settings"],"skin:icons/o2xconfigure.png");
@@ -791,17 +791,17 @@ void GMenu2X::main() {
 		sc["bgmain"]->blit(s,0,0);
 
 		//Sections
-		sectionsCoordX = halfX - (constrain((uint)menu->sections.size(), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
+		sectionsCoordX = halfX - (constrain((uint)menu->getSections().size(), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
 		if (menu->firstDispSection()>0)
 			sc.skinRes("imgs/l_enabled.png")->blit(s,0,0);
 		else
 			sc.skinRes("imgs/l_disabled.png")->blit(s,0,0);
-		if (menu->firstDispSection()+linkColumns<menu->sections.size())
+		if (menu->firstDispSection()+linkColumns<menu->getSections().size())
 			sc.skinRes("imgs/r_enabled.png")->blit(s,resX-10,0);
 		else
 			sc.skinRes("imgs/r_disabled.png")->blit(s,resX-10,0);
-		for (i=menu->firstDispSection(); i<menu->sections.size() && i<menu->firstDispSection()+linkColumns; i++) {
-			string sectionIcon = "skin:sections/"+menu->sections[i]+".png";
+		for (i=menu->firstDispSection(); i<menu->getSections().size() && i<menu->firstDispSection()+linkColumns; i++) {
+			string sectionIcon = "skin:sections/"+menu->getSections()[i]+".png";
 			x = (i-menu->firstDispSection())*skinConfInt["linkWidth"]+sectionsCoordX;
 			if (menu->selSectionIndex()==(int)i)
 				s->box(x, 0, skinConfInt["linkWidth"],
@@ -811,7 +811,7 @@ void GMenu2X::main() {
 				sc[sectionIcon]->blit(s,x-16,sectionLinkPadding,32,32);
 			else
 				sc.skinRes("icons/section.png")->blit(s,x-16,sectionLinkPadding);
-			s->write( font, menu->sections[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, SFontHAlignCenter, SFontVAlignBottom );
+			s->write( font, menu->getSections()[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, SFontHAlignCenter, SFontVAlignBottom );
 		}
 
 		//Links
@@ -909,8 +909,8 @@ void GMenu2X::main() {
 			re.x = 0; re.y = 0; re.h = skinConfInt["topBarHeight"]; re.w = resX;
 			if (ts.pressed() && ts.inRect(re)) {
 				re.w = skinConfInt["linkWidth"];
-				sectionsCoordX = halfX - (constrain((uint)menu->sections.size(), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
-				for (i=menu->firstDispSection(); !ts.handled() && i<menu->sections.size() && i<menu->firstDispSection()+linkColumns; i++) {
+				sectionsCoordX = halfX - (constrain((uint)menu->getSections().size(), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
+				for (i=menu->firstDispSection(); !ts.handled() && i<menu->getSections().size() && i<menu->firstDispSection()+linkColumns; i++) {
 					re.x = (i-menu->firstDispSection())*re.w+sectionsCoordX;
 
 					if (ts.inRect(re)) {
@@ -1433,7 +1433,7 @@ void GMenu2X::editLink() {
 	SettingsDialog sd(this,diagTitle,diagIcon);
 	sd.addSetting(new MenuSettingString(this,tr["Title"],tr["Link title"],&linkTitle, diagTitle,diagIcon));
 	sd.addSetting(new MenuSettingString(this,tr["Description"],tr["Link description"],&linkDescription, diagTitle,diagIcon));
-	sd.addSetting(new MenuSettingMultiString(this,tr["Section"],tr["The section this link belongs to"],&newSection,&menu->sections));
+	sd.addSetting(new MenuSettingMultiString(this,tr["Section"],tr["The section this link belongs to"],&newSection,&menu->getSections()));
 	sd.addSetting(new MenuSettingImage(this,tr["Icon"],tr.translate("Select an icon for the link: $1",linkTitle.c_str(),NULL),&linkIcon,".png,.bmp,.jpg,.jpeg"));
 	sd.addSetting(new MenuSettingFile(this,tr["Manual"],tr["Select a graphic/textual manual or a readme"],&linkManual,".man.png,.txt"));
 	sd.addSetting(new MenuSettingInt(this,tr["Clock (default: 336)"],tr["Cpu clock frequency to set when launching this link"],&linkClock,200,confInt["maxClock"]));
@@ -1474,8 +1474,8 @@ void GMenu2X::editLink() {
 #endif
 		//if section changed move file and update link->file
 		if (oldSection!=newSection) {
-			vector<string>::iterator newSectionIndex = find(menu->sections.begin(),menu->sections.end(),newSection);
-			if (newSectionIndex==menu->sections.end()) return;
+			vector<string>::const_iterator newSectionIndex = find(menu->getSections().begin(),menu->getSections().end(),newSection);
+			if (newSectionIndex==menu->getSections().end()) return;
 			string newFileName = "sections/"+newSection+"/"+linkTitle;
 			uint x=2;
 			while (fileExists(newFileName)) {
@@ -1487,9 +1487,9 @@ void GMenu2X::editLink() {
 			rename(menu->selLinkApp()->file.c_str(),newFileName.c_str());
 			menu->selLinkApp()->file = newFileName;
 #ifdef DEBUG
-			cout << "New section index: " << newSectionIndex - menu->sections.begin() << endl;
+			cout << "New section index: " << newSectionIndex - menu->getSections().begin() << endl;
 #endif
-			menu->linkChangeSection(menu->selLinkIndex(), menu->selSectionIndex(), newSectionIndex - menu->sections.begin());
+			menu->linkChangeSection(menu->selLinkIndex(), menu->selSectionIndex(), newSectionIndex - menu->getSections().begin());
 		}
 		menu->selLinkApp()->save();
 		sync();
@@ -1516,12 +1516,12 @@ void GMenu2X::addSection() {
 	InputDialog id(this,tr["Insert a name for the new section"]);
 	if (id.exec()) {
 		//only if a section with the same name does not exist
-		if (find(menu->sections.begin(), menu->sections.end(), id.getInput())
-				== menu->sections.end()) {
+		if (find(menu->getSections().begin(), menu->getSections().end(), id.getInput())
+				== menu->getSections().end()) {
 			//section directory doesn't exists
 			ledOn();
 			if (menu->addSection(id.getInput())) {
-				menu->setSectionIndex( menu->sections.size()-1 ); //switch to the new section
+				menu->setSectionIndex( menu->getSections().size()-1 ); //switch to the new section
 				sync();
 			}
 			ledOff();
@@ -1534,8 +1534,8 @@ void GMenu2X::renameSection() {
 	if (id.exec()) {
 		//only if a section with the same name does not exist & !samename
 		if (menu->selSection() != id.getInput()
-		 && find(menu->sections.begin(),menu->sections.end(), id.getInput())
-				== menu->sections.end()) {
+		 && find(menu->getSections().begin(),menu->getSections().end(), id.getInput())
+				== menu->getSections().end()) {
 			//section directory doesn't exists
 			string newsectiondir = "sections/" + id.getInput();
 			string sectiondir = "sections/" + menu->selSection();
@@ -1553,7 +1553,7 @@ void GMenu2X::renameSection() {
 						sc.move("skin:"+oldpng, "skin:"+newpng);
 					}
 				}
-				menu->sections[menu->selSectionIndex()] = id.getInput();
+				menu->renameSection(menu->selSectionIndex(), id.getInput());
 				sync();
 			}
 			ledOff();

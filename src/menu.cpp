@@ -436,3 +436,7 @@ void Menu::readLinks() {
 		closedir(dirp);
 	}
 }
+
+void Menu::renameSection(int index, const string &name) {
+	sections[index] = name;
+}
