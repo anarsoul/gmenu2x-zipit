@@ -30,8 +30,9 @@
 
 using namespace std;
 
-LinkApp::LinkApp(GMenu2X *gmenu2x, const char* linkfile)
-	: Link(gmenu2x) {
+LinkApp::LinkApp(GMenu2X *gmenu2x_, const char* linkfile)
+	: Link(gmenu2x_)
+{
 	manual = "";
 	file = linkfile;
 	wrapper = false;
