@@ -272,10 +272,10 @@ GMenu2X::GMenu2X() {
 		FileLister fl("skins/"+confStr["skin"]+"/wallpapers",false,true);
 		fl.setFilter(".png,.jpg,.jpeg,.bmp");
 		fl.browse();
-		if (fl.files.size()<=0 && confStr["skin"] != "Default")
+		if (fl.getFiles().size()<=0 && confStr["skin"] != "Default")
 			fl.setPath("skins/Default/wallpapers",true);
-		if (fl.files.size()>0)
-			confStr["wallpaper"] = fl.getPath()+fl.files[0];
+		if (fl.getFiles().size()>0)
+			confStr["wallpaper"] = fl.getPath()+fl.getFiles()[0];
 	}
 
 	initBG();
@@ -1020,7 +1020,7 @@ void GMenu2X::options() {
 
 	FileLister fl_tr("translations");
 	fl_tr.browse();
-	fl_tr.files.insert(fl_tr.files.begin(),"English");
+	fl_tr.insertFile("English");
 	string lang = tr.lang();
 
 	vector<string> encodings;
@@ -1028,7 +1028,7 @@ void GMenu2X::options() {
 	encodings.push_back("PAL");
 
 	SettingsDialog sd(this,tr["Settings"]);
-	sd.addSetting(new MenuSettingMultiString(this,tr["Language"],tr["Set the language used by GMenu2X"],&lang,&fl_tr.files));
+	sd.addSetting(new MenuSettingMultiString(this,tr["Language"],tr["Set the language used by GMenu2X"],&lang,&fl_tr.getFiles()));
 	sd.addSetting(new MenuSettingBool(this,tr["Save last selection"],tr["Save the last selected link and section on exit"],&confInt["saveSelection"]));
 	sd.addSetting(new MenuSettingInt(this,tr["Clock for GMenu2X"],tr["Set the cpu working frequency when running GMenu2X"],&confInt["menuClock"],200,430));
 	sd.addSetting(new MenuSettingInt(this,tr["Maximum overclock"],tr["Set the maximum overclock for launching links"],&confInt["maxClock"],200,430));
@@ -1081,12 +1081,12 @@ void GMenu2X::settingsOpen2x() {
 
 void GMenu2X::skinMenu() {
 	FileLister fl_sk("skins",true,false);
-	fl_sk.exclude.push_back("..");
+	fl_sk.addExclude("..");
 	fl_sk.browse();
 	string curSkin = confStr["skin"];
 
 	SettingsDialog sd(this,tr["Skin"]);
-	sd.addSetting(new MenuSettingMultiString(this,tr["Skin"],tr["Set the skin used by GMenu2X"],&confStr["skin"],&fl_sk.directories));
+	sd.addSetting(new MenuSettingMultiString(this,tr["Skin"],tr["Set the skin used by GMenu2X"],&confStr["skin"],&fl_sk.getDirectories()));
 	sd.addSetting(new MenuSettingRGBA(this,tr["Top Bar Color"],tr["Color of the top bar"],&skinConfColors[COLOR_TOP_BAR_BG]));
 	sd.addSetting(new MenuSettingRGBA(this,tr["Bottom Bar Color"],tr["Color of the bottom bar"],&skinConfColors[COLOR_BOTTOM_BAR_BG]));
 	sd.addSetting(new MenuSettingRGBA(this,tr["Selection Color"],tr["Color of the selection and other interface details"],&skinConfColors[COLOR_SELECTION_BG]));

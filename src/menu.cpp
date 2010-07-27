@@ -237,7 +237,7 @@ bool Menu::addLink(string path, string file, string section) {
 
 			if (lcfilename.find("readme") != string::npos) {
 				found = true;
-				manual = path+fl.files[x];
+				manual = path+fl.getFiles()[x];
 			}
 		}
 	}
