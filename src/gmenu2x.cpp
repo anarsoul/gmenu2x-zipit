@@ -1513,7 +1513,7 @@ void GMenu2X::deleteLink() {
 }
 
 void GMenu2X::addSection() {
-	InputDialog id(this,tr["Insert a name for the new section"]);
+	InputDialog id(this, input, ts, tr["Insert a name for the new section"]);
 	if (id.exec()) {
 		//only if a section with the same name does not exist
 		if (find(menu->getSections().begin(), menu->getSections().end(), id.getInput())
@@ -1530,7 +1530,7 @@ void GMenu2X::addSection() {
 }
 
 void GMenu2X::renameSection() {
-	InputDialog id(this,tr["Insert a new name for this section"],menu->selSection());
+	InputDialog id(this, input, ts, tr["Insert a new name for this section"],menu->selSection());
 	if (id.exec()) {
 		//only if a section with the same name does not exist & !samename
 		if (menu->selSection() != id.getInput()
