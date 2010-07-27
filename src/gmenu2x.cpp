@@ -1027,7 +1027,7 @@ void GMenu2X::options() {
 	encodings.push_back("NTSC");
 	encodings.push_back("PAL");
 
-	SettingsDialog sd(this,tr["Settings"]);
+	SettingsDialog sd(this, input, ts, tr["Settings"]);
 	sd.addSetting(new MenuSettingMultiString(this,tr["Language"],tr["Set the language used by GMenu2X"],&lang,&fl_tr.getFiles()));
 	sd.addSetting(new MenuSettingBool(this,tr["Save last selection"],tr["Save the last selected link and section on exit"],&confInt["saveSelection"]));
 	sd.addSetting(new MenuSettingInt(this,tr["Clock for GMenu2X"],tr["Set the cpu working frequency when running GMenu2X"],&confInt["menuClock"],200,430));
@@ -1055,7 +1055,7 @@ void GMenu2X::options() {
 }
 
 void GMenu2X::settingsOpen2x() {
-	SettingsDialog sd(this,tr["Open2x Settings"]);
+	SettingsDialog sd(this, input, ts, tr["Open2x Settings"]);
 	sd.addSetting(new MenuSettingBool(this,tr["USB net on boot"],tr["Allow USB networking to be started at boot time"],&o2x_usb_net_on_boot));
 	sd.addSetting(new MenuSettingString(this,tr["USB net IP"],tr["IP address to be used for USB networking"],&o2x_usb_net_ip));
 	sd.addSetting(new MenuSettingBool(this,tr["Telnet on boot"],tr["Allow telnet to be started at boot time"],&o2x_telnet_on_boot));
@@ -1085,7 +1085,7 @@ void GMenu2X::skinMenu() {
 	fl_sk.browse();
 	string curSkin = confStr["skin"];
 
-	SettingsDialog sd(this,tr["Skin"]);
+	SettingsDialog sd(this, input, ts, tr["Skin"]);
 	sd.addSetting(new MenuSettingMultiString(this,tr["Skin"],tr["Set the skin used by GMenu2X"],&confStr["skin"],&fl_sk.getDirectories()));
 	sd.addSetting(new MenuSettingRGBA(this,tr["Top Bar Color"],tr["Color of the top bar"],&skinConfColors[COLOR_TOP_BAR_BG]));
 	sd.addSetting(new MenuSettingRGBA(this,tr["Bottom Bar Color"],tr["Color of the bottom bar"],&skinConfColors[COLOR_BOTTOM_BAR_BG]));
@@ -1430,7 +1430,7 @@ void GMenu2X::editLink() {
 	string diagTitle = tr.translate("Edit link: $1",linkTitle.c_str(),NULL);
 	string diagIcon = menu->selLinkApp()->getIconPath();
 
-	SettingsDialog sd(this,diagTitle,diagIcon);
+	SettingsDialog sd(this, input, ts, diagTitle, diagIcon);
 	sd.addSetting(new MenuSettingString(this,tr["Title"],tr["Link title"],&linkTitle, diagTitle,diagIcon));
 	sd.addSetting(new MenuSettingString(this,tr["Description"],tr["Link description"],&linkDescription, diagTitle,diagIcon));
 	sd.addSetting(new MenuSettingMultiString(this,tr["Section"],tr["The section this link belongs to"],&newSection,&menu->getSections()));
