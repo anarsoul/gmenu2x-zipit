@@ -492,8 +492,8 @@ void GMenu2X::viewLog() {
 			td.exec();
 
 			MessageBox mb(this, tr["Do you want to delete the log file?"], "icons/ebook.png");
-			mb.buttons[ACTION_B] = tr["Yes"];
-			mb.buttons[ACTION_X] = tr["No"];
+			mb.setButton(ACTION_B, tr["Yes"]);
+			mb.setButton(ACTION_X, tr["No"]);
 			if (mb.exec() == ACTION_B) {
 				ledOn();
 				unlink(logfile.c_str());
@@ -1221,7 +1221,7 @@ void GMenu2X::activateSdUsb() {
 	} else {
 		system("scripts/usbon.sh sd");
 		MessageBox mb(this,tr["USB Enabled (SD)"],"icons/usb.png");
-		mb.buttons[ACTION_B] = tr["Turn off"];
+		mb.setButton(ACTION_B, tr["Turn off"]);
 		mb.exec();
 		system("scripts/usboff.sh sd");
 	}
@@ -1234,7 +1234,7 @@ void GMenu2X::activateNandUsb() {
 	} else {
 		system("scripts/usbon.sh nand");
 		MessageBox mb(this,tr["USB Enabled (Nand)"],"icons/usb.png");
-		mb.buttons[ACTION_B] = tr["Turn off"];
+		mb.setButton(ACTION_B, tr["Turn off"]);
 		mb.exec();
 		system("scripts/usboff.sh nand");
 	}
@@ -1247,7 +1247,7 @@ void GMenu2X::activateRootUsb() {
 	} else {
 		system("scripts/usbon.sh root");
 		MessageBox mb(this,tr["USB Enabled (Root)"],"icons/usb.png");
-		mb.buttons[ACTION_B] = tr["Turn off"];
+		mb.setButton(ACTION_B, tr["Turn off"]);
 		mb.exec();
 		system("scripts/usboff.sh root");
 	}
@@ -1501,8 +1501,8 @@ void GMenu2X::editLink() {
 void GMenu2X::deleteLink() {
 	if (menu->selLinkApp()!=NULL) {
 		MessageBox mb(this, tr.translate("Deleting $1",menu->selLink()->getTitle().c_str(),NULL)+"\n"+tr["Are you sure?"], menu->selLink()->getIconPath());
-		mb.buttons[ACTION_B] = tr["Yes"];
-		mb.buttons[ACTION_X] = tr["No"];
+		mb.setButton(ACTION_B, tr["Yes"]);
+		mb.setButton(ACTION_X, tr["No"]);
 		if (mb.exec() == ACTION_B) {
 			ledOn();
 			menu->deleteSelectedLink();
@@ -1563,8 +1563,8 @@ void GMenu2X::renameSection() {
 
 void GMenu2X::deleteSection() {
 	MessageBox mb(this,tr["You will lose all the links in this section."]+"\n"+tr["Are you sure?"]);
-	mb.buttons[ACTION_B] = tr["Yes"];
-	mb.buttons[ACTION_X] = tr["No"];
+	mb.setButton(ACTION_B, tr["Yes"]);
+	mb.setButton(ACTION_X, tr["No"]);
 	if (mb.exec() == ACTION_B) {
 		ledOn();
 		if (rmtree(path+"sections/"+menu->selSection())) {
