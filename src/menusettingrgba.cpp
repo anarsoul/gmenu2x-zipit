@@ -18,13 +18,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "menusettingrgba.h"
+#include "gmenu2x.h"
+
 #include <sstream>
 
-using namespace std;
-using namespace fastdelegate;
+using std::string;
+using std::stringstream;
+using fastdelegate::MakeDelegate;
 
-MenuSettingRGBA::MenuSettingRGBA(GMenu2X *gmenu2x, const string &name, const string &description, RGBAColor *value)
-	: MenuSetting(gmenu2x,name,description) {
+MenuSettingRGBA::MenuSettingRGBA(
+		GMenu2X *gmenu2x, const string &name,
+		const string &description, RGBAColor *value)
+	: MenuSetting(gmenu2x,name,description)
+{
 	IconButton *btn;
 
 	selPart = 0;

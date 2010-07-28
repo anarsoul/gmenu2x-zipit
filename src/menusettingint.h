@@ -20,26 +20,23 @@
 #ifndef MENUSETTINGINT_H
 #define MENUSETTINGINT_H
 
-#include "iconbutton.h"
 #include "menusetting.h"
-#include "FastDelegate.h"
-
-using std::string;
-class GMenu2X;
 
 class MenuSettingInt : public MenuSetting {
 private:
 	int originalValue;
 	int *_value;
-	string strvalue;
+	std::string strvalue;
 	int min, max;
 
 	void inc();
 	void dec();
 
 public:
-	MenuSettingInt(GMenu2X *gmenu2x, const string &name, const string &description, int *value, int min, int max);
-	virtual ~MenuSettingInt() {};
+	MenuSettingInt(
+			GMenu2X *gmenu2x, const std::string &name,
+			const std::string &description, int *value, int min, int max);
+	virtual ~MenuSettingInt() {}
 
 	virtual void manageInput();
 	virtual void adjustInput();
