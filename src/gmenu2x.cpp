@@ -82,6 +82,31 @@ const char *CARD_ROOT = "/card";
 using namespace std;
 using namespace fastdelegate;
 
+// Note: Keep this in sync with the enum!
+static const char *colorNames[NUM_COLORS] = {
+	"topBarBg",
+	"bottomBarBg",
+	"selectionBg",
+	"messageBoxBg",
+	"messageBoxBorder",
+	"messageBoxSelection",
+};
+
+static enum color stringToColor(const string &name)
+{
+	for (unsigned int i = 0; i < NUM_COLORS; i++) {
+		if (strcmp(colorNames[i], name.c_str()) == 0) {
+			return (enum color)i;
+		}
+	}
+	return (enum color)-1;
+}
+
+static const char *colorToString(enum color c)
+{
+	return colorNames[c];
+}
+
 int main(int /*argc*/, char */*argv*/[]) {
 	cout << "----" << endl;
 	cout << "GMenu2X starting: If you read this message in the logs, check http://gmenu2x.sourceforge.net/page/Troubleshooting for a solution" << endl;
@@ -1095,42 +1120,6 @@ void GMenu2X::skinMenu() {
 		initBG();
 	}
 }
-
-enum color GMenu2X::stringToColor(const string &name)
-{
-	if (name == "topBarBg")
-		return COLOR_TOP_BAR_BG;
-	else if (name == "bottomBarBg")
-		return COLOR_BOTTOM_BAR_BG;
-	else if (name == "messageBoxBg")
-		return COLOR_MESSAGE_BOX_BG;
-	else if (name == "messageBoxBorder")
-		return COLOR_MESSAGE_BOX_BORDER;
-	else if (name == "messageBoxSelection")
-		return COLOR_MESSAGE_BOX_SELECTION;
-	else
-		return (enum color)-1;
-}
-
-
-
-const string &GMenu2X::colorToString(enum color c)
-{
-	static const std::string colorNames[NUM_COLORS + 1] = {
-		"topBarBg",
-		"bottomBarBg",
-		"messageBoxBg",
-		"messageBoxBorder",
-		"messageBoxSelection",
-		"unkown",
-	};
-
-	if (c < NUM_COLORS)
-		return colorNames[c];
-	else
-		return colorNames[NUM_COLORS];
-}
-
 
 void GMenu2X::toggleTvOut() {
 #ifdef TARGET_GP2X
