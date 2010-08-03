@@ -45,7 +45,7 @@ bool BrowseDialog::exec()
 		return false;
 
 	string path = fl->getPath();
-	if (path.empty() || !fileExists(path) || path.compare(0, 5, CARD_ROOT) != 0)
+	if (path.empty() || !fileExists(path) || path.compare(0, CARD_ROOT_LEN, CARD_ROOT) != 0)
 		setPath(CARD_ROOT);
 
 	fl->browse();
@@ -166,8 +166,8 @@ void BrowseDialog::directoryUp()
 
 	if (p == path.size() - 1)
 		p = path.rfind("/", p - 1);
-
-	if (p == string::npos || p < 4 || path.compare(0, 5, CARD_ROOT) != 0) {
+	
+	if (p == string::npos || path.compare(0, CARD_ROOT_LEN, CARD_ROOT) != 0 || path.length() <= CARD_ROOT_LEN) {
 		close = true;
 		result = false;
 	} else {

@@ -77,7 +77,8 @@
 //#include <pnd_discovery.h>
 #endif
 
-const char *CARD_ROOT = "/card";
+const char *CARD_ROOT = "/"; //Note: Add a trailing /!
+const int CARD_ROOT_LEN = 1;
 
 using namespace std;
 using namespace fastdelegate;
@@ -1006,7 +1007,7 @@ void GMenu2X::main() {
 }
 
 void GMenu2X::explorer() {
-	FileDialog fd(this,tr["Select an application"],".gpu,.dge,.sh");
+	FileDialog fd(this,tr["Select an application"],".gpu,.dge,.sh,");
 	if (fd.exec()) {
 		if (confInt["saveSelection"] && (confInt["section"]!=menu->selSectionIndex() || confInt["link"]!=menu->selLinkIndex()))
 			writeConfig();
@@ -1063,10 +1064,11 @@ void GMenu2X::options() {
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) tr.setLang(lang);
-		if (fileExists(CARD_ROOT) && !showRootFolder)
+		/*if (fileExists(CARD_ROOT) && !showRootFolder)
 			unlink(CARD_ROOT);
 		else if (!fileExists(CARD_ROOT) && showRootFolder)
-			symlink("/", CARD_ROOT);
+			symlink("/", CARD_ROOT);*/
+		//WARNING: Disabled because these functions get dangerous when run with / as CARD_ROOT
 		writeConfig();
 	}
 }
