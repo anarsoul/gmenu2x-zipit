@@ -167,7 +167,7 @@ void BrowseDialog::directoryUp()
 	if (p == path.size() - 1)
 		p = path.rfind("/", p - 1);
 	
-	if (p == string::npos || path.compare(0, CARD_ROOT_LEN, CARD_ROOT) != 0 || path.length() <= CARD_ROOT_LEN) {
+	if (p == string::npos || path.compare(0, 1, "/") != 0 || path.length() < 2) {
 		close = true;
 		result = false;
 	} else {

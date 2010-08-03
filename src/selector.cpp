@@ -152,7 +152,7 @@ int Selector::exec(int startSelection) {
 		if ( gmenu2x->input[ACTION_X] ) {
 			if (link->getSelectorBrowser()) {
 				string::size_type p = dir.rfind("/", dir.size()-2);
-				if (p==string::npos || dir.compare(0, CARD_ROOT_LEN, CARD_ROOT) != 0 || dir.length() <= CARD_ROOT_LEN) {
+				if (p==string::npos || dir.compare(0, 1, "/") != 0 || dir.length() < 2) {
 					close = true;
 					result = false;
 				} else {

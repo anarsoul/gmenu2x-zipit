@@ -77,8 +77,8 @@
 //#include <pnd_discovery.h>
 #endif
 
-const char *CARD_ROOT = "/"; //Note: Add a trailing /!
-const int CARD_ROOT_LEN = 1;
+const char *CARD_ROOT = "/card/"; //Note: Add a trailing /!
+const int CARD_ROOT_LEN = 5;
 
 using namespace std;
 using namespace fastdelegate;
