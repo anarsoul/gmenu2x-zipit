@@ -77,7 +77,11 @@
 //#include <pnd_discovery.h>
 #endif
 
+#ifdef _CARD_ROOT
+const char *CARD_ROOT = _CARD_ROOT;
+#else
 const char *CARD_ROOT = "/card/"; //Note: Add a trailing /!
+#endif
 const int CARD_ROOT_LEN = 5;
 
 using namespace std;
@@ -1064,11 +1068,11 @@ void GMenu2X::options() {
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) tr.setLang(lang);
-		/*if (fileExists(CARD_ROOT) && !showRootFolder)
+		if (fileExists(CARD_ROOT) && !showRootFolder)
 			unlink(CARD_ROOT);
 		else if (!fileExists(CARD_ROOT) && showRootFolder)
-			symlink("/", CARD_ROOT);*/
-		//WARNING: Disabled because these functions get dangerous when run with / as CARD_ROOT
+			symlink("/", CARD_ROOT);
+		//WARNING: the above might be dangerous with CARD_ROOT set to /
 		writeConfig();
 	}
 }
