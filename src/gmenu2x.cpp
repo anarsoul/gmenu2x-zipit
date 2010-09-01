@@ -806,6 +806,10 @@ void GMenu2X::main() {
 	btnContextMenu.setPosition(resX-38, bottomBarIconY);
 	btnContextMenu.setAction(MakeDelegate(this, &GMenu2X::contextMenu));
 
+	if (!fileExists(CARD_ROOT))
+		CARD_ROOT = "/";
+
+
 	while (!quit) {
 		tickNow = SDL_GetTicks();
 
@@ -1068,10 +1072,10 @@ void GMenu2X::options() {
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) tr.setLang(lang);
-		if (fileExists(CARD_ROOT) && !showRootFolder)
+		/*if (fileExists(CARD_ROOT) && !showRootFolder)
 			unlink(CARD_ROOT);
-		else if (!fileExists(CARD_ROOT) /*&& showRootFolder*/)
-			symlink("/", CARD_ROOT);
+		else if (!fileExists(CARD_ROOT) && showRootFolder)
+			symlink("/", CARD_ROOT);*/
 		//WARNING: the above might be dangerous with CARD_ROOT set to /
 		writeConfig();
 	}
