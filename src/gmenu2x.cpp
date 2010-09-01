@@ -1070,7 +1070,7 @@ void GMenu2X::options() {
 		if (lang != tr.lang()) tr.setLang(lang);
 		if (fileExists(CARD_ROOT) && !showRootFolder)
 			unlink(CARD_ROOT);
-		else if (!fileExists(CARD_ROOT) && showRootFolder)
+		else if (!fileExists(CARD_ROOT) /*&& showRootFolder*/)
 			symlink("/", CARD_ROOT);
 		//WARNING: the above might be dangerous with CARD_ROOT set to /
 		writeConfig();
