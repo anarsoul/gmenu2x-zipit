@@ -164,6 +164,43 @@ bool InputDialog::exec() {
 		action = drawVirtualKeyboard();
 		gmenu2x->s->flip();
 
+        switch (inputMgr.waitForPressedButton()) {
+            case SETTINGS:
+				ok = false;
+				close = true;
+                break;
+            case UP:
+				selRow--;
+                break;
+            case DOWN:
+				selRow++;
+				if (selRow==(int)kb->size()) selCol = selCol<8 ? 0 : 1;
+                break;
+            case LEFT:
+				selCol--;
+                break;
+            case RIGHT:
+				selCol++;
+                break;
+            case ACCEPT:
+                confirm();
+                break;
+            case MANUAL:
+                changeKeys();
+                break;
+            case CLEAR:
+            case ALTLEFT:
+                backspace();
+                break;
+            case ALTRIGHT:
+                space();
+                break;
+            default:
+                break;
+        }
+
+
+        /*
 		inputMgr.update();
 		if ( inputMgr[ACTION_START] ) action = ID_ACTION_CLOSE;
 		if ( inputMgr[ACTION_UP   ] ) action = ID_ACTION_UP;
@@ -198,6 +235,7 @@ bool InputDialog::exec() {
 			case ID_ACTION_KB_CHANGE: changeKeys(); break;
 			case ID_ACTION_SELECT: confirm(); break;
 		}
+*/
 	}
 
 	return ok;

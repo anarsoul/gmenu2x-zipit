@@ -65,12 +65,18 @@ void MenuSettingInt::draw(int y)
 	gmenu2x->s->write( gmenu2x->font, strvalue, 155, y+gmenu2x->font->getHalfHeight(), SFontHAlignLeft, SFontVAlignMiddle );
 }
 
-void MenuSettingInt::manageInput()
+void MenuSettingInt::manageInput(bevent_t *event)
 {
-	if (gmenu2x->input[ACTION_LEFT ] || gmenu2x->input[ACTION_X])
-		dec();
-	if (gmenu2x->input[ACTION_RIGHT] || gmenu2x->input[ACTION_Y])
-		inc();
+    switch (event->button) {
+        case LEFT:
+            dec();
+            break;
+        case RIGHT:
+            inc();
+            break;
+        default:
+            break;
+    }
 }
 
 void MenuSettingInt::inc()
@@ -100,8 +106,8 @@ int MenuSettingInt::value()
 void MenuSettingInt::adjustInput()
 {
 #ifdef TARGET_GP2X
-	gmenu2x->input.setInterval(30, ACTION_LEFT );
-	gmenu2x->input.setInterval(30, ACTION_RIGHT);
+//	gmenu2x->input.setInterval(30, ACTION_LEFT );
+//	gmenu2x->input.setInterval(30, ACTION_RIGHT);
 #endif
 }
 

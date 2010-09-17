@@ -18,186 +18,167 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <iostream>
-#include <sstream>
-#include <fstream>
-
+#include "debug.h"
 #include "inputmanager.h"
 #include "utilities.h"
-#include "debug.h"
 
-using namespace std;
+#include <iostream>
+#include <fstream>
 
-InputManager::InputManager() {}
-
-InputManager::~InputManager() {
-	for (uint x=0; x<joysticks.size(); x++)
-		if(SDL_JoystickOpened(x))
-			SDL_JoystickClose(joysticks[x]);
-}
+static SDL_Joystick *joystick;
 
 void InputManager::init(const string &conffile) {
-	SDL_JoystickEventState(SDL_IGNORE);
-
-	int numJoy = SDL_NumJoysticks();
-	for (int x=0; x<numJoy; x++) {
-		SDL_Joystick *joy = SDL_JoystickOpen(x);
-		if (joy) {
-
-			INFO("Initialized joystick: '%s'\n", SDL_JoystickName(x));
-
-			joysticks.push_back(joy);
-		}
-
-		else WARNING("Failed to initialize joystick: %i\n", x);
-	}
-
-	setActionsCount(14);
-
-	if (fileExists(conffile)) {
-		ifstream inf(conffile.c_str(), ios_base::in);
-		if (inf.is_open()) {
-			string line, name, value;
-			stringstream ss;
-			string::size_type pos;
-			vector<string> values;
-
-			while (getline(inf, line, '\n')) {
-				pos = line.find("=");
-				name = trim(line.substr(0,pos));
-				value = trim(line.substr(pos+1,line.length()));
-				int action = -1;
-
-				if (name=="up") action = ACTION_UP;
-				else if (name=="down") action = ACTION_DOWN;
-				else if (name=="left") action = ACTION_LEFT;
-				else if (name=="right") action = ACTION_RIGHT;
-				else if (name=="a") action = ACTION_A;
-				else if (name=="b") action = ACTION_B;
-				else if (name=="x") action = ACTION_X;
-				else if (name=="y") action = ACTION_Y;
-				else if (name=="l") action = ACTION_L;
-				else if (name=="r") action = ACTION_R;
-				else if (name=="start") action = ACTION_START;
-				else if (name=="select") action = ACTION_SELECT;
-				else if (name=="volup") action = ACTION_VOLUP;
-				else if (name=="voldown") action = ACTION_VOLDOWN;
-
-				if (action >= 0) {
-					split(values, value, ",");
-					if (values.size() >= 2) {
-
-						if (values[0] == "joystickbutton" && values.size()==3) {
-							InputMap map;
-							map.type = InputManager::MAPPING_TYPE_BUTTON;
-							map.num = atoi(values[1].c_str());
-							map.value = atoi(values[2].c_str());
-							map.treshold = 0;
-							mappings[action].push_back(map);
-						} else if (values[0] == "joystickaxys" && values.size()==4) {
-							InputMap map;
-							map.type = InputManager::MAPPING_TYPE_AXYS;
-							map.num = atoi(values[1].c_str());
-							map.value = atoi(values[2].c_str());
-							map.treshold = atoi(values[3].c_str());
-							mappings[action].push_back(map);
-						} else if (values[0] == "keyboard") {
-							InputMap map;
-							map.type = InputManager::MAPPING_TYPE_KEYPRESS;
-							map.value = atoi(values[1].c_str());
-							mappings[action].push_back(map);
-						}
-
-					}
-				}
-			}
-			inf.close();
-		}
-	}
+    if (!readConfFile(conffile))
+      ERROR("InputManager initialization from config file failed.\n");
 }
 
-void InputManager::setActionsCount(int count) {
-	actions.clear();
-	actionTick.clear();
-	interval.clear();
-	for (int x=0; x<count; x++) {
-		actions.push_back(false);
-		actionTick.push_back(0);
-		interval.push_back(0);
-		MappingList maplist;
-		mappings.push_back(maplist);
-	}
+
+InputManager::InputManager() {
+    initJoystick();
 }
 
-bool InputManager::update() {
-	bool anyactions = false;
-	SDL_JoystickUpdate();
 
-	events.clear();
-	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
-		SDL_Event evcopy = event;
-		events.push_back(evcopy);
-	}
-
-	Uint32 tick = SDL_GetTicks();
-	for (uint x=0; x<actions.size(); x++) {
-		actions[x] = false;
-		if (isActive(x)) {
-			if (tick-actionTick[x]>interval[x]) {
-				actions[x] = true;
-				actionTick[x] = tick;
-				anyactions = true;
-			}
-		} else {
-			actionTick[x] = 0;
-		}
-	}
-	return anyactions;
+InputManager::~InputManager() {
+    if (SDL_NumJoysticks > 0)
+      SDL_JoystickClose(joystick);
 }
 
-int InputManager::count() {
-	return actions.size();
+
+void InputManager::initJoystick() {
+    if (SDL_NumJoysticks > 0)
+      joystick = SDL_JoystickOpen(0);
 }
 
-void InputManager::setInterval(int ms, int action) {
-	if (action<0)
-		for (uint x=0; x<interval.size(); x++)
-			interval[x] = ms;
-	else if ((uint)action < interval.size())
-		interval[action] = ms;
+
+bool InputManager::readConfFile(const string &conffile) {
+    if (!fileExists(conffile)) return false;
+
+    ifstream inf(conffile.c_str(), ios_base::in);
+    if (!(inf.is_open()))
+      return false;
+
+    string line, name, source;
+    string::size_type pos;
+    buttontype_t button;
+
+    while(getline(inf, line, '\n')) {
+        pos = line.find("=");
+        name = trim(line.substr(0,pos));
+        line = trim(line.substr(pos+1,line.length()));
+
+        if (name == "up")            button = UP;
+        else if (name == "down")     button = DOWN;
+        else if (name == "left")     button = LEFT;
+        else if (name == "right")    button = RIGHT;
+        else if (name == "accept")   button = ACCEPT;
+        else if (name == "cancel")   button = CANCEL;
+        else if (name == "clear")    button = CLEAR;
+        else if (name == "manual")   button = MANUAL;
+        else if (name == "altleft")  button = ALTLEFT;
+        else if (name == "altright") button = ALTRIGHT;
+        else if (name == "menu")     button = MENU;
+        else if (name == "settings") button = SETTINGS;
+        else if (name == "volup")    button = VOLUP;
+        else if (name == "voldown")  button = VOLDOWN;
+        else if (name == "power")    button = POWER;
+        else if (name == "lock")     button = LOCK;
+        else return false;
+
+        pos = line.find(",");
+        source = trim(line.substr(0,pos));
+        line = trim(line.substr(pos+1, line.length()));
+
+        if (source == "keyboard") ButtonMap[button].source = KEYBOARD;
+        else if (source == "joystick") ButtonMap[button].source = JOYSTICK;
+        else return false;
+
+        ButtonMap[button].code = atoi(line.c_str());
+    }
+
+    inf.close();
+    return true;
 }
 
-bool InputManager::operator[](int action) {
-	if (action<0 || (uint)action>=actions.size()) return false;
-	return actions[action];
+
+buttontype_t InputManager::waitForPressedButton() {
+    return waitForButton(PRESSED);
 }
 
-bool InputManager::isActive(int action) {
-	MappingList mapList = mappings[action];
-	for (MappingList::const_iterator it = mapList.begin(); it !=mapList.end(); ++it) {
-		InputMap map = *it;
 
-		switch (map.type) {
-			case InputManager::MAPPING_TYPE_BUTTON:
-				if (map.num < joysticks.size() && SDL_JoystickGetButton(joysticks[map.num], map.value))
-					return true;
-			break;
-			case InputManager::MAPPING_TYPE_AXYS:
-				if (map.num < joysticks.size()) {
-					int axyspos = SDL_JoystickGetAxis(joysticks[map.num], map.value);
-					if (map.treshold<0 && axyspos < map.treshold) return true;
-					if (map.treshold>0 && axyspos > map.treshold) return true;
-				}
-			break;
-			case InputManager::MAPPING_TYPE_KEYPRESS:
-				for (uint ex=0; ex<events.size(); ex++) {
-					if (events[ex].type == SDL_KEYDOWN && events[ex].key.keysym.sym == map.value)
-						return true;
-				}
-			break;
-		}
-	}
+buttontype_t InputManager::waitForReleasedButton() {
+    return waitForButton(RELEASED);
+}
 
-	return false;
+buttontype_t InputManager::waitForButton(enum state_e state) {
+    bevent_t event;
+    do {
+        waitForEvent(&event);
+    } while(event.state != state);
+    return event.button;
+}
+
+
+void InputManager::waitForEvent(bevent_t *event) {
+    getEvent(event, true);
+}
+
+
+bool InputManager::pollEvent(bevent_t *event) {
+    return getEvent(event, false);
+}
+
+
+bool InputManager::getEvent(bevent_t *bevent, bool wait) {
+    //TODO: when an event is processed, program a new event
+    //in some time, and when it occurs, do a key repeat
+    
+    SDL_JoystickUpdate();
+    SDL_Event event;
+
+    if (wait)
+      SDL_WaitEvent(&event);
+    else {
+        bevent->state = RELEASED;
+        if (!SDL_PollEvent(&event)) return false;
+    }
+
+    enum source_type_e source;
+
+    switch(event.type) {
+        case SDL_KEYDOWN:
+            bevent->state = PRESSED;
+            source = KEYBOARD;
+            break;
+        case SDL_KEYUP:
+            bevent->state = RELEASED;
+            source = KEYBOARD;
+            break;
+        case SDL_JOYBUTTONDOWN:
+            bevent->state = PRESSED;
+            source = JOYSTICK;
+            break;
+        case SDL_JOYBUTTONUP:
+            bevent->state = RELEASED;
+            source = JOYSTICK;
+            break;
+        default:
+            return false;
+            break;
+    }
+
+    if (source == KEYBOARD) {
+      for (int i=0; i<BUTTONTYPE_T_SIZE; i++)
+          if (ButtonMap[i].source == KEYBOARD && (unsigned int)event.key.keysym.sym == ButtonMap[i].code) {
+              bevent->button = (buttontype_t)i;
+              break;
+          }
+    } else {
+      for (int i=0; i<BUTTONTYPE_T_SIZE; i++)
+          if (ButtonMap[i].source == JOYSTICK && (unsigned int)event.jbutton.button == ButtonMap[i].code) {
+              bevent->button = (buttontype_t)i;
+              break;
+          }
+    }
+
+    return true;
 }

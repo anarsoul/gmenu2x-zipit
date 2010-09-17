@@ -21,6 +21,7 @@
 #define MENUSETTINGMULTISTRING_H
 
 #include "menusettingstringbase.h"
+#include "inputmanager.h"
 
 #include <vector>
 
@@ -44,7 +45,7 @@ public:
 			const std::vector<std::string> *choices);
 	virtual ~MenuSettingMultiString() {};
 
-	virtual void manageInput();
+	virtual void manageInput(bevent_t *event);
 };
 
 #endif

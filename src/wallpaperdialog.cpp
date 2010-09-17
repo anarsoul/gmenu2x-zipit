@@ -51,6 +51,7 @@ bool WallpaperDialog::exec()
 	DEBUG("Wallpapers: %i\n", wallpapers.size());
 
 	uint i, selected = 0, firstElement = 0, iY;
+
 	while (!close) {
 		if (selected>firstElement+9) firstElement=selected-9;
 		if (selected<firstElement) firstElement=selected;
@@ -86,48 +87,39 @@ bool WallpaperDialog::exec()
 		gmenu2x->drawScrollBar(10,wallpapers.size(),firstElement,44,170);
 		gmenu2x->s->flip();
 
-
-		gmenu2x->input.update();
-		if ( gmenu2x->input[ACTION_SELECT] ) { close = true; result = false; }
-		if ( gmenu2x->input[ACTION_UP    ] ) {
-			if (selected==0)
-				selected = wallpapers.size()-1;
-			else
-				selected -= 1;
-		}
-		if ( gmenu2x->input[ACTION_L     ] ) {
-			if ((int)(selected-9)<0) {
-				selected = 0;
-			} else {
-				selected -= 9;
-			}
-		}
-		if ( gmenu2x->input[ACTION_DOWN  ] ) {
-			if (selected+1>=wallpapers.size())
-				selected = 0;
-			else
-				selected += 1;
-		}
-		if ( gmenu2x->input[ACTION_R     ] ) {
-			if (selected+9>=wallpapers.size()) {
-				selected = wallpapers.size()-1;
-			} else {
-				selected += 9;
-			}
-		}
-		if ( gmenu2x->input[ACTION_X] ) {
-			close = true;
-			result = false;
-		}
-		if ( gmenu2x->input[ACTION_B] ) {
-			close = true;
-			if (wallpapers.size()>0) {
-				if (selected<wallpapers.size()-fl.getFiles().size())
-					wallpaper = "skins/"+gmenu2x->confStr["skin"]+"/wallpapers/"+wallpapers[selected];
-				else
-					wallpaper = "skins/Default/wallpapers/"+wallpapers[selected];
-			} else result = false;
-		}
+        switch(gmenu2x->input.waitForPressedButton()) {
+            case MENU:
+            case CLEAR:
+                close = true;
+                result = false;
+                break;
+            case UP:
+                if (selected == 0) selected = wallpapers.size()-1;
+                else selected -= 1;
+                break;
+            case ALTLEFT:
+                if ((int)(selected-9) < 0) selected = 0;
+                else selected -= 9;
+                break;
+            case DOWN:
+                if (selected+1 >= wallpapers.size()) selected = 0;
+                else selected += 1;
+                break;
+            case ALTRIGHT:
+                if (selected+9 >= wallpapers.size()) selected = wallpapers.size()-1;
+                else selected += 9;
+                break;
+            case ACCEPT:
+                close = true;
+                if (wallpapers.size() > 0) {
+                    if (selected < wallpapers.size() - fl.getFiles().size())
+                      wallpaper = "skins/" + gmenu2x->confStr["skin"] + "/wallpapers/" + wallpapers[selected];
+                    else
+                      wallpaper = "skins/Default/wallpapers/" + wallpapers[selected];
+                } else result = false;
+            default:
+                break;
+        }
 	}
 
 	for (uint i=0; i<wallpapers.size(); i++)

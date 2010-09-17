@@ -116,7 +116,30 @@ void TextDialog::exec() {
 		drawText(text, firstRow, rowsPerPage);
 		gmenu2x->s->flip();
 
+        switch(gmenu2x->input.waitForPressedButton()) {
+            case UP:
+                if (firstRow > 0) firstRow--;
+                break;
+            case DOWN:
+                if (firstRow + rowsPerPage < text->size()) firstRow++;
+                break;
+            case ALTLEFT:
+                if (firstRow >= rowsPerPage-1) firstRow -= rowsPerPage-1;
+                else firstRow = 0;
+                break;
+            case ALTRIGHT:
+                if (firstRow + rowsPerPage*2 -1 < text->size()) firstRow += rowsPerPage-1;
+                else firstRow = max(0, text->size() - rowsPerPage);
+                break;
+            case SETTINGS:
+            case CLEAR:
+                close = true;
+                break;
+            default:
+                break;
+        }
 
+        /*
 		gmenu2x->input.update();
 		if ( gmenu2x->input[ACTION_UP  ] && firstRow>0 ) firstRow--;
 		if ( gmenu2x->input[ACTION_DOWN] && firstRow+rowsPerPage<text->size() ) firstRow++;
@@ -133,5 +156,6 @@ void TextDialog::exec() {
 				firstRow = max(0,text->size()-rowsPerPage);
 		}
 		if ( gmenu2x->input[ACTION_START] || gmenu2x->input[ACTION_X] ) close = true;
+        */
 	}
 }

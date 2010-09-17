@@ -17,73 +17,57 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef INPUTMANAGER_H
-#define INPUTMANAGER_H
+#ifndef NEWINPUT_H
+#define NEWINPUT_H
 
-#define ACTION_UP      0
-#define ACTION_DOWN    1
-#define ACTION_LEFT    2
-#define ACTION_RIGHT   3
-#define ACTION_A       4
-#define ACTION_B       5
-#define ACTION_X       6
-#define ACTION_Y       7
-#define ACTION_L       8
-#define ACTION_R       9
-#define ACTION_START   10
-#define ACTION_SELECT  11
-#define ACTION_VOLUP   12
-#define ACTION_VOLDOWN 13
+#include <SDL/SDL.h>
+#include <sstream>
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <vector>
-#include <string>
+using namespace std;
 
-using std::vector;
-using std::string;
+typedef enum buttontype_e {
+    UP, DOWN, LEFT, RIGHT,
+    ACCEPT, CANCEL,
+    CLEAR, MANUAL,
+    ALTLEFT, ALTRIGHT,
+    MENU, SETTINGS,
+    VOLUP, VOLDOWN,
+    POWER, LOCK
+} buttontype_t;
+#define BUTTONTYPE_T_SIZE 16
+
+enum source_type_e {KEYBOARD, JOYSTICK};
+enum state_e {PRESSED, RELEASED};
 
 typedef struct {
-	int type;
-	uint num;
-	int value;
-	int treshold;
-} InputMap;
+    source_type_e source;
+    Uint32 code;
+} input_t;
 
-typedef vector<InputMap> MappingList;
-typedef vector<SDL_Event> SDLEventList;
+typedef struct {
+    buttontype_t button;
+    state_e state;
+} bevent_t;
 
-/**
-Manages all input peripherals
-@author Massimiliano Torromeo <massimiliano.torromeo@gmail.com>
-*/
+
 class InputManager {
 private:
-	InputMap getInputMapping(int action);
-	vector<Uint32> actionTick;
-	vector<Uint32> interval;
-	SDLEventList events;
+    input_t ButtonMap[BUTTONTYPE_T_SIZE];
 
-	vector <SDL_Joystick*> joysticks;
-	vector<bool> actions;
-	vector<MappingList> mappings;
+    bool readConfFile(const string &conffile);
+    void initJoystick();
+    bool getEvent(bevent_t *bevent, bool wait);
+    buttontype_t waitForButton(enum state_e state);
 
 public:
-	static const int MAPPING_TYPE_UNDEFINED = -1;
-	static const int MAPPING_TYPE_BUTTON = 0;
-	static const int MAPPING_TYPE_AXYS = 1;
-	static const int MAPPING_TYPE_KEYPRESS = 2;
+    InputManager();
+    ~InputManager();
 
-	InputManager();
-	~InputManager();
-	void init(const string &conffile = "input.conf");
-
-	bool update();
-	int count();
-	void setActionsCount(int count);
-	void setInterval(int ms, int action = -1);
-	bool operator[](int action);
-	bool isActive(int action);
+    void init(const string &conffile);
+    void waitForEvent(bevent_t *event);
+    buttontype_t waitForPressedButton();
+    buttontype_t waitForReleasedButton();
+    bool pollEvent(bevent_t *event);
 };
 
 #endif

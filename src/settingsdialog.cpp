@@ -105,11 +105,39 @@ bool SettingsDialog::exec() {
 		gmenu2x->s->flip();
 		voices[sel]->handleTS();
 
+        bevent_t event;
+        do {
+            inputMgr.waitForEvent(&event);
+        } while (event.state != PRESSED);
+
+        switch (event.button) {
+            case SETTINGS:
+                close = true;
+                break;
+            case UP:
+				if (sel==0)
+					sel = voices.size()-1;
+				else
+					sel -= 1;
+				gmenu2x->setInputSpeed();
+				voices[sel]->adjustInput();
+                break;
+            case DOWN:
+				sel += 1;
+				if (sel>=voices.size()) sel = 0;
+				gmenu2x->setInputSpeed();
+				voices[sel]->adjustInput();
+                break;
+            default:
+                voices[sel]->manageInput(&event);
+                break;
+        }
+
+        /*
 		inputMgr.update();
 		if ( inputMgr[ACTION_START] ) action = SD_ACTION_CLOSE;
 		if ( inputMgr[ACTION_UP   ] ) action = SD_ACTION_UP;
 		if ( inputMgr[ACTION_DOWN ] ) action = SD_ACTION_DOWN;
-		voices[sel]->manageInput();
 
 		switch (action) {
 			case SD_ACTION_CLOSE: close = true; break;
@@ -128,6 +156,7 @@ bool SettingsDialog::exec() {
 				voices[sel]->adjustInput();
 			} break;
 		}
+        */
 	}
 
 	gmenu2x->setInputSpeed();

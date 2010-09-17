@@ -21,6 +21,7 @@
 #define MENUSETTINGSTRINGBASE_H
 
 #include "menusetting.h"
+#include "inputmanager.h"
 
 class MenuSettingStringBase : public MenuSetting {
 protected:
@@ -37,7 +38,7 @@ public:
 	virtual ~MenuSettingStringBase();
 
 	virtual void draw(int y);
-	virtual void manageInput();
+	virtual void manageInput(bevent_t *event);
 	virtual bool edited();
 
 	void setValue(const std::string &value) { *_value = value; }

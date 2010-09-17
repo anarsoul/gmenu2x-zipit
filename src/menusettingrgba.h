@@ -22,6 +22,7 @@
 
 #include "menusetting.h"
 #include "surface.h"
+#include "inputmanager.h"
 
 class GMenu2X;
 
@@ -46,7 +47,7 @@ public:
 
 	virtual void draw(int y);
 	virtual void handleTS();
-	virtual void manageInput();
+	virtual void manageInput(bevent_t *event);
 	virtual void adjustInput();
 	virtual void drawSelected(int y);
 	virtual bool edited();

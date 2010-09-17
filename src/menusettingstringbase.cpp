@@ -44,10 +44,18 @@ void MenuSettingStringBase::draw(int y)
 			SFontHAlignLeft, SFontVAlignMiddle);
 }
 
-void MenuSettingStringBase::manageInput()
+void MenuSettingStringBase::manageInput(bevent_t *event)
 {
-	if (gmenu2x->input[ACTION_X]) clear();
-	if (gmenu2x->input[ACTION_B]) edit();
+    switch (event->button) {
+        case CLEAR:
+            clear();
+            break;
+        case ACCEPT:
+            edit();
+            break;
+        default:
+            break;
+    }
 }
 
 void MenuSettingStringBase::clear()

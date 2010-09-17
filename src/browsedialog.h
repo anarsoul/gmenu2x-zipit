@@ -26,6 +26,7 @@
 #include "gmenu2x.h"
 #include "buttonbox.h"
 #include "dialog.h"
+#include "inputmanager.h"
 
 class FileLister;
 
@@ -75,7 +76,7 @@ private:
 
 	ButtonBox buttonBox;
 
-	Action getAction();
+	Action getAction(bevent_t *event);
 	void handleInput();
 
 	void paint();

@@ -82,15 +82,23 @@ void MenuSettingRGBA::handleTS() {
 	MenuSetting::handleTS();
 }
 
-void MenuSettingRGBA::manageInput() {
-	if (gmenu2x->input[ACTION_Y])
-		inc();
-	if (gmenu2x->input[ACTION_X])
-		dec();
-	if (gmenu2x->input[ACTION_LEFT])
-		leftComponent();
-	if (gmenu2x->input[ACTION_RIGHT])
-		rightComponent();
+void MenuSettingRGBA::manageInput(bevent_t *event) {
+    switch(event->button) {
+        case MANUAL:
+            inc();
+            break;
+        case CLEAR:
+            dec();
+            break;
+        case LEFT:
+            leftComponent();
+            break;
+        case RIGHT:
+            rightComponent();
+            break;
+        default:
+            break;
+    }
 }
 
 void MenuSettingRGBA::dec()
@@ -173,9 +181,11 @@ unsigned short MenuSettingRGBA::getSelPart()
 void MenuSettingRGBA::adjustInput()
 {
 #ifdef TARGET_GP2X
+    /*
 	gmenu2x->input.setInterval(30, ACTION_Y );
 	gmenu2x->input.setInterval(30, ACTION_X );
 	gmenu2x->input.setInterval(30, ACTION_L );
+    */
 #endif
 }
 

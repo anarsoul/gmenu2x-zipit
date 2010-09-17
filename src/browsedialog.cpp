@@ -68,26 +68,40 @@ bool BrowseDialog::exec()
 	return result;
 }
 
-BrowseDialog::Action BrowseDialog::getAction()
+BrowseDialog::Action BrowseDialog::getAction(bevent_t *event)
 {
-	BrowseDialog::Action action = BrowseDialog::ACT_NONE;
+	BrowseDialog::Action action;
 
-	if (gmenu2x->input[ACTION_SELECT])
-		action = BrowseDialog::ACT_CLOSE;
-	else if (gmenu2x->input[ACTION_UP])
-		action = BrowseDialog::ACT_UP;
-	else if (gmenu2x->input[ACTION_L])
-		action = BrowseDialog::ACT_SCROLLUP;
-	else if (gmenu2x->input[ACTION_DOWN])
-		action = BrowseDialog::ACT_DOWN;
-	else if (gmenu2x->input[ACTION_R])
-		action = BrowseDialog::ACT_SCROLLDOWN;
-	else if (gmenu2x->input[ACTION_X] || gmenu2x->input[ACTION_LEFT])
-		action = BrowseDialog::ACT_GOUP;
-	else if (gmenu2x->input[ACTION_B])
-		action = BrowseDialog::ACT_SELECT;
-	else if (gmenu2x->input[ACTION_START])
-		action = BrowseDialog::ACT_CONFIRM;
+    switch(event->button) {
+        case MENU:
+            action = BrowseDialog::ACT_CLOSE;
+            break;
+        case UP:
+            action = BrowseDialog::ACT_UP;
+            break;
+        case DOWN:
+            action = BrowseDialog::ACT_DOWN;
+            break;
+        case ALTLEFT:
+            action = BrowseDialog::ACT_SCROLLUP;
+            break;
+        case ALTRIGHT:
+            action = BrowseDialog::ACT_SCROLLDOWN;
+            break;
+        case LEFT:
+        case CLEAR:
+            action = BrowseDialog::ACT_GOUP;
+            break;
+        case ACCEPT:
+            action = BrowseDialog::ACT_SELECT;
+            break;
+        case SETTINGS:
+            action = BrowseDialog::ACT_CONFIRM;
+            break;
+        default:
+            action = BrowseDialog::ACT_NONE;
+            break;
+    }
 
 	return action;
 }
@@ -95,14 +109,22 @@ BrowseDialog::Action BrowseDialog::getAction()
 void BrowseDialog::handleInput()
 {
 	BrowseDialog::Action action;
+    bevent_t event;
 
-	gmenu2x->input.update();
+    do {
+        gmenu2x->input.waitForEvent(&event);
+    } while (event.state != PRESSED);
+
+    /*
+	while(!gmenu2x->input.update())
+      usleep(LOOP_DELAY);
+      */
 
 	if (ts_pressed && !gmenu2x->ts.pressed()) {
 		action = BrowseDialog::ACT_SELECT;
 		ts_pressed = false;
 	} else {
-		action = getAction();
+		action = getAction(&event);
 	}
 
 	if (gmenu2x->f200 && gmenu2x->ts.pressed() && !gmenu2x->ts.inRect(touchRect)) ts_pressed = false;

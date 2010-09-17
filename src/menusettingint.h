@@ -21,6 +21,7 @@
 #define MENUSETTINGINT_H
 
 #include "menusetting.h"
+#include "inputmanager.h"
 
 class MenuSettingInt : public MenuSetting {
 private:
@@ -38,7 +39,7 @@ public:
 			const std::string &description, int *value, int min, int max);
 	virtual ~MenuSettingInt() {}
 
-	virtual void manageInput();
+	virtual void manageInput(bevent_t *event);
 	virtual void adjustInput();
 	virtual void draw(int);
 	virtual bool edited();

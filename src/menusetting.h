@@ -21,6 +21,7 @@
 #define MENUSETTING_H
 
 #include "buttonbox.h"
+#include "inputmanager.h"
 
 #include <string>
 
@@ -46,7 +47,7 @@ public:
 	virtual void draw(int y);
 	virtual void handleTS();
 
-	virtual void manageInput() = 0;
+	virtual void manageInput(bevent_t *event) = 0;
 	virtual void adjustInput();
 	virtual void drawSelected(int y);
 	virtual bool edited() = 0;

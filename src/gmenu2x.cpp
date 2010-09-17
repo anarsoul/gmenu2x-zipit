@@ -522,9 +522,9 @@ void GMenu2X::viewLog() {
 			td.exec();
 
 			MessageBox mb(this, tr["Do you want to delete the log file?"], "icons/ebook.png");
-			mb.setButton(ACTION_B, tr["Yes"]);
-			mb.setButton(ACTION_X, tr["No"]);
-			if (mb.exec() == ACTION_B) {
+			mb.setButton(ACCEPT, tr["Yes"]);
+			mb.setButton(CLEAR, tr["No"]);
+			if (mb.exec() == ACCEPT) {
 				ledOn();
 				unlink(logfile.c_str());
 				sync();
@@ -865,11 +865,13 @@ void GMenu2X::main() {
 
 		drawScrollBar(linkRows,menu->sectionLinks()->size()/linkColumns + ((menu->sectionLinks()->size()%linkColumns==0) ? 0 : 1),menu->firstDispRow(),43,resY-81);
 
+        /*
 		switch(volumeMode) {
 			case VOLUME_MODE_MUTE:   sc.skinRes("imgs/mute.png")->blit(s,279,bottomBarIconY); break;
 			case VOLUME_MODE_PHONES: sc.skinRes("imgs/phones.png")->blit(s,279,bottomBarIconY); break;
 			default: sc.skinRes("imgs/volume.png")->blit(s,279,bottomBarIconY); break;
 		}
+        */
 
 		if (menu->selLink()!=NULL) {
 			s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, SFontHAlignCenter, SFontVAlignBottom );
@@ -902,8 +904,6 @@ void GMenu2X::main() {
 		//s->write( font, tr[batstr.c_str()], 20, 170 );
 		//On Screen Help
 
-		if(input[ACTION_A] )
-			helpDisplayed = ! helpDisplayed;
 
 		if (helpDisplayed) {
 			s->box(10,50,300,143, skinConfColors[COLOR_MESSAGE_BOX_BG]);
@@ -965,13 +965,55 @@ void GMenu2X::main() {
 		}
 
 //#ifdef TARGET_GP2X
+        
+        switch (input.waitForPressedButton()) {
+            case ACCEPT:
+                if (menu->selLink() != NULL) menu->selLink()->run();
+                break;
+            case CANCEL:
+                helpDisplayed = ! helpDisplayed;
+                break;
+            case SETTINGS:
+                options();
+                break;
+            case MENU:
+                contextMenu();
+                break;
+            case UP:
+                menu->linkUp();
+                break;
+            case DOWN:
+                menu->linkDown();
+                break;
+            case LEFT:
+                menu->linkLeft();
+                break;
+            case RIGHT:
+                menu->linkRight();
+                break;
+            case MANUAL:
+			    menu->selLinkApp()->showManual();
+                break;
+            case ALTLEFT:
+				menu->decSectionIndex();
+				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
+                break;
+            case ALTRIGHT:
+				menu->incSectionIndex();
+				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
+                break;
+            default:
+                break;
+        }
+
+        /*
 		while (!input.update())
 			usleep(LOOP_DELAY);
-		if ( input[ACTION_B] && menu->selLink()!=NULL ) menu->selLink()->run();
-		else if ( input[ACTION_START]  ) options();
-		else if ( input[ACTION_SELECT] ) contextMenu();
+		if ( input[ACCEPT] && menu->selLink()!=NULL ) menu->selLink()->run();
+		else if ( input[SETTINGS]  ) options();
+		else if ( input[MENU] ) contextMenu();
 		// VOLUME SCALE MODIFIER
-		else if ( fwType=="open2x" && input[ACTION_X] ) {
+		else if ( fwType=="open2x" && input[CLEAR] ) {
 			volumeMode = constrain(volumeMode-1, -VOLUME_MODE_MUTE-1, VOLUME_MODE_NORMAL);
 			if(volumeMode < VOLUME_MODE_MUTE)
 				volumeMode = VOLUME_MODE_NORMAL;
@@ -983,42 +1025,43 @@ void GMenu2X::main() {
 			setVolume(confInt["globalVolume"]);
 		}
 		// LINK NAVIGATION
-		else if ( input[ACTION_LEFT ]  ) menu->linkLeft();
-		else if ( input[ACTION_RIGHT]  ) menu->linkRight();
-		else if ( input[ACTION_UP   ]  ) menu->linkUp();
-		else if ( input[ACTION_DOWN ]  ) menu->linkDown();
+		else if ( input[ALTLEFTEFT ]  ) menu->linkLeft();
+		else if ( input[ALTRIGHTIGHT]  ) menu->linkRight();
+		else if ( input[UP   ]  ) menu->linkUp();
+		else if ( input[DOWN ]  ) menu->linkDown();
 		// SELLINKAPP SELECTED
 		else if (menu->selLinkApp()!=NULL) {
-			if ( input[ACTION_Y] ) menu->selLinkApp()->showManual();
-			else if ( input.isActive(ACTION_A) ) {
+			if ( input[MANUAL] ) menu->selLinkApp()->showManual();
+			else if ( input.isActive(CANCEL) ) {
 				// VOLUME
-				if ( input[ACTION_VOLDOWN] && !input.isActive(ACTION_VOLUP) )
+				if ( input[VOLDOWN] && !input.isActive(VOLUP) )
 					menu->selLinkApp()->setVolume( constrain(menu->selLinkApp()->volume()-1,0,100) );
-				if ( input[ACTION_VOLUP] && !input.isActive(ACTION_VOLDOWN) )
+				if ( input[VOLUP] && !input.isActive(VOLDOWN) )
 					menu->selLinkApp()->setVolume( constrain(menu->selLinkApp()->volume()+1,0,100) );;
-				if ( input.isActive(ACTION_VOLUP) && input.isActive(ACTION_VOLDOWN) ) menu->selLinkApp()->setVolume(-1);
+				if ( input.isActive(VOLUP) && input.isActive(VOLDOWN) ) menu->selLinkApp()->setVolume(-1);
 			} else {
 				// CLOCK
-				if ( input[ACTION_VOLDOWN] && !input.isActive(ACTION_VOLUP) )
+				if ( input[VOLDOWN] && !input.isActive(VOLUP) )
 					menu->selLinkApp()->setClock( constrain(menu->selLinkApp()->clock()-1,200,confInt["maxClock"]) );
-				if ( input[ACTION_VOLUP] && !input.isActive(ACTION_VOLDOWN) )
+				if ( input[VOLUP] && !input.isActive(VOLDOWN) )
 					menu->selLinkApp()->setClock( constrain(menu->selLinkApp()->clock()+1,200,confInt["maxClock"]) );
-				if ( input.isActive(ACTION_VOLUP) && input.isActive(ACTION_VOLDOWN) ) menu->selLinkApp()->setClock(336);
+				if ( input.isActive(VOLUP) && input.isActive(VOLDOWN) ) menu->selLinkApp()->setClock(336);
 			}
 		}
-		if ( input.isActive(ACTION_A) ) {
-			if (input.isActive(ACTION_L) && input.isActive(ACTION_R))
+		if ( input.isActive(CANCEL) ) {
+			if (input.isActive(ALTLEFT) && input.isActive(ALTRIGHT))
 				saveScreenshot();
 		} else {
 			// SECTIONS
-			if ( input[ACTION_L     ] ) {
+			if ( input[ALTLEFT     ] ) {
 				menu->decSectionIndex();
 				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
-			} else if ( input[ACTION_R     ] ) {
+			} else if ( input[ALTRIGHT     ] ) {
 				menu->incSectionIndex();
 				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
 			}
 		}
+        */
 	}
 }
 
@@ -1213,6 +1256,7 @@ void GMenu2X::setSkin(const string &skin, bool setWallpaper) {
 	initFont();
 }
 
+/*
 void GMenu2X::activateSdUsb() {
 	if (usbnet) {
 		MessageBox mb(this,tr["Operation not permitted."]+"\n"+tr["You should disable Usb Networking to do this."]);
@@ -1220,7 +1264,7 @@ void GMenu2X::activateSdUsb() {
 	} else {
 		system("scripts/usbon.sh sd");
 		MessageBox mb(this,tr["USB Enabled (SD)"],"icons/usb.png");
-		mb.setButton(ACTION_B, tr["Turn off"]);
+		mb.setButton(ACCEPT, tr["Turn off"]);
 		mb.exec();
 		system("scripts/usboff.sh sd");
 	}
@@ -1233,7 +1277,7 @@ void GMenu2X::activateNandUsb() {
 	} else {
 		system("scripts/usbon.sh nand");
 		MessageBox mb(this,tr["USB Enabled (Nand)"],"icons/usb.png");
-		mb.setButton(ACTION_B, tr["Turn off"]);
+		mb.setButton(ACCEPT, tr["Turn off"]);
 		mb.exec();
 		system("scripts/usboff.sh nand");
 	}
@@ -1246,12 +1290,12 @@ void GMenu2X::activateRootUsb() {
 	} else {
 		system("scripts/usbon.sh root");
 		MessageBox mb(this,tr["USB Enabled (Root)"],"icons/usb.png");
-		mb.setButton(ACTION_B, tr["Turn off"]);
+		mb.setButton(ACCEPT, tr["Turn off"]);
 		mb.exec();
 		system("scripts/usboff.sh root");
 	}
 }
-
+*/
 void GMenu2X::contextMenu() {
 	vector<MenuOption> voices;
 	{
@@ -1307,6 +1351,8 @@ void GMenu2X::contextMenu() {
 	bg.box(0, 0, resX, resY, 0,0,0,150);
 	bg.box(box.x, box.y, box.w, box.h, skinConfColors["messageBoxBg"]);
 	bg.rectangle( box.x+2, box.y+2, box.w-4, box.h-4, skinConfColors["messageBoxBorder"] );*/
+
+    bevent_t event;
 	while (!close) {
 		tickNow = SDL_GetTicks();
 
@@ -1354,11 +1400,30 @@ void GMenu2X::contextMenu() {
 			}
 		}
 
-		input.update();
-		if ( input[ACTION_SELECT] ) close = true;
-		if ( input[ACTION_UP    ] ) sel = max(0, sel-1);
-		if ( input[ACTION_DOWN  ] ) sel = min((int)voices.size()-1, sel+1);
-		if ( input[ACTION_B] ) { voices[sel].action(); close = true; }
+        
+        if (fadeAlpha < 200) {
+            if (!input.pollEvent(&event) || event.state != PRESSED) continue;
+        } else {
+            event.button = input.waitForPressedButton();
+        }
+
+        switch(event.button) {
+            case MENU:
+                close = true;
+                break;
+            case UP:
+                sel = max(0, sel-1);
+                break;
+            case DOWN:
+                sel = min((int)voices.size()-1, sel+1);
+                break;
+            case ACCEPT:
+                voices[sel].action();
+                close = true;
+                break;
+            default:
+                break;
+        }
 	}
 }
 
@@ -1499,9 +1564,9 @@ void GMenu2X::editLink() {
 void GMenu2X::deleteLink() {
 	if (menu->selLinkApp()!=NULL) {
 		MessageBox mb(this, tr.translate("Deleting $1",menu->selLink()->getTitle().c_str(),NULL)+"\n"+tr["Are you sure?"], menu->selLink()->getIconPath());
-		mb.setButton(ACTION_B, tr["Yes"]);
-		mb.setButton(ACTION_X, tr["No"]);
-		if (mb.exec() == ACTION_B) {
+		mb.setButton(ACCEPT, tr["Yes"]);
+		mb.setButton(CLEAR, tr["No"]);
+		if (mb.exec() == ACCEPT) {
 			ledOn();
 			menu->deleteSelectedLink();
 			sync();
@@ -1561,9 +1626,9 @@ void GMenu2X::renameSection() {
 
 void GMenu2X::deleteSection() {
 	MessageBox mb(this,tr["You will lose all the links in this section."]+"\n"+tr["Are you sure?"]);
-	mb.setButton(ACTION_B, tr["Yes"]);
-	mb.setButton(ACTION_X, tr["No"]);
-	if (mb.exec() == ACTION_B) {
+	mb.setButton(ACCEPT, tr["Yes"]);
+	mb.setButton(CLEAR, tr["No"]);
+	if (mb.exec() == ACCEPT) {
 		ledOn();
 		if (rmtree(path+"sections/"+menu->selSection())) {
 			menu->deleteSelectedSection();
@@ -1655,12 +1720,22 @@ void GMenu2X::scanner() {
 	ledOff();
 #endif
 
-	bool close = false;
-	while (!close) {
-		input.update();
-		if (input[ACTION_START] || input[ACTION_B] || input[ACTION_X]) close = true;
-		usleep(30000);
-	}
+    buttontype_t button;
+    do {
+        button = input.waitForPressedButton();
+    } while ((button != SETTINGS)
+                && (button != ACCEPT)
+                && (button != CLEAR));
+
+    /*
+    bevent_t event;
+    do {
+        input.getEvent(&event, true);
+    } while ((event.state != PRESSED) ||
+                (  (event.button != SETTINGS)
+                && (event.button != ACCEPT)
+                && (event.button != CLEAR)));
+                */
 }
 
 void GMenu2X::scanPath(string path, vector<string> *files) {
@@ -1754,18 +1829,20 @@ unsigned short GMenu2X::getBatteryLevel() {
 }
 
 void GMenu2X::setInputSpeed() {
+    /*
 	input.setInterval(150);
-	input.setInterval(30,  ACTION_VOLDOWN);
-	input.setInterval(30,  ACTION_VOLUP  );
-	input.setInterval(30,  ACTION_A      );
-	input.setInterval(500, ACTION_START  );
-	input.setInterval(500, ACTION_SELECT );
-	input.setInterval(300, ACTION_X      );
-	input.setInterval(300,  ACTION_Y      );
-	input.setInterval(1000,ACTION_B      );
+	input.setInterval(30,  VOLDOWN);
+	input.setInterval(30,  VOLUP  );
+	input.setInterval(30,  CANCEL      );
+	input.setInterval(500, SETTINGS  );
+	input.setInterval(500, MENU );
+	input.setInterval(300, CLEAR      );
+	input.setInterval(300,  MANUAL      );
+	input.setInterval(1000,ACCEPT      );
 	//joy.setInterval(1000,ACTION_CLICK  );
-	input.setInterval(300, ACTION_L      );
-	input.setInterval(300, ACTION_R      );
+	input.setInterval(300, ALTLEFT      );
+	input.setInterval(300, ALTRIGHT      );
+    */
 	SDL_EnableKeyRepeat(1,150);
 }
 

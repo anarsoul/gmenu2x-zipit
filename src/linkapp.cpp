@@ -333,11 +333,28 @@ void LinkApp::showManual() {
 				repaint = false;
 			}
 
-			inputMgr.update();
-			if ( inputMgr[ACTION_Y] || inputMgr[ACTION_X] || inputMgr[ACTION_START] ) close = true;
-			if ( inputMgr[ACTION_LEFT] && page>0 ) { page--; repaint=true; }
-			if ( inputMgr[ACTION_RIGHT] && page<pagecount-1 ) { page++; repaint=true; }
-		}
+            switch(inputMgr.waitForPressedButton()) {
+                case MANUAL:
+                case CLEAR:
+                case SETTINGS:
+                    close = true;
+                    break;
+                case LEFT:
+                    if (page > 0) {
+                        page--;
+                        repaint = true;
+                    }
+                    break;
+                case RIGHT:
+                    if (page < pagecount-1) {
+                        page++;
+                        repaint=true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
 		return;
 	}
 

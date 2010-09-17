@@ -49,10 +49,18 @@ MenuSettingMultiString::MenuSettingMultiString(
 	buttonBox.add(btn);
 }
 
-void MenuSettingMultiString::manageInput()
+void MenuSettingMultiString::manageInput(bevent_t *event)
 {
-	if (gmenu2x->input[ACTION_LEFT ]) decSel();
-	if (gmenu2x->input[ACTION_RIGHT]) incSel();
+    switch(event->button) {
+        case LEFT:
+            decSel();
+            break;
+        case RIGHT:
+            incSel();
+            break;
+        default:
+            break;
+    }
 }
 
 void MenuSettingMultiString::incSel()

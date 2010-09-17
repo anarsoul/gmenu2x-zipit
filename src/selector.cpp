@@ -115,7 +115,65 @@ int Selector::exec(int startSelection) {
 		gmenu2x->drawScrollBar(SELECTOR_ELEMENTS,fl.size(),firstElement,42,175);
 		gmenu2x->s->flip();
 
+        switch (gmenu2x->input.waitForPressedButton()) {
+            case SETTINGS:
+                close = true;
+                result = false;
+                break;
+            case UP:
+                if (selected == 0) selected = fl.size() -1;
+                else selected -= 1;
+                selTick = SDL_GetTicks();
+                break;
+            case ALTLEFT:
+                if ((int)(selected-SELECTOR_ELEMENTS+1)<0) selected = 0;
+                else selected -= SELECTOR_ELEMENTS-1;
+                selTick = SDL_GetTicks();
+                break;
+            case DOWN:
+                if (selected+1>=fl.size()) selected = 0;
+                else selected += 1;
+                selTick = SDL_GetTicks();
+                break;
+            case ALTRIGHT:
+                if (selected+SELECTOR_ELEMENTS-1>=fl.size()) selected = fl.size()-1;
+                else selected += SELECTOR_ELEMENTS-1;
+                selTick = SDL_GetTicks();
+                break;
+            case CLEAR:
+                if (link->getSelectorBrowser()) {
+                    string::size_type p = dir.rfind("/", dir.size()-2);
+                    if (p==string::npos || dir.compare(0, 1, "/") != 0 || dir.length() < 2) {
+                        close = true;
+                        result = false;
+                    } else {
+                        dir = dir.substr(0,p+1);
+                        INFO("%s\n", dir.c_str());
+                        selected = 0;
+                        firstElement = 0;
+                        prepare(&fl,&screens,&titles);
+                    }
+                } else {
+                    close = true;
+                    result = false;
+                }
+                break;
+            case ACCEPT:
+                if (fl.isFile(selected)) {
+                    file = fl[selected];
+                    close = true;
+                } else {
+                    dir = dir+fl[selected]+"/";
+                    selected = 0;
+                    firstElement = 0;
+                    prepare(&fl,&screens,&titles);
+                }
+                break;
+            default:
+                break;
+        }
 
+        /*
 		gmenu2x->input.update();
 		if ( gmenu2x->input[ACTION_START] ) { close = true; result = false; }
 		if ( gmenu2x->input[ACTION_UP] ) {
@@ -179,6 +237,7 @@ int Selector::exec(int startSelection) {
 				prepare(&fl,&screens,&titles);
 			}
 		}
+        */
 	}
 	gmenu2x->sc.defaultAlpha = true;
 	freeScreenshots(&screens);

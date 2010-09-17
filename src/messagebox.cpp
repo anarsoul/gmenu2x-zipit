@@ -40,23 +40,23 @@ MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon)
 	}
 
 	//Default enabled button
-	buttons[ACTION_B] = "OK";
+	buttons[ACCEPT] = "OK";
 
 	//Default labels
-	buttonLabels[ACTION_UP] = "up";
-	buttonLabels[ACTION_DOWN] = "down";
-	buttonLabels[ACTION_LEFT] = "left";
-	buttonLabels[ACTION_RIGHT] = "right";
-	buttonLabels[ACTION_A] = "a";
-	buttonLabels[ACTION_B] = "b";
-	buttonLabels[ACTION_X] = "x";
-	buttonLabels[ACTION_Y] = "y";
-	buttonLabels[ACTION_L] = "l";
-	buttonLabels[ACTION_R] = "r";
-	buttonLabels[ACTION_START] = "start";
-	buttonLabels[ACTION_SELECT] = "select";
-	buttonLabels[ACTION_VOLUP] = "vol+";
-	buttonLabels[ACTION_VOLDOWN] = "vol-";
+	buttonLabels[UP] = "up";
+	buttonLabels[DOWN] = "down";
+	buttonLabels[LEFT] = "left";
+	buttonLabels[RIGHT] = "right";
+	buttonLabels[CANCEL] = "a";
+	buttonLabels[ACCEPT] = "b";
+	buttonLabels[CLEAR] = "x";
+	buttonLabels[MANUAL] = "y";
+	buttonLabels[ALTLEFT] = "l";
+	buttonLabels[ALTRIGHT] = "r";
+	buttonLabels[SETTINGS] = "start";
+	buttonLabels[MENU] = "select";
+	buttonLabels[VOLUP] = "vol+";
+	buttonLabels[VOLDOWN] = "vol-";
 }
 
 void MessageBox::setButton(int action, const string &btn) {
@@ -102,6 +102,7 @@ int MessageBox::exec() {
 	bg.blit(gmenu2x->s,0,0);
 	gmenu2x->s->flip();
 
+    bevent_t event;
 	while (result<0) {
 		//touchscreen
 		if (gmenu2x->f200) {
@@ -113,10 +114,14 @@ int MessageBox::exec() {
 					}
 			}
 		}
-
+/*
 		gmenu2x->input.update();
 		for (uint i=0; i<buttons.size(); i++)
 			if (buttons[i]!="" && gmenu2x->input[i]) result = i;
+
+        */
+
+        if (gmenu2x->input.pollEvent(&event) && (event.state == PRESSED) && (buttons[event.button] != "")) result = event.button;
 
 		usleep(LOOP_DELAY);
 	}
