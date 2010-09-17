@@ -1,10 +1,13 @@
-#include "cpu.h"
-
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+
+#include <iostream>
+
+#include "cpu.h"
+#include "debug.h"
 
 #define SYSFS_CPUFREQ_DIR "/sys/devices/system/cpu/cpu0/cpufreq"
 #define SYSFS_CPUFREQ_MAX SYSFS_CPUFREQ_DIR "/scaling_max_freq"
@@ -14,11 +17,11 @@ void writeStringToFile(const char *path, const char *content)
 {
 	int fd = open(path, O_RDWR);
 	if (fd == -1) {
-		fprintf(stderr, "Failed to open \"%s\": %s\n", path, strerror(errno));
+		WARNING("Failed to open '%s': %s\n", path, strerror(errno));
 	} else {
 		ssize_t written = write(fd, content, strlen(content));
 		if (written == -1) {
-			fprintf(stderr, "Error writing \"%s\": %s\n", path, strerror(errno));
+			WARNING("Error writing '%s': %s\n", path, strerror(errno));
 		}
 		close(fd);
 	}

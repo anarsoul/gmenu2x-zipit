@@ -69,6 +69,8 @@
 #include "menusettingimage.h"
 #include "menusettingdir.h"
 
+#include "debug.h"
+
 #include <sys/mman.h>
 
 #ifdef TARGET_PANDORA
@@ -112,17 +114,15 @@ static const char *colorToString(enum color c)
 	return colorNames[c];
 }
 
-int main(int /*argc*/, char */*argv*/[]) {
-	cout << "----" << endl;
-	cout << "GMenu2X starting: If you read this message in the logs, check http://gmenu2x.sourceforge.net/page/Troubleshooting for a solution" << endl;
-	cout << "----" << endl;
+int main(int /*argc*/, char * /*argv*/[]) {
+	INFO("----\nGMenu2X starting: If you read this message in the logs, check http://gmenu2x.sourceforge.net/page/Troubleshooting for a solution\n----\n");
 
 	signal(SIGINT,&exit);
 	GMenu2X app;
-#ifdef DEBUG
-	cout << "Starting main()" << endl;
-#endif
+
+	DEBUG("Starting main()\n");
 	app.main();
+
 	return 0;
 }
 
@@ -264,7 +264,7 @@ GMenu2X::GMenu2X() {
 
 	//Screen
 	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK)<0 ) {
-		cout << "\033[0;34mGMENU2X:\033[0;31m Could not initialize SDL:\033[0m " << SDL_GetError() << endl;
+		ERROR("Could not initialize SDL: %s\n", SDL_GetError());
 		quit();
 	}
 
@@ -288,9 +288,8 @@ GMenu2X::GMenu2X() {
 	initMenu();
 
 	if (!fileExists(confStr["wallpaper"])) {
-#ifdef DEBUG
-		cout << "Searching wallpaper" << endl;
-#endif
+		DEBUG("Searching wallpaper\n");
+
 		FileLister fl("skins/"+confStr["skin"]+"/wallpapers",false,true);
 		fl.setFilter(".png,.jpg,.jpeg,.bmp");
 		fl.browse();
@@ -403,7 +402,7 @@ void GMenu2X::initFont() {
 
 	string fontFile = sc.getSkinFilePath("imgs/font.png");
 	if (fontFile.empty()) {
-		cout << "Font png not found!" << endl;
+		ERROR("Font png not found!\n");
 		quit();
 		exit(-1);
 	}
@@ -795,7 +794,7 @@ void GMenu2X::main() {
 	uint sectionsCoordX = 24;
 	SDL_Rect re = {0,0,0,0};
 	bool helpDisplayed = false;
-#ifdef DEBUG
+#ifdef WITH_DEBUG
 	//framerate
 	long tickFPS = SDL_GetTicks();
 	int drawn_frames = 0;
@@ -913,7 +912,7 @@ void GMenu2X::main() {
 
 		}
 
-#ifdef DEBUG
+#ifdef WITH_DEBUG
 		//framerate
 		drawn_frames++;
 		if (tickNow-tickFPS>=1000) {
@@ -1031,7 +1030,7 @@ void GMenu2X::explorer() {
 
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
 		//try relaunching gmenu2x
-		fprintf(stderr, "Error executing selected application, re-launching gmenu2x\n");
+		ERROR("Error executing selected application, re-launching gmenu2x\n");
 		chdir(getExePath().c_str());
 		execlp("./gmenu2x", "./gmenu2x", NULL);
 	}
@@ -1167,7 +1166,7 @@ void GMenu2X::setSkin(const string &skin, bool setWallpaper) {
 			string line;
 			while (getline(skinconf, line, '\n')) {
 				line = trim(line);
-				cout << "skinconf: " << line << endl;
+				DEBUG("skinconf: '%s'\n", line.c_str());
 				string::size_type pos = line.find("=");
 				string name = trim(line.substr(0,pos));
 				string value = trim(line.substr(pos+1,line.length()));
@@ -1460,9 +1459,8 @@ void GMenu2X::editLink() {
 		//G
 		menu->selLinkApp()->setBacklight(linkBacklight);
 
-#ifdef DEBUG
-		cout << "New Section: " << newSection << endl;
-#endif
+		INFO("New Section: '%s'\n", newSection.c_str());
+
 		//if section changed move file and update link->file
 		if (oldSection!=newSection) {
 			vector<string>::const_iterator newSectionIndex = find(menu->getSections().begin(),menu->getSections().end(),newSection);
@@ -1477,9 +1475,9 @@ void GMenu2X::editLink() {
 			}
 			rename(menu->selLinkApp()->getFile().c_str(),newFileName.c_str());
 			menu->selLinkApp()->renameFile(newFileName);
-#ifdef DEBUG
-			cout << "New section index: " << newSectionIndex - menu->getSections().begin() << endl;
-#endif
+
+			INFO("New section index: %i.\n", newSectionIndex - menu->getSections().begin());
+
 			menu->linkChangeSection(menu->selLinkIndex(), menu->selSectionIndex(), newSectionIndex - menu->getSections().begin());
 		}
 		menu->selLinkApp()->save();
@@ -1816,7 +1814,7 @@ int GMenu2X::getVolume() {
 	if(mixer)
 	{
 		if (ioctl(mixer, SOUND_MIXER_READ_VOLUME, &basevolume) == -1) {
-			fprintf(stderr, "Failed opening mixer for read - VOLUME\n");
+			ERROR("Failed opening mixer for read - VOLUME\n");
 		}
 		close(mixer);
 		if(basevolume != -1)
@@ -1833,7 +1831,7 @@ void GMenu2X::setVolume(int vol) {
 	if(mixer)
 	{
 		if (ioctl(mixer, SOUND_MIXER_WRITE_VOLUME, &oss_volume) == -1) {
-			fprintf(stderr, "Failed opening mixer for write - VOLUME\n");
+			ERROR("Failed opening mixer for write - VOLUME\n");
 		}
 		close(mixer);
 	}
@@ -1887,7 +1885,7 @@ string GMenu2X::getDiskFree() {
 			((unsigned long long)b.f_blocks * b.f_frsize) / 1048576;
 		ss << free << "/" << total << "MB";
 		ss >> df;
-	} else cout << "\033[0;34mGMENU2X:\033[0;31m statvfs failed with error '" << strerror(errno) << "'\033[0m" << endl;
+	} else WARNING("statvfs failed with error '%s'.\n", strerror(errno));
 	return df;
 }
 

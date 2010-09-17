@@ -32,6 +32,7 @@
 #include "selector.h"
 #include "filelister.h"
 #include "gmenu2x.h"
+#include "debug.h"
 
 using namespace std;
 
@@ -157,7 +158,7 @@ int Selector::exec(int startSelection) {
 					result = false;
 				} else {
 					dir = dir.substr(0,p+1);
-					cout << dir << endl;
+					INFO("%s\n", dir.c_str());
 					selected = 0;
 					firstElement = 0;
 					prepare(&fl,&screens,&titles);
@@ -204,9 +205,9 @@ void Selector::prepare(FileLister *fl, vector<string> *screens, vector<string> *
 		titles->at(i) = getAlias(noext);
 		if (titles->at(i)=="")
 			titles->at(i) = noext;
-#ifdef DEBUG
-		cout << "\033[0;34mGMENU2X:\033[0m Searching for screen " << screendir << noext << ".png" << endl;
-#endif
+
+		DEBUG("Searching for screen '%s%s.png'\n", screendir.c_str(), noext.c_str());
+
 		if (fileExists(screendir+noext+".png"))
 			screens->at(i) = screendir+noext+".png";
 		else if (fileExists(screendir+noext+".jpg"))
