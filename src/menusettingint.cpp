@@ -74,6 +74,12 @@ void MenuSettingInt::manageInput(bevent_t *event)
         case RIGHT:
             inc();
             break;
+        case ALTLEFT:
+            setValue(value() - 10);
+            break;
+        case ALTRIGHT:
+            setValue(value() + 10);
+            break;
         default:
             break;
     }
