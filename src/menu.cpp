@@ -245,6 +245,7 @@ bool Menu::addLink(string path, string file, string section) {
 	INFO("Manual: '%s'\n", manual.c_str());
 
 	string shorttitle=title, description="", exec=path+file, icon="";
+	if (fileExists(exename+".png")) icon = exename+".png";
 
 	//Reduce title lenght to fit the link width
 	if (gmenu2x->font->getTextWidth(shorttitle)>gmenu2x->skinConfInt["linkWidth"]) {
