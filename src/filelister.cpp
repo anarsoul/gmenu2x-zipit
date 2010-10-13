@@ -80,12 +80,14 @@ void FileLister::browse()
 		vector<string> vfilter;
 		split(vfilter, getFilter(), ",");
 
-		string filepath, file;
+		string filepath, file, file_lowercase;
 		struct stat st;
 		struct dirent *dptr;
 
 		while ((dptr = readdir(dirp))) {
 			file = dptr->d_name;
+                        file_lowercase = file;
+                        std::transform(file_lowercase.begin(), file_lowercase.end(), file_lowercase.begin(), ::tolower);
 
 			if (file[0] == '.' && file != "..")
 				continue;
@@ -108,7 +110,7 @@ void FileLister::browse()
 					continue;
 				for (vector<string>::iterator it = vfilter.begin(); it != vfilter.end(); ++it) {
 					if (it->length() <= file.length()) {
-						if (file.compare(file.length() - it->length(), it->length(), *it) == 0) {
+						if (file_lowercase.compare(file.length() - it->length(), it->length(), *it) == 0) {
 							files.push_back(file);
 							break;
 						}
