@@ -45,7 +45,7 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, InputManager &inputMgr_,
 	setVolume(-1);
 	//G
 	//setGamma(0);
-	setBacklight(100);
+	setBacklight(-1);
 	selectordir = "";
 	selectorfilter = "";
 	icon = iconPath = "";
@@ -185,7 +185,7 @@ const string &LinkApp::backlightStr()
 
 void LinkApp::setBacklight(int val)
 {
-	ibacklight = constrain(val,5,100);
+	ibacklight = constrain(val,-1,100);
 	stringstream ss;
 	sbacklight = "";
 	ss << ibacklight;

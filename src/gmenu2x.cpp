@@ -1503,7 +1503,7 @@ void GMenu2X::editLink() {
 	sd.addSetting(new MenuSettingInt(this,tr["Clock (default: 336)"],tr["Cpu clock frequency to set when launching this link"],&linkClock,200,confInt["maxClock"]));
 //	sd.addSetting(new MenuSettingBool(this,tr["Tweak RAM Timings"],tr["This usually speeds up the application at the cost of stability"],&linkUseRamTimings));
 	sd.addSetting(new MenuSettingInt(this,tr["Volume (default: -1)"],tr["Volume to set for this link"],&linkVolume,-1,100));
-	sd.addSetting(new MenuSettingInt(this,tr["Backlight (default: 100)"],tr["LCD backlight value to set when launching this link"],&linkBacklight,5,100));
+	sd.addSetting(new MenuSettingInt(this,tr["Backlight (default: -1)"],tr["LCD backlight value to set when launching this link"],&linkBacklight,-1,100));
 	sd.addSetting(new MenuSettingString(this,tr["Parameters"],tr["Parameters to pass to the application"],&linkParams, diagTitle,diagIcon));
 	sd.addSetting(new MenuSettingDir(this,tr["Selector Directory"],tr["Directory to scan for the selector"],&linkSelDir));
 	sd.addSetting(new MenuSettingBool(this,tr["Selector Browser"],tr["Allow the selector to change directory"],&linkSelBrowser));
@@ -1531,6 +1531,8 @@ void GMenu2X::editLink() {
 		menu->selLinkApp()->setClock(linkClock);
 		menu->selLinkApp()->setVolume(linkVolume);
 		//G
+		if ((linkBacklight < 5) && (linkBacklight > -1))
+			linkBacklight = 5;
 		menu->selLinkApp()->setBacklight(linkBacklight);
 
 		INFO("New Section: '%s'\n", newSection.c_str());
