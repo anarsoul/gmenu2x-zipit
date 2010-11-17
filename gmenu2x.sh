@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export SDL_NOMOUSE=1
+source /etc/profile
 
 cd /usr/share/gmenu2x
 ./gmenu2x 
