@@ -145,10 +145,10 @@ void GMenu2X::gp2x_init() {
 		f200 = ts.init();
 	}*/
 	batteryHandle = fopen("/sys/class/power_supply/battery/capacity", "r");
-	usbHandle = fopen("/sys/class/power_supply/usb/online", "r");
+	usbHandle = fopen("/sys/class/power_supply/USB/online", "r");
 	acHandle = fopen("/sys/class/power_supply/ac/online", "r");
 	backlightHandle =
-		fopen("/sys/class/backlight/pwm-backlight/brightness", "w+");
+		fopen("/sys/class/backlight/gpm940b0-bl/brightness", "w+");
 #endif
 }
 
