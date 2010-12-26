@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 
 #include <fstream>
@@ -491,6 +492,15 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 		//	gmenu2x->setGamma(gamma());
 		if((backlight() != 0) && (backlight() != gmenu2x->confInt["backlight"]))
 			gmenu2x->setBacklight(backlight());
+
+		/* Make the terminal we're connected to (via stdin/stdout) our
+      		   contolling terminal again.  Else many console programs are
+      		   not going to work correctly.  Actually this would not be
+      		   necessary, if SDL correctly restored terminal state after
+      		   SDL_Quit(). */
+		int pid = setsid();
+		tcsetpgrp(1, pid);
+		ioctl(1, TIOCSCTTY, (char *)1);
 
 		execlp("/bin/sh","/bin/sh","-c",command.c_str(),NULL);
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
