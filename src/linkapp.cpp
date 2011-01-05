@@ -499,8 +499,7 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
       		   necessary, if SDL correctly restored terminal state after
       		   SDL_Quit(). */
 		int pid = setsid();
-		tcsetpgrp(1, pid);
-		ioctl(1, TIOCSCTTY, (char *)1);
+		ioctl(1, TIOCSCTTY, STDOUT_FILENO);
 
 		execlp("/bin/sh","/bin/sh","-c",command.c_str(),NULL);
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
