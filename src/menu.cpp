@@ -145,8 +145,8 @@ void Menu::setSectionIndex(int i) {
 		i=0;
 	iSection = i;
 
-	if (i>(int)iFirstDispSection+4)
-		iFirstDispSection = i-4;
+	if (i>(int)iFirstDispSection+2)
+		iFirstDispSection = i-2;
 	else if (i<(int)iFirstDispSection)
 		iFirstDispSection = i;
 
