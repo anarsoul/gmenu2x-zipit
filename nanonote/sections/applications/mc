@@ -1,0 +1,3 @@
+title=mc
+icon=skin:icons/mc.png
+exec=/usr/bin/mc
