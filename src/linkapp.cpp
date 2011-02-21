@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <signal.h>
 #include <unistd.h>
 
 #include <fstream>
@@ -500,6 +501,10 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
       		   SDL_Quit(). */
 		int pid = setsid();
 		ioctl(1, TIOCSCTTY, STDOUT_FILENO);
+
+		int pgid = tcgetpgrp(STDOUT_FILENO);
+		signal(SIGTTOU, SIG_IGN);
+		tcsetpgrp(STDOUT_FILENO, pgid);
 
 		execlp("/bin/sh","/bin/sh","-c",command.c_str(),NULL);
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
