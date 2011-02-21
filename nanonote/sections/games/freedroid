@@ -1,2 +1,3 @@
 title=freedroid
 exec=/usr/bin/freedroid
+params=-q
