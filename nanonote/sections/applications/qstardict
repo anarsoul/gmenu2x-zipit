@@ -1,0 +1,4 @@
+title=qStarDict
+icon=skin:icons/stardict.png
+exec=/usr/bin/qstardict
+params=-qws
