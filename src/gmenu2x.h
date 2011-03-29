@@ -36,6 +36,10 @@
 #include <vector>
 #include <tr1/unordered_map>
 
+#ifndef GMENU2X_SYSTEM_DIR
+#define GMENU2X_SYSTEM_DIR "/usr/share/gmenu2x"
+#endif
+
 const int MAX_VOLUME_SCALE_FACTOR = 200;
 // Default values - going to add settings adjustment, saving, loading and such
 const int VOLUME_SCALER_MUTE = 0;
