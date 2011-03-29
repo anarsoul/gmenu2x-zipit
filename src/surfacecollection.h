@@ -45,6 +45,7 @@ public:
 	void setSkin(const std::string &skin);
 	std::string getSkinFilePath(const std::string &file);
 	static std::string getSkinFilePath(const std::string &skin, const std::string &file);
+	static std::string getSkinPath(const std::string &skin);
 
 	bool defaultAlpha;
 	void debug();

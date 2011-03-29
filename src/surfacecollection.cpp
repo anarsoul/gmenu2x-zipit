@@ -38,6 +38,21 @@ void SurfaceCollection::setSkin(const string &skin) {
 	this->skin = skin;
 }
 
+/* Returns the location of a skin directory,
+ * from its name given as a parameter. */
+string SurfaceCollection::getSkinPath(const string &skin)
+{
+	string path = GMenu2X::getHome() + "/skins/" + skin;
+	if (fileExists(path))
+	  return path;
+
+	path = GMENU2X_SYSTEM_DIR "/skins/" + skin;
+	if (fileExists(path))
+	  return path;
+
+	return "";
+}
+
 string SurfaceCollection::getSkinFilePath(const string &file)
 {
 	return SurfaceCollection::getSkinFilePath(skin, file);
