@@ -673,7 +673,8 @@ void GMenu2X::writeConfigOpen2x() {
 
 void GMenu2X::writeSkinConfig() {
 	ledOn();
-	string conffile = path+"skins/"+confStr["skin"]+"/skin.conf";
+
+	string conffile = getHome() + "/skins/" + confStr["skin"] + "/skin.conf";
 	ofstream inf(conffile.c_str());
 	if (inf.is_open()) {
 		ConfStrHash::iterator endS = skinConfStr.end();
@@ -1242,8 +1243,12 @@ void GMenu2X::setSkin(const string &skin, bool setWallpaper) {
 	skinConfColors[COLOR_MESSAGE_BOX_BORDER] = (RGBAColor){80,80,80,255};
 	skinConfColors[COLOR_MESSAGE_BOX_SELECTION] = (RGBAColor){160,160,160,255};
 
-	//load skin settings
-	string skinconfname = "skins/"+skin+"/skin.conf";
+	/* Load skin settings from user directory if present,
+	 * or from the system directory. */
+	string skinconfname = getHome() + "/skins/" + skin + "/skin.conf";
+	if (!fileExists(skinconfname))
+	  skinconfname = GMENU2X_SYSTEM_DIR "/skins/" + skin + "/skin.conf";
+
 	if (fileExists(skinconfname)) {
 		ifstream skinconf(skinconfname.c_str(), ios_base::in);
 		if (skinconf.is_open()) {
