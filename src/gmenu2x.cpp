@@ -87,6 +87,7 @@ const char *CARD_ROOT = "/card/"; //Note: Add a trailing /!
 const int CARD_ROOT_LEN = 5;
 
 static GMenu2X *app;
+static string gmenu2x_home;
 
 using namespace std;
 using namespace fastdelegate;
@@ -121,12 +122,31 @@ static void quit_all(int err) {
     exit(err);
 }
 
+const string GMenu2X::getHome(void)
+{
+	return gmenu2x_home;
+}
+
 int main(int /*argc*/, char * /*argv*/[]) {
 	INFO("----\nGMenu2X starting: If you read this message in the logs, check http://gmenu2x.sourceforge.net/page/Troubleshooting for a solution\n----\n");
 
 	signal(SIGINT, &quit_all);
 	signal(SIGSEGV,&quit_all);
 	signal(SIGTERM,&quit_all);
+
+	char *home = getenv("HOME");
+	if (home == NULL) {
+		ERROR("Unable to find gmenu2x home directory. The $HOME variable is not defined.\n");
+		return 1;
+	}
+
+	gmenu2x_home = (string)home + (string)"/.gmenu2x";
+	if (!fileExists(gmenu2x_home) && mkdir(gmenu2x_home.c_str(), 0770) < 0) {
+		ERROR("Unable to create gmenu2x home directory.\n");
+		return 1;
+	}
+
+	DEBUG("Home path: %s.\n", gmenu2x_home.c_str());
 
 	app = new GMenu2X();
 	DEBUG("Starting main()\n");

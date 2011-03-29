@@ -155,6 +155,10 @@ public:
 	~GMenu2X();
 	void quit();
 
+	/* Returns the home directory of gmenu2x, usually
+	 * ~/.gmenu2x */
+	static const string getHome(void);
+
 	/*
 	 * Variables needed for elements disposition
 	 */
