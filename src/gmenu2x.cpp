@@ -329,7 +329,19 @@ GMenu2X::GMenu2X() {
 	}
 
 	initBG();
-	input.init(path+"input.conf");
+
+	/* If a user-specified input.conf file exists, we load it;
+	 * otherwise, we load the default one. */
+	const char *input_file = (getHome() + "/input.conf").c_str();
+	if (fileExists(input_file)) {
+		DEBUG("Loading user-specific input.conf file: %s.\n", input_file);
+	} else {
+		input_file = GMENU2X_SYSTEM_DIR "/input.conf";
+		DEBUG("Loading system input.conf file: %s.\n", input_file);
+	}
+
+	input.init(input_file);
+
 	setInputSpeed();
 	initServices();
 	setBacklight(confInt["backlight"]);
