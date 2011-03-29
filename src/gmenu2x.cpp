@@ -568,7 +568,7 @@ void GMenu2X::viewLog() {
 }
 
 void GMenu2X::readConfig() {
-	string conffile = path+"gmenu2x.conf";
+	string conffile = getHome() + "/gmenu2x.conf";
 	if (fileExists(conffile)) {
 		ifstream inf(conffile.c_str(), ios_base::in);
 		if (inf.is_open()) {
@@ -604,7 +604,7 @@ void GMenu2X::readConfig() {
 
 void GMenu2X::writeConfig() {
 	ledOn();
-	string conffile = path+"gmenu2x.conf";
+	string conffile = getHome() + "/gmenu2x.conf";
 	ofstream inf(conffile.c_str());
 	if (inf.is_open()) {
 		ConfStrHash::iterator endS = confStr.end();
