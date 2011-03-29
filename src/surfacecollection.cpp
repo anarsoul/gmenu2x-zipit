@@ -40,6 +40,11 @@ void SurfaceCollection::setSkin(const string &skin) {
 
 string SurfaceCollection::getSkinFilePath(const string &file)
 {
+	return SurfaceCollection::getSkinFilePath(skin, file);
+}
+
+string SurfaceCollection::getSkinFilePath(const string &skin, const string &file)
+{
 	/* We first search the skin file on the user-specific directory. */
 	string path = GMenu2X::getHome() + "/skins/" + skin + "/" + file;
 	if (fileExists(path))
