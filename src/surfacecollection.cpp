@@ -23,6 +23,8 @@
 #include "utilities.h"
 #include "debug.h"
 
+#include <iostream>
+
 using std::endl;
 using std::string;
 

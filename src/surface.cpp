@@ -18,14 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "surface.h"
+#include "imageio.h"
+#include "utilities.h"
+#include "debug.h"
+
 #include <SDL_gfxPrimitives.h>
 
 #include <iostream>
 using namespace std;
-
-#include "surface.h"
-#include "utilities.h"
-#include "debug.h"
 
 RGBAColor strtorgba(const string &strColor) {
 	RGBAColor c = {0,0,0,255};
@@ -124,7 +125,7 @@ void Surface::load(const string &img, bool alpha, const string &skin) {
 		skinpath = img;
 	}
 
-	SDL_Surface *buf = IMG_Load(skinpath.c_str());
+	SDL_Surface *buf = loadPNG(skinpath);
 	if (buf!=NULL) {
 		if (alpha)
 			raw = SDL_DisplayFormatAlpha(buf);

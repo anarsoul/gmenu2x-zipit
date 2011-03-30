@@ -20,9 +20,8 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
-#include <iostream>
 #include <SDL.h>
-#include <SDL_image.h>
+#include <string>
 
 #include "asfont.h"
 

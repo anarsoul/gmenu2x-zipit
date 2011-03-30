@@ -1,7 +1,8 @@
 #include "sfontplus.h"
 
+#include "imageio.h"
+
 #include <cassert>
-#include <SDL_image.h>
 #include <iostream>
 
 using namespace std;
@@ -63,7 +64,7 @@ bool SFontPlus::utf8Code(unsigned char c) {
 }
 
 void SFontPlus::initFont(const string &font, const string &characters) {
-	SDL_Surface *buf = IMG_Load(font.c_str());
+	SDL_Surface *buf = loadPNG(font);
 	if (buf!=NULL) {
 		initFont( SDL_DisplayFormatAlpha(buf), characters );
 		SDL_FreeSurface(buf);
