@@ -65,10 +65,12 @@ void FileLister::setFilter(const string &filter)
 	this->filter = filter;
 }
 
-void FileLister::browse()
+void FileLister::browse(bool clean)
 {
-	directories.clear();
-	files.clear();
+	if (clean) {
+		directories.clear();
+		files.clear();
+	}
 
 	if (showDirectories || showFiles) {
 		DIR *dirp;
