@@ -26,6 +26,7 @@ using namespace std;
 #include "surface.h"
 #include "utilities.h"
 #include "debug.h"
+#include "surfacecollection.h"
 
 RGBAColor strtorgba(const string &strColor) {
 	RGBAColor c = {0,0,0,255};
@@ -116,13 +117,10 @@ void Surface::load(const string &img, bool alpha, const string &skin) {
 	free();
 
 	string skinpath;
-	if (!skin.empty() && !img.empty() && img[0]!='/') {
-		skinpath = "skins/"+skin+"/"+img;
-		if (!fileExists(skinpath))
-			skinpath = "skins/Default/"+img;
-	} else {
-		skinpath = img;
-	}
+	if (!skin.empty() && !img.empty() && img[0]!='/')
+	  skinpath = SurfaceCollection::getSkinFilePath(skin, img);
+	else
+	  skinpath = img;
 
 	SDL_Surface *buf = IMG_Load(skinpath.c_str());
 	if (buf!=NULL) {
