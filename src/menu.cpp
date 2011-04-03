@@ -44,7 +44,16 @@ Menu::Menu(GMenu2X *gmenu2x) {
 	struct dirent *dptr;
 	string filepath;
 
-	if ((dirp = opendir("sections")) == NULL) return;
+	dirp = opendir((GMenu2X::getHome()+"/sections").c_str());
+	if (dirp == NULL) {
+		mkdir((GMenu2X::getHome()+"/sections").c_str(), 0770);
+		mkdir((GMenu2X::getHome()+"/sections/settings").c_str(), 0770);
+		mkdir((GMenu2X::getHome()+"/sections/applications").c_str(), 0770);
+		mkdir((GMenu2X::getHome()+"/sections/emulators").c_str(), 0770);
+		mkdir((GMenu2X::getHome()+"/sections/games").c_str(), 0770);
+
+		dirp = opendir((GMenu2X::getHome()+"/sections").c_str());
+	}
 
 	while ((dptr = readdir(dirp))) {
 		if (dptr->d_name[0]=='.') continue;
