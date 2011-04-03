@@ -57,7 +57,7 @@ Menu::Menu(GMenu2X *gmenu2x) {
 
 	while ((dptr = readdir(dirp))) {
 		if (dptr->d_name[0]=='.') continue;
-		filepath = (string)"sections/"+dptr->d_name;
+		filepath = GMenu2X::getHome()+(string)"/sections/"+dptr->d_name;
 		int statRet = stat(filepath.c_str(), &st);
 		if (!S_ISDIR(st.st_mode)) continue;
 		if (statRet != -1) {
@@ -165,7 +165,7 @@ void Menu::setSectionIndex(int i) {
 
 string Menu::sectionPath(int section) {
 	if (section<0 || section>(int)sections.size()) section = iSection;
-	return "sections/"+sections[section]+"/";
+	return GMenu2X::getHome()+"/sections/"+sections[section]+"/";
 }
 
 /*====================================
@@ -207,14 +207,14 @@ bool Menu::addLink(string path, string file, string section) {
 		title = title.substr(0, pos);
 	}
 
-	string linkpath = "sections/"+section+"/"+title;
+	string linkpath = GMenu2X::getHome()+"/sections/"+section+"/"+title;
 	int x=2;
 	while (fileExists(linkpath)) {
 		stringstream ss;
 		linkpath = "";
 		ss << x;
 		ss >> linkpath;
-		linkpath = "sections/"+section+"/"+title+linkpath;
+		linkpath = GMenu2X::getHome()+"/sections/"+section+"/"+title+linkpath;
 		x++;
 	}
 
@@ -293,7 +293,7 @@ bool Menu::addLink(string path, string file, string section) {
 }
 
 bool Menu::addSection(const string &sectionName) {
-	string sectiondir = "sections/"+sectionName;
+	string sectiondir = GMenu2X::getHome()+"/sections/"+sectionName;
 	if (mkdir(sectiondir.c_str(),0777)==0) {
 		sections.push_back(sectionName);
 		linklist ll;
