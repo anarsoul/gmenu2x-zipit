@@ -317,15 +317,8 @@ GMenu2X::GMenu2X() {
 	initMenu();
 
 	if (!fileExists(confStr["wallpaper"])) {
-		DEBUG("Searching wallpaper\n");
-
-		FileLister fl("skins/"+confStr["skin"]+"/wallpapers",false,true);
-		fl.setFilter(".png,.jpg,.jpeg,.bmp");
-		fl.browse();
-		if (fl.getFiles().size()<=0 && confStr["skin"] != "Default")
-			fl.setPath("skins/Default/wallpapers",true);
-		if (fl.getFiles().size()>0)
-			confStr["wallpaper"] = fl.getPath()+fl.getFiles()[0];
+		DEBUG("No wallpaper defined; we will take the default one.\n");
+		confStr["wallpaper"] = DEFAULT_WALLPAPER_PATH;
 	}
 
 	initBG();

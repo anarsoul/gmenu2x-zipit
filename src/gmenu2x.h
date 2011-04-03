@@ -40,6 +40,11 @@
 #define GMENU2X_SYSTEM_DIR "/usr/share/gmenu2x"
 #endif
 
+#ifndef DEFAULT_WALLPAPER_PATH
+#define DEFAULT_WALLPAPER_PATH \
+  GMENU2X_SYSTEM_DIR "/skins/Default/wallpapers/default.png"
+#endif
+
 const int MAX_VOLUME_SCALE_FACTOR = 200;
 // Default values - going to add settings adjustment, saving, loading and such
 const int VOLUME_SCALER_MUTE = 0;
