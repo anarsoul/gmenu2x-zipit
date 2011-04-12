@@ -1158,7 +1158,10 @@ void GMenu2X::options() {
 		if (curMenuClock!=confInt["menuClock"]) setClock(confInt["menuClock"]);
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
 		if (lang == "English") lang = "";
-		if (lang != tr.lang()) tr.setLang(lang);
+		if (lang != tr.lang()) {
+			tr.setLang(lang);
+			confStr["lang"] = lang;
+		}
 		/*if (fileExists(CARD_ROOT) && !showRootFolder)
 			unlink(CARD_ROOT);
 		else if (!fileExists(CARD_ROOT) && showRootFolder)
