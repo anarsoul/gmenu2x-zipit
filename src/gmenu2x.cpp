@@ -667,7 +667,14 @@ void GMenu2X::writeConfigOpen2x() {
 void GMenu2X::writeSkinConfig() {
 	ledOn();
 
-	string conffile = getHome() + "/skins/" + confStr["skin"] + "/skin.conf";
+	string conffile = getHome() + "/skins/";
+	if (!fileExists(conffile))
+	  mkdir(conffile.c_str(), 0770);
+	conffile = conffile + confStr["skin"];
+	if (!fileExists(conffile))
+	  mkdir(conffile.c_str(), 0770);
+	conffile = conffile + "/skin.conf";
+
 	ofstream inf(conffile.c_str());
 	if (inf.is_open()) {
 		ConfStrHash::iterator endS = skinConfStr.end();
