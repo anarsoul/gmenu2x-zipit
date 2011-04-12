@@ -2,6 +2,8 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#include <cstdio>
+
 #define NODEBUG_L 0
 #define ERROR_L 1
 #define WARNING_L 2
