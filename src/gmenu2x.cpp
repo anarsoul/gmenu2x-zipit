@@ -1187,9 +1187,12 @@ void GMenu2X::settingsOpen2x() {
 }
 
 void GMenu2X::skinMenu() {
-	FileLister fl_sk("skins",true,false);
+	FileLister fl_sk(GMENU2X_SYSTEM_DIR "/skins", true, false);
 	fl_sk.addExclude("..");
 	fl_sk.browse();
+	fl_sk.setPath(getHome() + "/skins", false);
+	fl_sk.browse(false);
+
 	string curSkin = confStr["skin"];
 
 	SettingsDialog sd(this, input, ts, tr["Skin"]);
