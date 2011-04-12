@@ -1121,8 +1121,11 @@ void GMenu2X::options() {
 	int prevbacklight = confInt["backlight"];
 	bool showRootFolder = fileExists(CARD_ROOT);
 
-	FileLister fl_tr("translations");
+	FileLister fl_tr(GMENU2X_SYSTEM_DIR "/translations");
 	fl_tr.browse();
+	fl_tr.setPath(getHome() + "/translations", false);
+	fl_tr.browse(false);
+
 	fl_tr.insertFile("English");
 	string lang = tr.lang();
 
