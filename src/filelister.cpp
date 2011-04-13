@@ -73,7 +73,7 @@ void FileLister::browse()
 	if (showDirectories || showFiles) {
 		DIR *dirp;
 		if ((dirp = opendir(path.c_str())) == NULL) {
-			ERROR("Error: opendir(%s)\n", path.c_str());
+			ERROR("Unable to open directory: %s\n", path.c_str());
 			return;
 		}
 
