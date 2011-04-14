@@ -38,12 +38,12 @@ bool WallpaperDialog::exec()
 	FileLister fl;
 	fl.setFilter(".png,.jpg,.jpeg,.bmp");
 
-	string filepath = GMENU2X_SYSTEM_DIR "/skins/"
+	string filepath = GMenu2X::getHome() + "/skins/"
 	  	+ gmenu2x->confStr["skin"] + "/wallpapers";
 	if (fileExists(filepath))
 	  fl.setPath(filepath, true);
 
-	filepath = GMenu2X::getHome() + "/skins/"
+	filepath = GMENU2X_SYSTEM_DIR "/skins/"
 	  	+ gmenu2x->confStr["skin"] + "/wallpapers";
 	if (fileExists(filepath)) {
 		fl.setPath(filepath, false);
@@ -51,13 +51,13 @@ bool WallpaperDialog::exec()
 	}
 
 	if (gmenu2x->confStr["skin"] != "Default") {
-		filepath = GMENU2X_SYSTEM_DIR "/skins/Default/wallpapers";
+		filepath = GMenu2X::getHome() + "/skins/Default/wallpapers";
 		if (fileExists(filepath)) {
 			fl.setPath(filepath, false);
 			fl.browse(false);
 		}
 
-		filepath = GMenu2X::getHome() + "/skins/Default/wallpapers";
+		filepath = GMENU2X_SYSTEM_DIR "/skins/Default/wallpapers";
 		if (fileExists(filepath)) {
 			fl.setPath(filepath, false);
 			fl.browse(false);

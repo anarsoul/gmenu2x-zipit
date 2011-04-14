@@ -88,8 +88,8 @@ void FileLister::browse(bool clean)
 
 		while ((dptr = readdir(dirp))) {
 			file = dptr->d_name;
-                        file_lowercase = file;
-                        std::transform(file_lowercase.begin(), file_lowercase.end(), file_lowercase.begin(), ::tolower);
+			file_lowercase = file;
+			std::transform(file_lowercase.begin(), file_lowercase.end(), file_lowercase.begin(), ::tolower);
 
 			if (file[0] == '.' && file != "..")
 				continue;
@@ -106,10 +106,18 @@ void FileLister::browse(bool clean)
 			if (S_ISDIR(st.st_mode)) {
 				if (!showDirectories)
 					continue;
+
+				if (std::find(directories.begin(), directories.end(), file) != directories.end())
+				  continue;
+
 				directories.push_back(file);
 			} else {
 				if (!showFiles)
 					continue;
+
+				if (std::find(files.begin(), files.end(), file) != files.end())
+				  continue;
+
 				for (vector<string>::iterator it = vfilter.begin(); it != vfilter.end(); ++it) {
 					if (it->length() <= file.length()) {
 						if (file_lowercase.compare(file.length() - it->length(), it->length(), *it) == 0) {

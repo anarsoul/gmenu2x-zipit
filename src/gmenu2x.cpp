@@ -1128,9 +1128,9 @@ void GMenu2X::options() {
 	int prevbacklight = confInt["backlight"];
 	bool showRootFolder = fileExists(CARD_ROOT);
 
-	FileLister fl_tr(GMENU2X_SYSTEM_DIR "/translations");
+	FileLister fl_tr(getHome() + "/translations");
 	fl_tr.browse();
-	fl_tr.setPath(getHome() + "/translations", false);
+	fl_tr.setPath(GMENU2X_SYSTEM_DIR "/translations", false);
 	fl_tr.browse(false);
 
 	fl_tr.insertFile("English");
@@ -1197,10 +1197,10 @@ void GMenu2X::settingsOpen2x() {
 }
 
 void GMenu2X::skinMenu() {
-	FileLister fl_sk(GMENU2X_SYSTEM_DIR "/skins", true, false);
+	FileLister fl_sk(getHome() + "/skins", true, false);
 	fl_sk.addExclude("..");
 	fl_sk.browse();
-	fl_sk.setPath(getHome() + "/skins", false);
+	fl_sk.setPath(GMENU2X_SYSTEM_DIR "/skins", false);
 	fl_sk.browse(false);
 
 	string curSkin = confStr["skin"];
