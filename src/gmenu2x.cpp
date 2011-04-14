@@ -1648,19 +1648,22 @@ void GMenu2X::renameSection() {
 		 && find(menu->getSections().begin(),menu->getSections().end(), id.getInput())
 				== menu->getSections().end()) {
 			//section directory doesn't exists
-			string newsectiondir = "sections/" + id.getInput();
-			string sectiondir = "sections/" + menu->selSection();
+			string newsectiondir = getHome() + "/sections/" + id.getInput();
+			string sectiondir = getHome() + "/sections/" + menu->selSection();
 			ledOn();
-			if (rename(sectiondir.c_str(), "tmpsection")==0 && rename("tmpsection", newsectiondir.c_str())==0) {
-				string oldpng = sectiondir+".png", newpng = newsectiondir+".png";
-				string oldicon = sc.getSkinFilePath(oldpng), newicon = sc.getSkinFilePath(newpng);
+
+			if (!rename(sectiondir.c_str(), newsectiondir.c_str())) {
+				string oldpng = menu->selSection() + ".png";
+				string newpng = id.getInput() + ".png";
+				string oldicon = sc.getSkinFilePath(oldpng);
+				string newicon = sc.getSkinFilePath(newpng);
+
 				if (!oldicon.empty() && newicon.empty()) {
 					newicon = oldicon;
 					newicon.replace(newicon.find(oldpng), oldpng.length(), newpng);
 
 					if (!fileExists(newicon)) {
-						rename(oldicon.c_str(), "tmpsectionicon");
-						rename("tmpsectionicon", newicon.c_str());
+						rename(oldicon.c_str(), newicon.c_str());
 						sc.move("skin:"+oldpng, "skin:"+newpng);
 					}
 				}
@@ -1678,7 +1681,7 @@ void GMenu2X::deleteSection() {
 	mb.setButton(CLEAR, tr["No"]);
 	if (mb.exec() == ACCEPT) {
 		ledOn();
-		if (rmtree(path+"sections/"+menu->selSection())) {
+		if (rmtree(getHome() + "/sections/" + menu->selSection())) {
 			menu->deleteSelectedSection();
 			sync();
 		}
