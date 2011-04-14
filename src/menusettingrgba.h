@@ -34,6 +34,7 @@ private:
 	RGBAColor originalValue;
 	RGBAColor *_value;
 
+	void update_value(int value);
 	void dec();
 	void inc();
 	void leftComponent();
