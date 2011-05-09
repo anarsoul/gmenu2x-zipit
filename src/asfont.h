@@ -45,9 +45,7 @@ public:
 	bool utf8Code(unsigned char c);
 
 	int getHeight();
-	int getHalfHeight();
 	int getLineHeight();
-	int getHalfLineHeight();
 	int getTextWidth(const char* text);
 	int getTextWidth(const std::string& text);
 	int getTextWidth(std::vector<std::string> *text);
@@ -58,7 +56,6 @@ public:
 
 private:
 	SFontPlus font;
-	int halfHeight, halfLineHeight;
 };
 
 #endif /* ASFONT_H */

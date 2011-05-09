@@ -177,8 +177,6 @@ unsigned SFontPlus::getLineHeight() {
 ASFont::ASFont(const std::string &fontImagePath)
 	: font(fontImagePath, SFONTPLUS_CHARSET)
 {
-	halfHeight = getHeight()/2;
-	halfLineHeight = getLineHeight()/2;
 }
 
 ASFont::~ASFont() {
@@ -208,7 +206,7 @@ void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, 
 	case VAlignTop:
 		break;
 	case VAlignMiddle:
-		y -= getHalfHeight();
+		y -= getHeight() / 2;
 		break;
 	case VAlignBottom:
 		y -= getHeight();
@@ -222,7 +220,7 @@ void ASFont::write(SDL_Surface* surface, std::vector<std::string> *text, int x, 
 	case VAlignTop:
 		break;
 	case VAlignMiddle:
-		y -= getHalfHeight()*text->size();
+		y -= (getHeight() / 2) * text->size();
 		break;
 	case VAlignBottom:
 		y -= getHeight()*text->size();
@@ -258,15 +256,8 @@ void ASFont::write(Surface* surface, const std::string& text, int x, int y, HAli
 int ASFont::getHeight() {
 	return font.getHeight();
 }
-int ASFont::getHalfHeight() {
-	return halfHeight;
-}
-
 int ASFont::getLineHeight() {
 	return font.getLineHeight();
-}
-int ASFont::getHalfLineHeight() {
-	return halfLineHeight;
 }
 
 int ASFont::getTextWidth(const char* text) {

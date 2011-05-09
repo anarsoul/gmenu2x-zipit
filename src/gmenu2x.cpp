@@ -1333,7 +1333,6 @@ void GMenu2X::contextMenu() {
 	uint i, sel=0, fadeAlpha=0;
 
 	int h = font->getHeight();
-	int h2 = font->getHalfHeight();
 	SDL_Rect box;
 	box.h = (h+2)*voices.size()+8;
 	box.w = 0;
@@ -1370,7 +1369,7 @@ void GMenu2X::contextMenu() {
 		//draw selection rect
 		s->box( selbox.x, selbox.y, selbox.w, selbox.h, skinConfColors[COLOR_MESSAGE_BOX_SELECTION] );
 		for (i=0; i<voices.size(); i++)
-			s->write( font, voices[i].text, box.x+12, box.y+h2+5+(h+2)*i, ASFont::HAlignLeft, ASFont::VAlignMiddle );
+			s->write( font, voices[i].text, box.x+12, box.y+5+(h+2)*i, ASFont::HAlignLeft, ASFont::VAlignTop );
 		s->flip();
 
 		//touchscreen
