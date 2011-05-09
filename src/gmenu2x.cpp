@@ -466,7 +466,7 @@ void GMenu2X::initMenu() {
 				menu->addActionLink(i,"USB Nand",MakeDelegate(this,&GMenu2X::activateNandUsb),tr["Activate Usb on Nand"],"skin:icons/usb.png");
 			//menu->addActionLink(i,"USB Root",MakeDelegate(this,&GMenu2X::activateRootUsb),tr["Activate Usb on the root of the Gp2x Filesystem"],"skin:icons/usb.png");*/
 #endif
-			if (fileExists(path+"log.txt"))
+			if (fileExists(getHome()+"/log.txt"))
 				menu->addActionLink(i,tr["Log Viewer"],MakeDelegate(this,&GMenu2X::viewLog),tr["Displays last launched program's output"],"skin:icons/ebook.png");
 			menu->addActionLink(i,tr["About"],MakeDelegate(this,&GMenu2X::about),tr["Info about GMenu2X"],"skin:icons/about.png");
 		}
@@ -532,7 +532,7 @@ and all the anonymous donors...\n\
 }
 
 void GMenu2X::viewLog() {
-	string logfile = path+"log.txt";
+	string logfile = getHome()+"/log.txt";
 	if (fileExists(logfile)) {
 		ifstream inf(logfile.c_str(), ios_base::in);
 		if (inf.is_open()) {
