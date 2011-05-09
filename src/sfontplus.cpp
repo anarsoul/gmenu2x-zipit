@@ -1,11 +1,7 @@
 #include "sfontplus.h"
-
 #include "imageio.h"
 
 #include <cassert>
-#include <iostream>
-
-using namespace std;
 
 Uint32 SFontPlus::getPixel(Sint32 x, Sint32 y) {
 	assert(x>=0);
@@ -49,7 +45,7 @@ SFontPlus::SFontPlus(SDL_Surface* font) {
 	initFont(font);
 }
 
-SFontPlus::SFontPlus(const string &font) {
+SFontPlus::SFontPlus(const std::string &font) {
 	surface = NULL;
 	initFont(font);
 }
@@ -63,7 +59,7 @@ bool SFontPlus::utf8Code(unsigned char c) {
 	//return c>=194;
 }
 
-void SFontPlus::initFont(const string &font, const string &characters) {
+void SFontPlus::initFont(const std::string &font, const std::string &characters) {
 	SDL_Surface *buf = loadPNG(font);
 	if (buf!=NULL) {
 		initFont( SDL_DisplayFormatAlpha(buf), characters );
@@ -71,7 +67,7 @@ void SFontPlus::initFont(const string &font, const string &characters) {
 	}
 }
 
-void SFontPlus::initFont(SDL_Surface *font, const string &characters) {
+void SFontPlus::initFont(SDL_Surface *font, const std::string &characters) {
 	freeFont();
 	this->characters = characters;
 	if (font==NULL) return;
@@ -79,22 +75,22 @@ void SFontPlus::initFont(SDL_Surface *font, const string &characters) {
 	Uint32 pink = SDL_MapRGB(surface->format, 255,0,255);
 #ifdef DEBUG
 	bool utf8 = false;
-	for (uint x=0; x<characters.length(); x++) {
+	for (unsigned x=0; x<characters.length(); x++) {
 		if (!utf8) utf8 = (unsigned char)characters[x]>128;
 		if (utf8) DEBUG("%d\n", (unsigned char)characters[x]);
 	}
 #endif
 
-	uint c = 0;
+	unsigned c = 0;
 
 	SDL_LockSurface(surface);
-	for (uint x=0; x<(uint)surface->w && c<characters.length(); x++) {
+	for (unsigned x=0; x<(unsigned)surface->w && c<characters.length(); x++) {
 		if (getPixel(x,0) == pink) {
-			uint startx = x;
+			unsigned startx = x;
 			charpos.push_back(x);
 
 			x++;
-			while (x<(uint)surface->w && getPixel(x,0) == pink) x++;
+			while (x<(unsigned)surface->w && getPixel(x,0) == pink) x++;
 			charpos.push_back(x);
 
 			//utf8 characters
@@ -110,12 +106,12 @@ void SFontPlus::initFont(SDL_Surface *font, const string &characters) {
 	SDL_UnlockSurface(surface);
 	Uint32 colKey = getPixel(0,surface->h-1);
 	SDL_SetColorKey(surface, SDL_SRCCOLORKEY, colKey);
-	string::size_type pos = characters.find("0")*2;
+	std::string::size_type pos = characters.find("0")*2;
 	SDL_Rect srcrect = {charpos[pos], 1, charpos[pos+2] - charpos[pos], surface->h - 1};
-	uint y = srcrect.h;
+	unsigned y = srcrect.h;
 	bool nonKeyFound = false;
 	while (y-- > 0 && !nonKeyFound) {
-		uint x = srcrect.w;
+		unsigned x = srcrect.w;
 		while (x-- > 0 && !nonKeyFound)
 			nonKeyFound = getPixel(x+srcrect.x,y+srcrect.y) != colKey;
 	}
@@ -129,10 +125,10 @@ void SFontPlus::freeFont() {
 	}
 }
 
-void SFontPlus::write(SDL_Surface *s, const string &text, int x, int y) {
+void SFontPlus::write(SDL_Surface *s, const std::string &text, int x, int y) {
 	if (text.empty()) return;
 
-	string::size_type pos;
+	std::string::size_type pos;
 	SDL_Rect srcrect, dstrect;
 
 	// these values won't change in the loop
@@ -140,14 +136,14 @@ void SFontPlus::write(SDL_Surface *s, const string &text, int x, int y) {
 	dstrect.y = y;
 	srcrect.h = dstrect.h = surface->h-1;
 
-	for(uint i=0; i<text.length() && x<surface->w; i++) {
+	for(unsigned i=0; i<text.length() && x<surface->w; i++) {
 		//Utf8 characters
 		if (utf8Code(text[i]) && i+1<text.length()) {
 			pos = characters.find(text.substr(i,2));
 			i++;
 		} else
 			pos = characters.find(text[i]);
-		if (pos == string::npos) {
+		if (pos == std::string::npos) {
 			x += charpos[2]-charpos[1];
 			continue;
 		}
@@ -164,18 +160,18 @@ void SFontPlus::write(SDL_Surface *s, const string &text, int x, int y) {
 	}
 }
 
-uint SFontPlus::getTextWidth(const string &text) {
-	string::size_type pos;
+unsigned SFontPlus::getTextWidth(const std::string &text) {
+	std::string::size_type pos;
 	int width = 0;
 
-	for(uint x=0; x<text.length(); x++) {
+	for(unsigned x=0; x<text.length(); x++) {
 		//Utf8 characters
 		if (utf8Code(text[x]) && x+1<text.length()) {
 			pos = characters.find(text.substr(x,2));
 			x++;
 		} else
 			pos = characters.find(text[x]);
-		if (pos == string::npos) {
+		if (pos == std::string::npos) {
 			width += charpos[2]-charpos[1];
 			continue;
 		}
@@ -187,10 +183,10 @@ uint SFontPlus::getTextWidth(const string &text) {
 	return width;
 }
 
-uint SFontPlus::getHeight() {
+unsigned SFontPlus::getHeight() {
 	return surface->h - 1;
 }
 
-uint SFontPlus::getLineHeight() {
+unsigned SFontPlus::getLineHeight() {
 	return lineHeight;
 }
