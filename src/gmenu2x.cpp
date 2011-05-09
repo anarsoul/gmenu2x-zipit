@@ -374,7 +374,7 @@ void GMenu2X::initBG() {
 	string df = getDiskFree();
 
 	sd.blit( sc["bgmain"], 3, bottomBarIconY );
-	sc["bgmain"]->write( font, df, 22, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
+	sc["bgmain"]->write( font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 	volumeX = 27+font->getTextWidth(df);
 	volume.blit( sc["bgmain"], volumeX, bottomBarIconY );
 	volumeX += 19;
@@ -845,7 +845,7 @@ void GMenu2X::main() {
 				sc[sectionIcon]->blit(s,x-16,sectionLinkPadding,32,32);
 			else
 				sc.skinRes("icons/section.png")->blit(s,x-16,sectionLinkPadding);
-			s->write( font, menu->getSections()[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, SFontHAlignCenter, SFontVAlignBottom );
+			s->write( font, menu->getSections()[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, ASFont::HAlignCenter, ASFont::VAlignBottom );
 		}
 
 		//Links
@@ -874,10 +874,10 @@ void GMenu2X::main() {
         */
 
 		if (menu->selLink()!=NULL) {
-			s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, SFontHAlignCenter, SFontVAlignBottom );
+			s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, ASFont::HAlignCenter, ASFont::VAlignBottom );
 			if (menu->selLinkApp()!=NULL) {
-				s->write ( font, menu->selLinkApp()->clockStr(confInt["maxClock"]), cpuX, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
-				s->write ( font, menu->selLinkApp()->volumeStr(), volumeX, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
+				s->write ( font, menu->selLinkApp()->clockStr(confInt["maxClock"]), cpuX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
+				s->write ( font, menu->selLinkApp()->volumeStr(), volumeX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 				//Manual indicator
 				if (!menu->selLinkApp()->getManual().empty())
 					sc.skinRes("imgs/manual.png")->blit(s,manualX,bottomBarIconY);
@@ -931,7 +931,7 @@ void GMenu2X::main() {
 			tickFPS = tickNow;
 			drawn_frames = 0;
 		}
-		s->write( font, fps+" FPS", resX-1,1 ,SFontHAlignRight );
+		s->write( font, fps+" FPS", resX-1,1 ,ASFont::HAlignRight );
 #endif
 
 		s->flip();
@@ -1371,7 +1371,7 @@ void GMenu2X::contextMenu() {
 		//draw selection rect
 		s->box( selbox.x, selbox.y, selbox.w, selbox.h, skinConfColors[COLOR_MESSAGE_BOX_SELECTION] );
 		for (i=0; i<voices.size(); i++)
-			s->write( font, voices[i].text, box.x+12, box.y+h2+5+(h+2)*i, SFontHAlignLeft, SFontVAlignMiddle );
+			s->write( font, voices[i].text, box.x+12, box.y+h2+5+(h+2)*i, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 		s->flip();
 
 		//touchscreen
@@ -1647,7 +1647,7 @@ void GMenu2X::scanner() {
 	Surface scanbg(bg);
 	drawButton(&scanbg, "x", tr["Exit"],
 	drawButton(&scanbg, "b", "", 5)-10);
-	scanbg.write(font,tr["Link Scanner"],halfX,7,SFontHAlignCenter,SFontVAlignMiddle);
+	scanbg.write(font,tr["Link Scanner"],halfX,7,ASFont::HAlignCenter,ASFont::VAlignMiddle);
 
 	uint lineY = 42;
 
@@ -1993,7 +1993,7 @@ int GMenu2X::drawButton(Surface *s, const string &btn, const string &text, int x
 	if (sc.skinRes("imgs/buttons/"+btn+".png") != NULL) {
 		sc["imgs/buttons/"+btn+".png"]->blit(s, x, y-7);
 		re.w = sc["imgs/buttons/"+btn+".png"]->raw->w+3;
-		s->write(font, text, x+re.w, y, SFontHAlignLeft, SFontVAlignMiddle);
+		s->write(font, text, x+re.w, y, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 		re.w += font->getTextWidth(text);
 	}
 	return x+re.w+6;
@@ -2005,7 +2005,7 @@ int GMenu2X::drawButtonRight(Surface *s, const string &btn, const string &text, 
 		x -= 16;
 		sc["imgs/buttons/"+btn+".png"]->blit(s, x, y-7);
 		x -= 3;
-		s->write(font, text, x, y, SFontHAlignRight, SFontVAlignMiddle);
+		s->write(font, text, x, y, ASFont::HAlignRight, ASFont::VAlignMiddle);
 		return x-6-font->getTextWidth(text);
 	}
 	return x-6;

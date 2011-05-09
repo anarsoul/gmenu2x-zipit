@@ -267,10 +267,6 @@ void Surface::blendAdd(Surface *target, int x, int y) {
 */
 }
 
-void Surface::write(ASFont *font, const string &text, int x, int y, const unsigned short halign, const unsigned short valign) {
-	font->write(this,text,x,y,halign,valign);
-}
-
 void Surface::operator = (SDL_Surface *s) {
 	raw = SDL_DisplayFormat(s);
 	halfW = raw->w/2;
@@ -340,21 +336,25 @@ void Surface::setClipRect(SDL_Rect rect) {
 	SDL_SetClipRect(raw,&rect);
 }
 
-bool Surface::blit(Surface *destination, SDL_Rect container, const unsigned short halign, const unsigned short valign) {
+bool Surface::blit(Surface *destination, SDL_Rect container, ASFont::HAlign halign, ASFont::VAlign valign) {
 	switch (halign) {
-	case SFontHAlignCenter:
+	case ASFont::HAlignLeft:
+		break;
+	case ASFont::HAlignCenter:
 		container.x += container.w/2-halfW;
 		break;
-	case SFontHAlignRight:
+	case ASFont::HAlignRight:
 		container.x += container.w-raw->w;
 		break;
 	}
 
 	switch (valign) {
-	case SFontVAlignMiddle:
+	case ASFont::VAlignTop:
+		break;
+	case ASFont::VAlignMiddle:
 		container.y += container.h/2-halfH;
 		break;
-	case SFontVAlignBottom:
+	case ASFont::VAlignBottom:
 		container.y += container.h-raw->h;
 		break;
 	}

@@ -75,14 +75,16 @@ public:
 	void setClipRect(SDL_Rect rect);
 
 	bool blit(Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
-	bool blit(Surface *destination, SDL_Rect container, const unsigned short halign=0, const unsigned short valign=0);
+	bool blit(Surface *destination, SDL_Rect container, ASFont::HAlign halign = ASFont::HAlignLeft, ASFont::VAlign valign = ASFont::VAlignTop);
 	bool blit(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitCenter(Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 
-	void write(ASFont *font, const string &text, int x, int y, const unsigned short halign=0, const unsigned short valign=0);
+	void write(ASFont *font, const string &text, int x, int y, ASFont::HAlign halign = ASFont::HAlignLeft, ASFont::VAlign valign = ASFont::VAlignTop) {
+		font->write(this, text, x, y, halign, valign);
+	}
 
 	int box(Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8);
 	int box(Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8);

@@ -32,33 +32,39 @@ void ASFont::write(SDL_Surface* surface, const char* text, int x, int y) {
 	font.write(surface, text, x, y);
 }
 
-void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, const unsigned short halign, const unsigned short valign) {
+void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
 	switch (halign) {
-	case SFontHAlignCenter:
+	case HAlignLeft:
+		break;
+	case HAlignCenter:
 		x -= getTextWidth(text)/2;
 		break;
-	case SFontHAlignRight:
+	case HAlignRight:
 		x -= getTextWidth(text);
 		break;
 	}
 
 	switch (valign) {
-	case SFontVAlignMiddle:
+	case VAlignTop:
+		break;
+	case VAlignMiddle:
 		y -= getHalfHeight();
 		break;
-	case SFontVAlignBottom:
+	case VAlignBottom:
 		y -= getHeight();
 		break;
 	}
 
 	font.write(surface, text, x, y);
 }
-void ASFont::write(SDL_Surface* surface, std::vector<std::string> *text, int x, int y, const unsigned short halign, const unsigned short valign) {
+void ASFont::write(SDL_Surface* surface, std::vector<std::string> *text, int x, int y, HAlign halign, VAlign valign) {
 	switch (valign) {
-	case SFontVAlignMiddle:
+	case VAlignTop:
+		break;
+	case VAlignMiddle:
 		y -= getHalfHeight()*text->size();
 		break;
-	case SFontVAlignBottom:
+	case VAlignBottom:
 		y -= getHeight()*text->size();
 		break;
 	}
@@ -66,10 +72,12 @@ void ASFont::write(SDL_Surface* surface, std::vector<std::string> *text, int x, 
 	for (unsigned i=0; i<text->size(); i++) {
 		int ix = x;
 		switch (halign) {
-		case SFontHAlignCenter:
+		case HAlignLeft:
+			break;
+		case HAlignCenter:
 			ix -= getTextWidth(text->at(i))/2;
 			break;
-		case SFontHAlignRight:
+		case HAlignRight:
 			ix -= getTextWidth(text->at(i));
 			break;
 		}
@@ -78,7 +86,7 @@ void ASFont::write(SDL_Surface* surface, std::vector<std::string> *text, int x, 
 	}
 }
 
-void ASFont::write(Surface* surface, const std::string& text, int x, int y, const unsigned short halign, const unsigned short valign) {
+void ASFont::write(Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
 	if (text.find("\n", 0) != std::string::npos) {
 		std::vector<std::string> textArr;
 		split(textArr,text,"\n");
