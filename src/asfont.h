@@ -12,9 +12,19 @@
 
 class Surface;
 
-#define SFONTPLUS_CHARSET "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¿ÀÁÈÉÌÍÒÓÙÚÝÄËÏÖÜŸÂÊÎÔÛÅÃÕÑÆÇČĎĚĽĹŇÔŘŔŠŤŮŽàáèéìíòóùúýäëïöüÿâêîôûåãõñæçčďěľĺňôřŕšťžůðßÐÞþАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяØøąćęłńśżźĄĆĘŁŃŚŻŹ"
-
 class SFontPlus {
+public:
+	SFontPlus(const std::string &fontImagePath, const std::string &characters);
+	~SFontPlus();
+
+	bool utf8Code(unsigned char c);
+
+	void write(SDL_Surface *s, const std::string &text, int x, int y);
+
+	unsigned getTextWidth(const std::string &text);
+	unsigned getHeight();
+	unsigned getLineHeight();
+
 private:
 	Uint32 getPixel(Sint32 x, Sint32 y);
 
@@ -22,24 +32,6 @@ private:
 	std::vector<unsigned> charpos;
 	std::string characters;
 	unsigned height, lineHeight;
-
-public:
-	SFontPlus();
-	SFontPlus(SDL_Surface *font);
-	SFontPlus(const std::string &font);
-	~SFontPlus();
-
-	bool utf8Code(unsigned char c);
-
-	void initFont(SDL_Surface *font, const std::string &characters = SFONTPLUS_CHARSET);
-	void initFont(const std::string &font, const std::string &characters = SFONTPLUS_CHARSET);
-	void freeFont();
-
-	void write(SDL_Surface *s, const std::string &text, int x, int y);
-
-	unsigned getTextWidth(const std::string &text);
-	unsigned getHeight();
-	unsigned getLineHeight();
 };
 
 class ASFont {
@@ -47,8 +39,6 @@ public:
 	enum HAlign { HAlignLeft, HAlignRight,  HAlignCenter };
 	enum VAlign { VAlignTop,  VAlignBottom, VAlignMiddle };
 
-	ASFont(SDL_Surface* font);
-	ASFont(Surface* font);
 	ASFont(const std::string &font);
 	~ASFont();
 
