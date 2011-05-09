@@ -48,7 +48,6 @@
 #include "linkaction.h"
 #include "menu.h"
 #include "asfont.h"
-#include "sfontplus.h"
 #include "surface.h"
 #include "filedialog.h"
 #include "gmenu2x.h"
