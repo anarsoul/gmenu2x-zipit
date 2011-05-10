@@ -90,6 +90,12 @@ void MenuSettingRGBA::manageInput(bevent_t *event) {
         case CLEAR:
             dec();
             break;
+		case ALTLEFT:
+			update_value(-10);
+			break;
+		case ALTRIGHT:
+			update_value(10);
+			break;
         case LEFT:
             leftComponent();
             break;
@@ -101,14 +107,19 @@ void MenuSettingRGBA::manageInput(bevent_t *event) {
     }
 }
 
+void MenuSettingRGBA::update_value(int value)
+{
+	setSelPart(constrain(getSelPart() + value, 0, 255));
+}
+
 void MenuSettingRGBA::dec()
 {
-	setSelPart(constrain(getSelPart()-1,0,255));
+	update_value(-1);
 }
 
 void MenuSettingRGBA::inc()
 {
-	setSelPart(constrain(getSelPart()+1,0,255));
+	update_value(+1);
 }
 
 void MenuSettingRGBA::leftComponent()
