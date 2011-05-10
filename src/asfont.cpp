@@ -173,7 +173,7 @@ int ASFont::getTextWidth(const std::string& text) {
 	return getTextWidth(text.c_str());
 }
 
-void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
+void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign) {
 	switch (halign) {
 	case HAlignLeft:
 		break;
@@ -184,7 +184,10 @@ void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, 
 		x -= getTextWidth(text);
 		break;
 	}
+	write(surface, text, x, y);
+}
 
+void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
 	switch (valign) {
 	case VAlignTop:
 		break;
@@ -195,9 +198,9 @@ void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, 
 		y -= getHeight();
 		break;
 	}
-
-	write(surface, text, x, y);
+	write(surface, text, x, y, halign);
 }
+
 void ASFont::write(SDL_Surface* surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign) {
 	switch (valign) {
 	case VAlignTop:
@@ -211,19 +214,7 @@ void ASFont::write(SDL_Surface* surface, const std::vector<std::string> &text, i
 	}
 
 	for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
-		int ix = x;
-		switch (halign) {
-		case HAlignLeft:
-			break;
-		case HAlignCenter:
-			ix -= getTextWidth(*it) / 2;
-			break;
-		case HAlignRight:
-			ix -= getTextWidth(*it);
-			break;
-		}
-
-		write(surface, *it, ix, y);
+		write(surface, *it, x, y, halign);
 		y += getHeight();
 	}
 }
