@@ -189,16 +189,12 @@ bool ASFont::utf8Code(unsigned char c) {
 	return font.utf8Code(c);
 }
 
-void ASFont::write(SDL_Surface* surface, const char* text, int x, int y) {
-	font.write(surface, text, x, y);
-}
-
 void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
 	switch (halign) {
 	case HAlignLeft:
 		break;
 	case HAlignCenter:
-		x -= getTextWidth(text)/2;
+		x -= getTextWidth(text) / 2;
 		break;
 	case HAlignRight:
 		x -= getTextWidth(text);
@@ -218,40 +214,41 @@ void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, 
 
 	font.write(surface, text, x, y);
 }
-void ASFont::write(SDL_Surface* surface, std::vector<std::string> *text, int x, int y, HAlign halign, VAlign valign) {
+void ASFont::write(SDL_Surface* surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign) {
 	switch (valign) {
 	case VAlignTop:
 		break;
 	case VAlignMiddle:
-		y -= (getHeight() / 2) * text->size();
+		y -= (getHeight() / 2) * text.size();
 		break;
 	case VAlignBottom:
-		y -= getHeight()*text->size();
+		y -= getHeight() * text.size();
 		break;
 	}
 
-	for (unsigned i=0; i<text->size(); i++) {
+	for (std::vector<std::string>::const_iterator it = text.begin(); it != text.end(); ++it) {
 		int ix = x;
 		switch (halign) {
 		case HAlignLeft:
 			break;
 		case HAlignCenter:
-			ix -= getTextWidth(text->at(i))/2;
+			ix -= getTextWidth(*it) / 2;
 			break;
 		case HAlignRight:
-			ix -= getTextWidth(text->at(i));
+			ix -= getTextWidth(*it);
 			break;
 		}
 
-		font.write(surface, text->at(i), x, y+getHeight()*i);
+		font.write(surface, *it, ix, y);
+		y += getHeight();
 	}
 }
 
 void ASFont::write(Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
 	if (text.find("\n", 0) != std::string::npos) {
 		std::vector<std::string> textArr;
-		split(textArr,text,"\n");
-		write(surface->raw, &textArr, x, y, halign, valign);
+		split(textArr, text, "\n");
+		write(surface->raw, textArr, x, y, halign, valign);
 	} else
 		write(surface->raw, text, x, y, halign, valign);
 }
