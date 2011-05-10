@@ -143,27 +143,30 @@ void SFontPlus::write(SDL_Surface *s, const std::string &text, int x, int y) {
 	}
 }
 
-unsigned SFontPlus::getTextWidth(const std::string &text) {
-	std::string::size_type pos;
-	int width = 0;
-
-	for(unsigned x=0; x<text.length(); x++) {
-		//Utf8 characters
-		if (utf8Code(text[x]) && x+1<text.length()) {
-			pos = characters.find(text.substr(x,2));
-			x++;
-		} else
-			pos = characters.find(text[x]);
-		if (pos == std::string::npos) {
-			width += charpos[2]-charpos[1];
-			continue;
+unsigned SFontPlus::getTextWidth(const char *text) {
+	unsigned maxWidth = 0, width = 0;
+	while (char ch = *text++) {
+		if (ch == '\n') {
+			// New line.
+			maxWidth = max(width, maxWidth);
+			width = 0;
+		} else {
+			std::string::size_type pos;
+			if (utf8Code(ch) && *text) {
+				// 2-byte character.
+				pos = characters.find(std::string(&text[-1], 2));
+				text++;
+			} else {
+				// 1-byte character.
+				pos = characters.find(ch);
+			}
+			if (pos == std::string::npos) {
+				pos = 0;
+			}
+			width += charpos[pos * 2 + 2] - charpos[pos * 2 + 1];
 		}
-
-		pos *= 2;
-		width += charpos[pos+2] - charpos[pos+1];
 	}
-
-	return width;
+	return max(width, maxWidth);
 }
 
 unsigned SFontPlus::getHeight() {
@@ -264,16 +267,5 @@ int ASFont::getTextWidth(const char* text) {
 	return font.getTextWidth(text);
 }
 int ASFont::getTextWidth(const std::string& text) {
-	if (text.find("\n", 0) != std::string::npos) {
-		std::vector<std::string> textArr;
-		split(textArr,text,"\n");
-		return getTextWidth(&textArr);
-	} else
-		return getTextWidth(text.c_str());
-}
-int ASFont::getTextWidth(std::vector<std::string> *text) {
-	int w = 0;
-	for (unsigned i=0; i<text->size(); i++)
-		w = max( getTextWidth(text->at(i).c_str()), w );
-	return w;
+	return font.getTextWidth(text.c_str());
 }

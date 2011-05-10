@@ -21,7 +21,7 @@ public:
 
 	void write(SDL_Surface *s, const std::string &text, int x, int y);
 
-	unsigned getTextWidth(const std::string &text);
+	unsigned getTextWidth(const char *text);
 	unsigned getHeight();
 	unsigned getLineHeight();
 
@@ -48,7 +48,6 @@ public:
 	int getLineHeight();
 	int getTextWidth(const char* text);
 	int getTextWidth(const std::string& text);
-	int getTextWidth(std::vector<std::string> *text);
 	void write(SDL_Surface* surface, const char* text, int x, int y);
 	void write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign = HAlignLeft, VAlign valign = VAlignTop);
 	void write(SDL_Surface* surface, std::vector<std::string> *text, int x, int y, HAlign halign = HAlignLeft, VAlign valign = VAlignTop);
