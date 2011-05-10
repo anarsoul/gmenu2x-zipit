@@ -7,7 +7,7 @@
 
 #define SFONTPLUS_CHARSET "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¿ÀÁÈÉÌÍÒÓÙÚÝÄËÏÖÜŸÂÊÎÔÛÅÃÕÑÆÇČĎĚĽĹŇÔŘŔŠŤŮŽàáèéìíòóùúýäëïöüÿâêîôûåãõñæçčďěľĺňôřŕšťžůðßÐÞþАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяØøąćęłńśżźĄĆĘŁŃŚŻŹ"
 
-Uint32 SFontPlus::getPixel(Sint32 x, Sint32 y) {
+Uint32 ASFont::getPixel(Sint32 x, Sint32 y) {
 	assert(x>=0);
 	assert(x<surface->w);
 	assert(y>=0);
@@ -40,8 +40,8 @@ Uint32 SFontPlus::getPixel(Sint32 x, Sint32 y) {
 	return 0;
 }
 
-SFontPlus::SFontPlus(const std::string &fontImagePath, const std::string &characters) {
-	this->characters = characters;
+ASFont::ASFont(const std::string &fontImagePath) {
+	this->characters = SFONTPLUS_CHARSET;
 
 	SDL_Surface *buf = loadPNG(fontImagePath);
 	if (!buf) {
@@ -97,18 +97,18 @@ SFontPlus::SFontPlus(const std::string &fontImagePath, const std::string &charac
 	lineHeight = y+1;
 }
 
-SFontPlus::~SFontPlus() {
+ASFont::~ASFont() {
 	if (surface) {
 		SDL_FreeSurface(surface);
 	}
 }
 
-bool SFontPlus::utf8Code(unsigned char c) {
+bool ASFont::utf8Code(unsigned char c) {
 	return (c>=194 && c<=198) || c==208 || c==209;
 	//return c>=194;
 }
 
-void SFontPlus::write(SDL_Surface *s, const std::string &text, int x, int y) {
+void ASFont::write(SDL_Surface *s, const std::string &text, int x, int y) {
 	if (text.empty()) return;
 
 	std::string::size_type pos;
@@ -143,8 +143,8 @@ void SFontPlus::write(SDL_Surface *s, const std::string &text, int x, int y) {
 	}
 }
 
-unsigned SFontPlus::getTextWidth(const char *text) {
-	unsigned maxWidth = 0, width = 0;
+int ASFont::getTextWidth(const char *text) {
+	int maxWidth = 0, width = 0;
 	while (char ch = *text++) {
 		if (ch == '\n') {
 			// New line.
@@ -169,24 +169,8 @@ unsigned SFontPlus::getTextWidth(const char *text) {
 	return max(width, maxWidth);
 }
 
-unsigned SFontPlus::getHeight() {
-	return surface->h - 1;
-}
-
-unsigned SFontPlus::getLineHeight() {
-	return lineHeight;
-}
-
-ASFont::ASFont(const std::string &fontImagePath)
-	: font(fontImagePath, SFONTPLUS_CHARSET)
-{
-}
-
-ASFont::~ASFont() {
-}
-
-bool ASFont::utf8Code(unsigned char c) {
-	return font.utf8Code(c);
+int ASFont::getTextWidth(const std::string& text) {
+	return getTextWidth(text.c_str());
 }
 
 void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
@@ -212,7 +196,7 @@ void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, 
 		break;
 	}
 
-	font.write(surface, text, x, y);
+	write(surface, text, x, y);
 }
 void ASFont::write(SDL_Surface* surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign) {
 	switch (valign) {
@@ -239,7 +223,7 @@ void ASFont::write(SDL_Surface* surface, const std::vector<std::string> &text, i
 			break;
 		}
 
-		font.write(surface, *it, ix, y);
+		write(surface, *it, ix, y);
 		y += getHeight();
 	}
 }
@@ -251,18 +235,4 @@ void ASFont::write(Surface* surface, const std::string& text, int x, int y, HAli
 		write(surface->raw, textArr, x, y, halign, valign);
 	} else
 		write(surface->raw, text, x, y, halign, valign);
-}
-
-int ASFont::getHeight() {
-	return font.getHeight();
-}
-int ASFont::getLineHeight() {
-	return font.getLineHeight();
-}
-
-int ASFont::getTextWidth(const char* text) {
-	return font.getTextWidth(text);
-}
-int ASFont::getTextWidth(const std::string& text) {
-	return font.getTextWidth(text.c_str());
 }

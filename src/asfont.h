@@ -12,28 +12,6 @@
 
 class Surface;
 
-class SFontPlus {
-public:
-	SFontPlus(const std::string &fontImagePath, const std::string &characters);
-	~SFontPlus();
-
-	bool utf8Code(unsigned char c);
-
-	void write(SDL_Surface *s, const std::string &text, int x, int y);
-
-	unsigned getTextWidth(const char *text);
-	unsigned getHeight();
-	unsigned getLineHeight();
-
-private:
-	Uint32 getPixel(Sint32 x, Sint32 y);
-
-	SDL_Surface *surface;
-	std::vector<unsigned> charpos;
-	std::string characters;
-	unsigned height, lineHeight;
-};
-
 class ASFont {
 public:
 	enum HAlign { HAlignLeft, HAlignRight,  HAlignCenter };
@@ -44,17 +22,28 @@ public:
 
 	bool utf8Code(unsigned char c);
 
-	int getHeight();
-	int getLineHeight();
-	int getTextWidth(const char* text);
+	int getTextWidth(const char *text);
 	int getTextWidth(const std::string& text);
+
+	int getHeight() {
+		return surface->h - 1;
+	}
+	int getLineHeight() {
+		return lineHeight;
+	}
+
 	void write(Surface* surface, const std::string& text, int x, int y, HAlign halign = HAlignLeft, VAlign valign = VAlignTop);
 
 private:
-	void write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign);
-	void write(SDL_Surface* surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign);
+	void write(SDL_Surface *s, const std::string &text, int x, int y);
+	void write(SDL_Surface *surface, const std::string& text, int x, int y, HAlign halign, VAlign valign);
+	void write(SDL_Surface *surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign);
+	Uint32 getPixel(Sint32 x, Sint32 y);
 
-	SFontPlus font;
+	SDL_Surface *surface;
+	std::vector<unsigned> charpos;
+	std::string characters;
+	int lineHeight;
 };
 
 #endif /* ASFONT_H */
