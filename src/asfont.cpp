@@ -4,6 +4,7 @@
 #include "utilities.h"
 
 #include <cassert>
+#include <cstring>
 
 #define SFONTPLUS_CHARSET "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¿ÀÁÈÉÌÍÒÓÙÚÝÄËÏÖÜŸÂÊÎÔÛÅÃÕÑÆÇČĎĚĽĹŇÔŘŔŠŤŮŽàáèéìíòóùúýäëïöüÿâêîôûåãõñæçčďěľĺňôřŕšťžůðßÐÞþАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяØøąćęłńśżźĄĆĘŁŃŚŻŹ"
 
@@ -40,28 +41,41 @@ Uint32 ASFont::getPixel(Sint32 x, Sint32 y) {
 	return 0;
 }
 
-ASFont::ASFont(const std::string &fontImagePath) {
-	this->characters = SFONTPLUS_CHARSET;
-
+ASFont::ASFont(const std::string &fontImagePath)
+	: characters(SFONTPLUS_CHARSET)
+{
+	// Load PNG file into an SDL surface.
 	SDL_Surface *buf = loadPNG(fontImagePath);
 	if (!buf) {
 		surface = NULL;
 		return;
 	}
-	surface = SDL_DisplayFormatAlpha(buf);
-	SDL_FreeSurface(buf);
+
+	// Make sure we have a surface that can be blitted using alpha blending.
+	if (buf->format->BytesPerPixel == 4) {
+		surface = buf;
+		SDL_SetAlpha(surface, SDL_SRCALPHA, 255);
+	} else {
+		SDL_PixelFormat format32;
+		memset(&format32, 0, sizeof(format32));
+		format32.BitsPerPixel = 32;
+		format32.BytesPerPixel = 4;
+		format32.Rmask =
+			SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0x00FF0000 : 0x000000FF;
+		format32.Gmask = 0x0000FF00;
+		format32.Bmask =
+			SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0x000000FF : 0x00FF0000;
+		format32.Amask = 0xFF000000;
+		format32.Rshift = SDL_BYTEORDER == SDL_BIG_ENDIAN ? 16 : 0;
+		format32.Gshift = 8;
+		format32.Bshift = SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0 : 16;
+		format32.Ashift = 24;
+		surface = SDL_ConvertSurface(buf, &format32, SDL_SRCALPHA);
+		SDL_FreeSurface(buf);
+	}
 
 	Uint32 pink = SDL_MapRGB(surface->format, 255,0,255);
-#ifdef DEBUG
-	bool utf8 = false;
-	for (unsigned x=0; x<characters.length(); x++) {
-		if (!utf8) utf8 = (unsigned char)characters[x]>128;
-		if (utf8) DEBUG("%d\n", (unsigned char)characters[x]);
-	}
-#endif
-
 	unsigned c = 0;
-
 	SDL_LockSurface(surface);
 	for (unsigned x=0; x<(unsigned)surface->w && c<characters.length(); x++) {
 		if (getPixel(x,0) == pink) {
@@ -84,7 +98,6 @@ ASFont::ASFont(const std::string &fontImagePath) {
 	}
 	SDL_UnlockSurface(surface);
 	Uint32 colKey = getPixel(0,surface->h-1);
-	SDL_SetColorKey(surface, SDL_SRCCOLORKEY, colKey);
 	std::string::size_type pos = characters.find("0")*2;
 	SDL_Rect srcrect = {charpos[pos], 1, charpos[pos+2] - charpos[pos], surface->h - 1};
 	unsigned y = srcrect.h;
