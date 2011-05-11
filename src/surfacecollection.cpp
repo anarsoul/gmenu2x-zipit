@@ -54,7 +54,7 @@ string SurfaceCollection::getSkinFilePath(const string &file) {
 void SurfaceCollection::debug() {
 	SurfaceHash::iterator end = surfaces.end();
 	for(SurfaceHash::iterator curr = surfaces.begin(); curr != end; curr++){
-		DEBUG("key: %i\n", curr->first);
+		DEBUG("key: %s\n", curr->first.c_str());
 	}
 }
 
