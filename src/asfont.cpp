@@ -8,39 +8,6 @@
 
 #define SFONTPLUS_CHARSET "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¿ÀÁÈÉÌÍÒÓÙÚÝÄËÏÖÜŸÂÊÎÔÛÅÃÕÑÆÇČĎĚĽĹŇÔŘŔŠŤŮŽàáèéìíòóùúýäëïöüÿâêîôûåãõñæçčďěľĺňôřŕšťžůðßÐÞþАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяØøąćęłńśżźĄĆĘŁŃŚŻŹ"
 
-Uint32 ASFont::getPixel(Sint32 x, Sint32 y) {
-	assert(x>=0);
-	assert(x<surface->w);
-	assert(y>=0);
-	assert(y<surface->h);
-
-	Uint32 Bpp = surface->format->BytesPerPixel;
-
-	// Get the pixel
-	switch(Bpp) {
-		case 1:
-			return *((Uint8 *)surface->pixels + y * surface->pitch + x);
-		break;
-		case 2:
-			return *((Uint16 *)surface->pixels + y * surface->pitch/2 + x);
-		break;
-		case 3: { // Format/endian independent
-			Uint8 *bits = ((Uint8 *)surface->pixels)+y*surface->pitch+x*Bpp;
-			Uint8 r, g, b;
-			r = *((bits)+surface->format->Rshift/8);
-			g = *((bits)+surface->format->Gshift/8);
-			b = *((bits)+surface->format->Bshift/8);
-			return SDL_MapRGB(surface->format, r, g, b);
-		}
-		break;
-		case 4:
-			return *((Uint32 *)surface->pixels + y * surface->pitch/4 + x);
-		break;
-	}
-
-	return 0;
-}
-
 ASFont::ASFont(const std::string &fontImagePath)
 	: characters(SFONTPLUS_CHARSET)
 {
@@ -73,41 +40,53 @@ ASFont::ASFont(const std::string &fontImagePath)
 		surface = SDL_ConvertSurface(buf, &format32, SDL_SRCALPHA);
 		SDL_FreeSurface(buf);
 	}
+	assert(surface->format->BytesPerPixel == 4);
 
-	Uint32 pink = SDL_MapRGB(surface->format, 255,0,255);
-	unsigned c = 0;
 	SDL_LockSurface(surface);
-	for (unsigned x=0; x<(unsigned)surface->w && c<characters.length(); x++) {
-		if (getPixel(x,0) == pink) {
-			unsigned startx = x;
+
+	// Determine character widths.
+	Uint32 pink = SDL_MapRGB(surface->format, 255, 0, 255);
+	Uint32 *topLine = static_cast<Uint32 *>(surface->pixels);
+	const unsigned width = surface->w;
+	unsigned x = 0;
+	unsigned c = 0;
+	while (c < characters.length()) {
+		while (x < width && topLine[x] != pink) x++;
+		unsigned startx = x;
+		x++;
+		while (x < width && topLine[x] == pink) x++;
+
+		charpos.push_back(startx);
+		charpos.push_back(x);
+		if (c > 0 && utf8Code(characters[c - 1])) {
+			// UTF8 character
+			charpos.push_back(startx);
 			charpos.push_back(x);
-
-			x++;
-			while (x<(unsigned)surface->w && getPixel(x,0) == pink) x++;
-			charpos.push_back(x);
-
-			//utf8 characters
-			if (c>0 && utf8Code(characters[c-1])) {
-				charpos.push_back(startx);
-				charpos.push_back(x);
-				c++;
-			}
-
 			c++;
 		}
+		c++;
 	}
-	SDL_UnlockSurface(surface);
-	Uint32 colKey = getPixel(0,surface->h-1);
-	std::string::size_type pos = characters.find("0")*2;
-	SDL_Rect srcrect = {charpos[pos], 1, charpos[pos+2] - charpos[pos], surface->h - 1};
+
+	// Scan height of "0" glyph.
+	std::string::size_type pos = characters.find("0") * 2;
+	SDL_Rect srcrect = {
+		charpos[pos], 1, charpos[pos + 2] - charpos[pos], surface->h - 1
+	};
+	const unsigned alphaMask = surface->format->Amask;
 	unsigned y = srcrect.h;
-	bool nonKeyFound = false;
-	while (y-- > 0 && !nonKeyFound) {
-		unsigned x = srcrect.w;
-		while (x-- > 0 && !nonKeyFound)
-			nonKeyFound = getPixel(x+srcrect.x,y+srcrect.y) != colKey;
+	bool nonTransparentFound = false;
+	while (!nonTransparentFound && y-- > 0) {
+		Uint32 *line = reinterpret_cast<Uint32 *>(
+			reinterpret_cast<Uint8 *>(surface->pixels)
+				+ (srcrect.y + y) * surface->pitch
+			);
+		for (unsigned x = 0; !nonTransparentFound && x < srcrect.w; x++) {
+			nonTransparentFound = (line[srcrect.x + x] & alphaMask) != 0;
+		}
 	}
-	lineHeight = y+1;
+	lineHeight = y + 1;
+
+	SDL_UnlockSurface(surface);
 }
 
 ASFont::~ASFont() {

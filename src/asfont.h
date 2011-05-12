@@ -35,7 +35,6 @@ public:
 	void write(Surface* surface, const std::string& text, int x, int y, HAlign halign = HAlignLeft, VAlign valign = VAlignTop);
 
 private:
-	Uint32 getPixel(Sint32 x, Sint32 y);
 	void write(SDL_Surface *surface, const std::string &text, int x, int y);
 	void write(SDL_Surface *surface, const std::string &text, int x, int y, HAlign halign);
 	void write(SDL_Surface *surface, const std::string &text, int x, int y, HAlign halign, VAlign valign);
