@@ -27,5 +27,49 @@ AC_ARG_WITH(sdl-gfx-prefix,
 
 AC_CHECK_LIB(SDL_gfx, rotozoomSurfaceXY,,check_sdl_gfx="no")
 
+AC_ARG_ENABLE(platform,
+			  [  --enable-platform=X        specify the targeted platform],
+			  [GMENU2X_PLATFORM="$enableval"], [GMENU2X_PLATFORM="default"])
 
-AC_OUTPUT(Makefile src/Makefile)
+case "$GMENU2X_PLATFORM" in
+	gp2x)
+		AC_DEFINE(PLATFORM_GP2X)
+		PLATFORM="gp2x"
+		SCREEN_RES="320x240"
+	;;
+	dingux)
+		AC_DEFINE(PLATFORM_DINGUX)
+		PLATFORM="dingux"
+		SCREEN_RES="320x240"
+	;;
+	nanonote)
+		AC_DEFINE(PLATFORM_NANONOTE)
+		PLATFORM="nanonote"
+		SCREEN_RES="320x240"
+	;;
+	pandora)
+		AC_DEFINE(PLATFORM_PANDORA)
+		PLATFORM="pandora"
+		SCREEN_RES="800x480"
+	;;
+	default)
+		AC_MSG_WARN([*** No --enable-platform specified. Defaulting to "pc".])
+		AC_DEFINE(PLATFORM_PC)
+		PLATFORM="pc"
+		SCREEN_RES="800x480"
+	;;
+	pc)
+		AC_DEFINE(PLATFORM_PC)
+		PLATFORM="pc"
+		SCREEN_RES="800x480"
+	;;
+	*)
+		AC_MSG_ERROR([*** Unknown platform.])
+	;;
+esac
+
+AC_SUBST(PLATFORM)
+AC_SUBST(SCREEN_RES)
+
+
+AC_OUTPUT(Makefile src/Makefile data/Makefile)
