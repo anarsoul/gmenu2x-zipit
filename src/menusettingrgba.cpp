@@ -63,10 +63,10 @@ void MenuSettingRGBA::draw(int y) {
 	MenuSetting::draw(y);
 	gmenu2x->s->rectangle( 153, y+1, 11, 11, 0,0,0,255 );
 	gmenu2x->s->box( 154, y+2, 9, 9, value() );
-	gmenu2x->s->write( gmenu2x->font, "R: "+strR, 169, y+gmenu2x->font->getHalfHeight(), SFontHAlignLeft, SFontVAlignMiddle );
-	gmenu2x->s->write( gmenu2x->font, "G: "+strG, 205, y+gmenu2x->font->getHalfHeight(), SFontHAlignLeft, SFontVAlignMiddle );
-	gmenu2x->s->write( gmenu2x->font, "B: "+strB, 241, y+gmenu2x->font->getHalfHeight(), SFontHAlignLeft, SFontVAlignMiddle );
-	gmenu2x->s->write( gmenu2x->font, "A: "+strA, 277, y+gmenu2x->font->getHalfHeight(), SFontHAlignLeft, SFontVAlignMiddle );
+	gmenu2x->s->write( gmenu2x->font, "R: "+strR, 169, y, ASFont::HAlignLeft, ASFont::VAlignTop );
+	gmenu2x->s->write( gmenu2x->font, "G: "+strG, 205, y, ASFont::HAlignLeft, ASFont::VAlignTop );
+	gmenu2x->s->write( gmenu2x->font, "B: "+strB, 241, y, ASFont::HAlignLeft, ASFont::VAlignTop );
+	gmenu2x->s->write( gmenu2x->font, "A: "+strA, 277, y, ASFont::HAlignLeft, ASFont::VAlignTop );
 }
 
 void MenuSettingRGBA::handleTS() {
@@ -90,6 +90,12 @@ void MenuSettingRGBA::manageInput(bevent_t *event) {
         case CLEAR:
             dec();
             break;
+		case ALTLEFT:
+			update_value(-10);
+			break;
+		case ALTRIGHT:
+			update_value(10);
+			break;
         case LEFT:
             leftComponent();
             break;
@@ -101,14 +107,19 @@ void MenuSettingRGBA::manageInput(bevent_t *event) {
     }
 }
 
+void MenuSettingRGBA::update_value(int value)
+{
+	setSelPart(constrain(getSelPart() + value, 0, 255));
+}
+
 void MenuSettingRGBA::dec()
 {
-	setSelPart(constrain(getSelPart()-1,0,255));
+	update_value(-1);
 }
 
 void MenuSettingRGBA::inc()
 {
-	setSelPart(constrain(getSelPart()+1,0,255));
+	update_value(+1);
 }
 
 void MenuSettingRGBA::leftComponent()

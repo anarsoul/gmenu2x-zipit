@@ -280,7 +280,7 @@ void LinkApp::drawRun() {
 	else
 		gmenu2x->sc["icons/generic.png"]->blit(gmenu2x->s,x,104);*/
 	gmenu2x->sc[getIconPath()]->blit(gmenu2x->s,x,gmenu2x->halfY-16);
-	gmenu2x->s->write( gmenu2x->font, text, x+42, gmenu2x->halfY+1, SFontHAlignLeft, SFontVAlignMiddle );
+	gmenu2x->s->write( gmenu2x->font, text, x+42, gmenu2x->halfY+1, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 	gmenu2x->s->flip();
 }
 
@@ -301,7 +301,8 @@ void LinkApp::showManual() {
 		gmenu2x->setClock(336);
 
 		Surface pngman(manual);
-		Surface bg(gmenu2x->confStr["wallpaper"],false);
+		// Note: Copy constructor converts to display format.
+		Surface bg(Surface(gmenu2x->confStr["wallpaper"]));
 		stringstream ss;
 		string pageStatus;
 
@@ -329,7 +330,7 @@ void LinkApp::showManual() {
 				ss << page+1;
 				ss >> pageStatus;
 				pageStatus = gmenu2x->tr["Page"]+": "+pageStatus+"/"+spagecount;
-				gmenu2x->s->write(gmenu2x->font, pageStatus, 310, 230, SFontHAlignRight, SFontVAlignMiddle);
+				gmenu2x->s->write(gmenu2x->font, pageStatus, 310, 230, ASFont::HAlignRight, ASFont::VAlignMiddle);
 
 				gmenu2x->s->flip();
 				repaint = false;

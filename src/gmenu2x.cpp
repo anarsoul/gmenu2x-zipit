@@ -48,7 +48,6 @@
 #include "linkaction.h"
 #include "menu.h"
 #include "asfont.h"
-#include "sfontplus.h"
 #include "surface.h"
 #include "filedialog.h"
 #include "gmenu2x.h"
@@ -215,6 +214,7 @@ void GMenu2X::gp2x_tvout_off() {
 #endif
 }
 
+
 GMenu2X::GMenu2X() {
 	//Detect firmware version and type
 	if (fileExists("/etc/open2x")) {
@@ -292,7 +292,7 @@ GMenu2X::GMenu2X() {
 #endif
 
 	//Screen
-	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK)<0 ) {
+	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK|SDL_INIT_TIMER)<0 ) {
 		ERROR("Could not initialize SDL: %s\n", SDL_GetError());
 		quit();
 	}
@@ -334,7 +334,7 @@ GMenu2X::GMenu2X() {
 	}
 
 	input.init(input_file);
-
+    PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
 	setInputSpeed();
 	initServices();
 	setBacklight(confInt["backlight"]);
@@ -345,6 +345,7 @@ GMenu2X::GMenu2X() {
 	readTmp();
 	if (lastSelectorElement>-1 && menu->selLinkApp()!=NULL && (!menu->selLinkApp()->getSelectorDir().empty() || !lastSelectorDir.empty()))
 		menu->selLinkApp()->selector(lastSelectorElement,lastSelectorDir);
+
 }
 
 GMenu2X::~GMenu2X() {
@@ -384,7 +385,8 @@ void GMenu2X::initBG() {
 		bg = new Surface(s);
 		bg->box(0,0,resX,resY,0,0,0);
 	} else {
-		bg = new Surface(confStr["wallpaper"],false);
+		// Note: Copy constructor converts to display format.
+		bg = new Surface(Surface(confStr["wallpaper"]));
 	}
 
 	drawTopBar(bg);
@@ -399,7 +401,7 @@ void GMenu2X::initBG() {
 	string df = getDiskFree();
 
 	sd.blit( sc["bgmain"], 3, bottomBarIconY );
-	sc["bgmain"]->write( font, df, 22, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
+	sc["bgmain"]->write( font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 	volumeX = 27+font->getTextWidth(df);
 	volume.blit( sc["bgmain"], volumeX, bottomBarIconY );
 	volumeX += 19;
@@ -587,6 +589,7 @@ void GMenu2X::readConfig() {
 	evalIntConf( &confInt["maxClock"], 430, 30, 500 );
 	evalIntConf( &confInt["menuClock"], 200, 30, 430 );
 	evalIntConf( &confInt["globalVolume"], 67, 0,100 );
+	evalIntConf( &confInt["backlightTimeout"], 15, 0,120 );
 	evalIntConf( &confInt["backlight"], 100, 5,100 );
 	evalIntConf( &confInt["videoBpp"], 32,32,32 ); // 8,16
 
@@ -850,7 +853,6 @@ void GMenu2X::main() {
 	if (!fileExists(CARD_ROOT))
 		CARD_ROOT = "/";
 
-
 	while (!quit) {
 		tickNow = SDL_GetTicks();
 
@@ -878,7 +880,7 @@ void GMenu2X::main() {
 				sc[sectionIcon]->blit(s,x-16,sectionLinkPadding,32,32);
 			else
 				sc.skinRes("icons/section.png")->blit(s,x-16,sectionLinkPadding);
-			s->write( font, menu->getSections()[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, SFontHAlignCenter, SFontVAlignBottom );
+			s->write( font, menu->getSections()[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, ASFont::HAlignCenter, ASFont::VAlignBottom );
 		}
 
 		//Links
@@ -907,10 +909,10 @@ void GMenu2X::main() {
         */
 
 		if (menu->selLink()!=NULL) {
-			s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, SFontHAlignCenter, SFontVAlignBottom );
+			s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, ASFont::HAlignCenter, ASFont::VAlignBottom );
 			if (menu->selLinkApp()!=NULL) {
-				s->write ( font, menu->selLinkApp()->clockStr(confInt["maxClock"]), cpuX, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
-				s->write ( font, menu->selLinkApp()->volumeStr(), volumeX, bottomBarTextY, SFontHAlignLeft, SFontVAlignMiddle );
+				s->write ( font, menu->selLinkApp()->clockStr(confInt["maxClock"]), cpuX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
+				s->write ( font, menu->selLinkApp()->volumeStr(), volumeX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 				//Manual indicator
 				if (!menu->selLinkApp()->getManual().empty())
 					sc.skinRes("imgs/manual.png")->blit(s,manualX,bottomBarIconY);
@@ -964,7 +966,7 @@ void GMenu2X::main() {
 			tickFPS = tickNow;
 			drawn_frames = 0;
 		}
-		s->write( font, fps+" FPS", resX-1,1 ,SFontHAlignRight );
+		s->write( font, fps+" FPS", resX-1,1 ,ASFont::HAlignRight );
 #endif
 
 		s->flip();
@@ -1149,6 +1151,7 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingBool(this,tr["Output logs"],tr["Logs the output of the links. Use the Log Viewer to read them."],&confInt["outputLogs"]));
 	//G
 	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set dingoo's Lcd Backlight value (default: 100)"],&confInt["backlight"],5,100));
+	sd.addSetting(new MenuSettingInt(this,tr["Screen Timeout"],tr["Set screen's backlight timeout in seconds"],&confInt["backlightTimeout"],0,120));
 //	sd.addSetting(new MenuSettingMultiString(this,tr["Tv-Out encoding"],tr["Encoding of the tv-out signal"],&confStr["tvoutEncoding"],&encodings));
 	sd.addSetting(new MenuSettingBool(this,tr["Show root"],tr["Show root folder in the file selection dialogs"],&showRootFolder));
 
@@ -1157,6 +1160,7 @@ void GMenu2X::options() {
 		if (prevbacklight != confInt["backlight"]) setBacklight(confInt["backlight"]);
 		if (curMenuClock!=confInt["menuClock"]) setClock(confInt["menuClock"]);
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
+        PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) {
 			tr.setLang(lang);
@@ -1377,7 +1381,6 @@ void GMenu2X::contextMenu() {
 	uint i, sel=0, fadeAlpha=0;
 
 	int h = font->getHeight();
-	int h2 = font->getHalfHeight();
 	SDL_Rect box;
 	box.h = (h+2)*voices.size()+8;
 	box.w = 0;
@@ -1414,7 +1417,7 @@ void GMenu2X::contextMenu() {
 		//draw selection rect
 		s->box( selbox.x, selbox.y, selbox.w, selbox.h, skinConfColors[COLOR_MESSAGE_BOX_SELECTION] );
 		for (i=0; i<voices.size(); i++)
-			s->write( font, voices[i].text, box.x+12, box.y+h2+5+(h+2)*i, SFontHAlignLeft, SFontVAlignMiddle );
+			s->write( font, voices[i].text, box.x+12, box.y+5+(h+2)*i, ASFont::HAlignLeft, ASFont::VAlignTop );
 		s->flip();
 
 		//touchscreen
@@ -1693,7 +1696,7 @@ void GMenu2X::scanner() {
 	Surface scanbg(bg);
 	drawButton(&scanbg, "x", tr["Exit"],
 	drawButton(&scanbg, "b", "", 5)-10);
-	scanbg.write(font,tr["Link Scanner"],halfX,7,SFontHAlignCenter,SFontVAlignMiddle);
+	scanbg.write(font,tr["Link Scanner"],halfX,7,ASFont::HAlignCenter,ASFont::VAlignMiddle);
 
 	uint lineY = 42;
 
@@ -2039,7 +2042,7 @@ int GMenu2X::drawButton(Surface *s, const string &btn, const string &text, int x
 	if (sc.skinRes("imgs/buttons/"+btn+".png") != NULL) {
 		sc["imgs/buttons/"+btn+".png"]->blit(s, x, y-7);
 		re.w = sc["imgs/buttons/"+btn+".png"]->raw->w+3;
-		s->write(font, text, x+re.w, y, SFontHAlignLeft, SFontVAlignMiddle);
+		s->write(font, text, x+re.w, y, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 		re.w += font->getTextWidth(text);
 	}
 	return x+re.w+6;
@@ -2051,7 +2054,7 @@ int GMenu2X::drawButtonRight(Surface *s, const string &btn, const string &text, 
 		x -= 16;
 		sc["imgs/buttons/"+btn+".png"]->blit(s, x, y-7);
 		x -= 3;
-		s->write(font, text, x, y, SFontHAlignRight, SFontVAlignMiddle);
+		s->write(font, text, x, y, ASFont::HAlignRight, ASFont::VAlignMiddle);
 		return x-6-font->getTextWidth(text);
 	}
 	return x-6;

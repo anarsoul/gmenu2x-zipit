@@ -30,6 +30,7 @@
 #include "inputmanager.h"
 #include "asfont.h"
 #include "surface.h"
+#include "powersaver.h"
 
 #include <iostream>
 #include <string>
@@ -131,6 +132,7 @@ private:
 		usbnet,
 		samba,
 		web;
+
 	string ip, defaultgw, lastSelectorDir;
 	int lastSelectorElement;
 	void readConfig();

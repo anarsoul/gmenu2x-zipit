@@ -2,9 +2,10 @@
 
 source /etc/profile
 
-setfont2 /usr/share/setfont2/un-fuzzy-6x10-font.pnm
-loadunimap /usr/share/setfont2/ben_uni.trans
-clear
+#setfont2 /usr/share/setfont2/un-fuzzy-6x10-font.pnm
+#loadunimap /usr/share/setfont2/ben_uni.trans
 
-cd /usr/share/gmenu2x
-./gmenu2x 
+setfont  /usr/share/kbd/consolefonts/kernel-6x11-font
+
+clear
+cd /usr/share/gmenu2x && ./gmenu2x

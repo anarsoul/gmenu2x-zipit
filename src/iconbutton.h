@@ -1,8 +1,10 @@
 #ifndef ICONBUTTON_H
 #define ICONBUTTON_H
 
-#include <string>
 #include "button.h"
+#include "asfont.h"
+
+#include <string>
 
 using std::string;
 
@@ -14,7 +16,8 @@ protected:
 	GMenu2X *gmenu2x;
 	string icon, label;
 	int labelPosition, labelMargin;
-	unsigned short labelHAlign, labelVAlign;
+	ASFont::HAlign labelHAlign;
+	ASFont::VAlign labelVAlign;
 	void recalcSize();
 	SDL_Rect iconRect, labelRect;
 

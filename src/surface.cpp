@@ -18,15 +18,16 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "surface.h"
+#include "imageio.h"
+#include "utilities.h"
+#include "debug.h"
+#include "surfacecollection.h"
+
 #include <SDL_gfxPrimitives.h>
 
 #include <iostream>
 using namespace std;
-
-#include "surface.h"
-#include "utilities.h"
-#include "debug.h"
-#include "surfacecollection.h"
 
 RGBAColor strtorgba(const string &strColor) {
 	RGBAColor c = {0,0,0,255};
@@ -42,54 +43,19 @@ Surface::Surface() {
 	dblbuffer = NULL;
 }
 
-Surface::Surface(const string &img, bool alpha, const string &skin) {
-	raw = NULL;
-	dblbuffer = NULL;
-	load(img, alpha, skin);
-	halfW = raw->w/2;
-	halfH = raw->h/2;
-}
-
-Surface::Surface(const string &img, const string &skin, bool alpha) {
-	raw = NULL;
-	dblbuffer = NULL;
-	load(img, alpha, skin);
-	halfW = raw->w/2;
-	halfH = raw->h/2;
-}
-
-Surface::Surface(SDL_Surface *s, SDL_PixelFormat *fmt, Uint32 flags) {
-	dblbuffer = NULL;
-	this->operator =(s);
-	if (fmt!=NULL || flags!=0) {
-		if (fmt==NULL) fmt = s->format;
-		if (flags==0) flags = s->flags;
-		raw = SDL_ConvertSurface( s, fmt, flags );
-	}
-}
-
 Surface::Surface(Surface *s) {
 	dblbuffer = NULL;
-	this->operator =(s->raw);
+	raw = SDL_DisplayFormat(s->raw);
+	halfW = raw->w/2;
+	halfH = raw->h/2;
 }
 
-Surface::Surface(int w, int h, Uint32 flags) {
+Surface::Surface(const string &img, const string &skin) {
+	raw = NULL;
 	dblbuffer = NULL;
-	Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-	raw = SDL_CreateRGBSurface( flags, w, h, 16, rmask, gmask, bmask, amask );
-	halfW = w/2;
-	halfH = h/2;
+	load(img, skin);
+	halfW = raw->w/2;
+	halfH = raw->h/2;
 }
 
 Surface::~Surface() {
@@ -113,7 +79,7 @@ SDL_PixelFormat *Surface::format() {
 		return raw->format;
 }
 
-void Surface::load(const string &img, bool alpha, const string &skin) {
+void Surface::load(const string &img, const string &skin) {
 	free();
 
 	string skinpath;
@@ -122,32 +88,9 @@ void Surface::load(const string &img, bool alpha, const string &skin) {
 	else
 	  skinpath = img;
 
-	SDL_Surface *buf = IMG_Load(skinpath.c_str());
-	if (buf!=NULL) {
-		if (alpha)
-			raw = SDL_DisplayFormatAlpha(buf);
-		else
-			raw = SDL_DisplayFormat(buf);
-		SDL_FreeSurface(buf);
-	} else {
+	raw = loadPNG(skinpath);
+	if (!raw) {
 		ERROR("Couldn't load surface '%s'\n", img.c_str());
-	}
-}
-
-void Surface::lock() {
-	if ( SDL_MUSTLOCK(raw) && !locked ) {
-		if ( SDL_LockSurface(raw) < 0 ) {
-			ERROR("Can't lock surface: '%s'\n", SDL_GetError());
-			SDL_Quit();
-		}
-		locked = true;
-	}
-}
-
-void Surface::unlock() {
-	if ( SDL_MUSTLOCK(raw) && locked ) {
-		SDL_UnlockSurface(raw);
-		locked = false;
 	}
 }
 
@@ -194,121 +137,24 @@ bool Surface::blitRight(Surface *destination, int x, int y, int w, int h, int a)
 	return blitRight(destination->raw,x,y,w,h,a);
 }
 
-void Surface::putPixel(int x, int y, SDL_Color color) {
-	putPixel(x,y, SDL_MapRGB( raw->format , color.r , color.g , color.b ));
-}
-
-void Surface::putPixel(int x, int y, Uint32 color) {
-	//determine position
-	char* pPosition = ( char* ) raw->pixels ;
-	//offset by y
-	pPosition += ( raw->pitch * y ) ;
-	//offset by x
-	pPosition += ( raw->format->BytesPerPixel * x ) ;
-	//copy pixel data
-	memcpy ( pPosition , &color , raw->format->BytesPerPixel ) ;
-}
-
-SDL_Color Surface::pixelColor(int x, int y) {
-	SDL_Color color;
-	Uint32 col = pixel(x,y);
-	SDL_GetRGB( col, raw->format, &color.r, &color.g, &color.b );
-	return color;
-}
-
-Uint32 Surface::pixel(int x, int y) {
-	//determine position
-	char* pPosition = ( char* ) raw->pixels ;
-	//offset by y
-	pPosition += ( raw->pitch * y ) ;
-	//offset by x
-	pPosition += ( raw->format->BytesPerPixel * x ) ;
-	//copy pixel data
-	Uint32 col = 0;
-	memcpy ( &col , pPosition , raw->format->BytesPerPixel ) ;
-	return col;
-}
-
-void Surface::blendAdd(Surface *target, int x, int y) {
-	SDL_Color targetcol, blendcol;
-	for (int iy=0; iy<raw->h; iy++)
-		if (iy+y >= 0 && iy+y < target->raw->h)
-			for (int ix=0; ix<raw->w; ix++) {
-				if (ix+x >= 0 && ix+x < target->raw->w) {
-					blendcol = pixelColor(ix,iy);
-					targetcol = target->pixelColor(ix+x,iy+y);
-					targetcol.r = min(targetcol.r+blendcol.r, 255);
-					targetcol.g = min(targetcol.g+blendcol.g, 255);
-					targetcol.b = min(targetcol.b+blendcol.b, 255);
-					target->putPixel(ix+x,iy+y,targetcol);
-				}
-			}
-
-/*
-	Uint32 bcol, tcol;
-	char *pPos, *tpPos;
-	for (int iy=0; iy<raw->h; iy++)
-		if (iy+y >= 0 && iy+y < target->raw->h) {
-			pPos = (char*)raw->pixels + raw->pitch*iy;
-			tpPos = (char*)target->raw->pixels + target->raw->pitch*(iy+y);
-
-			for (int ix=0; ix<raw->w; ix++) {
-				memcpy(&bcol, pPos, raw->format->BytesPerPixel);
-				memcpy(&tcol, tpPos, target->raw->format->BytesPerPixel);
-				//memcpy(tpPos, &bcol, target->raw->format->BytesPerPixel);
-				pPos += raw->format->BytesPerPixel;
-				tpPos += target->raw->format->BytesPerPixel;
-				target->putPixel(ix+x,iy+y,bcol);
-			}
-		}
-*/
-}
-
-void Surface::write(ASFont *font, const string &text, int x, int y, const unsigned short halign, const unsigned short valign) {
-	font->write(this,text,x,y,halign,valign);
-}
-
-void Surface::operator = (SDL_Surface *s) {
-	raw = SDL_DisplayFormat(s);
-	halfW = raw->w/2;
-	halfH = raw->h/2;
-}
-
-void Surface::operator = (Surface *s) {
-	this->operator =(s->raw);
-}
-
 int Surface::box(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 	return boxRGBA(raw,x,y,x+w-1,y+h-1,r,g,b,a);
 }
-int Surface::box(SDL_Rect re, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-	return boxRGBA(raw,re.x,re.y,re.x+re.w-1,re.y+re.h-1,r,g,b,a);
-}
-int Surface::box(SDL_Rect re, Uint8 r, Uint8 g, Uint8 b) {
-	return SDL_FillRect(raw, &re, SDL_MapRGBA(format(),r,g,b,255));
-}
 int Surface::box(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b) {
 	SDL_Rect re = {x,y,w,h};
-	return box(re,r,g,b);
+	return SDL_FillRect(raw, &re, SDL_MapRGBA(format(),r,g,b,255));
 }
 int Surface::box(Sint16 x, Sint16 y, Sint16 w, Sint16 h, RGBAColor c) {
 	return box(x,y,w,h,c.r,c.g,c.b,c.a);
 }
 int Surface::box(SDL_Rect re, RGBAColor c) {
-	return box(re,c.r,c.g,c.b,c.a);
+	return boxRGBA(
+		raw, re.x, re.y, re.x + re.w - 1, re.y + re.h - 1, c.r, c.g, c.b, c.a
+		);
 }
 
 int Surface::rectangle(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 	return rectangleRGBA(raw,x,y,x+w-1,y+h-1,r,g,b,a);
-}
-int Surface::rectangle(SDL_Rect re, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-	return rectangleRGBA(raw,re.x,re.y,re.x+re.w-1,re.y+re.h-1,r,g,b,a);
-}
-int Surface::rectangle(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b) {
-	return rectangleColor(raw, x,y,x+w-1,y+h-1, SDL_MapRGBA(format(),r,g,b,255));
-}
-int Surface::rectangle(SDL_Rect re, Uint8 r, Uint8 g, Uint8 b) {
-	return rectangleColor(raw, re.x,re.y,re.x+re.w-1,re.y+re.h-1, SDL_MapRGBA(format(),r,g,b,255));
 }
 int Surface::rectangle(Sint16 x, Sint16 y, Sint16 w, Sint16 h, RGBAColor c) {
 	return rectangle(x,y,w,h,c.r,c.g,c.b,c.a);
@@ -319,9 +165,6 @@ int Surface::rectangle(SDL_Rect re, RGBAColor c) {
 
 int Surface::hline(Sint16 x, Sint16 y, Sint16 w, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 	return hlineRGBA(raw,x,x+w-1,y,r,g,b,a);
-}
-int Surface::hline(Sint16 x, Sint16 y, Sint16 w, RGBAColor c) {
-	return hline(x,y,w-1,c.r,c.g,c.b,c.a);
 }
 
 void Surface::clearClipRect() {
@@ -337,21 +180,25 @@ void Surface::setClipRect(SDL_Rect rect) {
 	SDL_SetClipRect(raw,&rect);
 }
 
-bool Surface::blit(Surface *destination, SDL_Rect container, const unsigned short halign, const unsigned short valign) {
+bool Surface::blit(Surface *destination, SDL_Rect container, ASFont::HAlign halign, ASFont::VAlign valign) {
 	switch (halign) {
-	case SFontHAlignCenter:
+	case ASFont::HAlignLeft:
+		break;
+	case ASFont::HAlignCenter:
 		container.x += container.w/2-halfW;
 		break;
-	case SFontHAlignRight:
+	case ASFont::HAlignRight:
 		container.x += container.w-raw->w;
 		break;
 	}
 
 	switch (valign) {
-	case SFontVAlignMiddle:
+	case ASFont::VAlignTop:
+		break;
+	case ASFont::VAlignMiddle:
 		container.y += container.h/2-halfH;
 		break;
-	case SFontVAlignBottom:
+	case ASFont::VAlignBottom:
 		container.y += container.h-raw->h;
 		break;
 	}
