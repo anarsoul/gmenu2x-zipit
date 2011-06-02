@@ -301,7 +301,8 @@ void LinkApp::showManual() {
 		gmenu2x->setClock(336);
 
 		Surface pngman(manual);
-		Surface bg(gmenu2x->confStr["wallpaper"],false);
+		// Note: Copy constructor converts to display format.
+		Surface bg(Surface(gmenu2x->confStr["wallpaper"]));
 		stringstream ss;
 		string pageStatus;
 

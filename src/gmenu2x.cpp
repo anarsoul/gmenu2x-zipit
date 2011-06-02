@@ -361,7 +361,8 @@ void GMenu2X::initBG() {
 		bg = new Surface(s);
 		bg->box(0,0,resX,resY,0,0,0);
 	} else {
-		bg = new Surface(confStr["wallpaper"],false);
+		// Note: Copy constructor converts to display format.
+		bg = new Surface(Surface(confStr["wallpaper"]));
 	}
 
 	drawTopBar(bg);
