@@ -52,6 +52,7 @@ Surface::Surface(SDL_Surface *raw_, bool freeWhenDone_)
 
 Surface::Surface(Surface *s) {
 	raw = SDL_DisplayFormat(s->raw);
+	freeWhenDone = true;
 	halfW = raw->w/2;
 	halfH = raw->h/2;
 }
@@ -59,6 +60,7 @@ Surface::Surface(Surface *s) {
 Surface::Surface(const string &img, const string &skin) {
 	raw = NULL;
 	load(img, skin);
+	freeWhenDone = (raw != NULL);
 	halfW = raw->w/2;
 	halfH = raw->h/2;
 }
