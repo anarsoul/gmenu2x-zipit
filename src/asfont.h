@@ -35,10 +35,10 @@ public:
 	void write(Surface* surface, const std::string& text, int x, int y, HAlign halign = HAlignLeft, VAlign valign = VAlignTop);
 
 private:
-	void write(SDL_Surface *surface, const std::string &text, int x, int y);
-	void write(SDL_Surface *surface, const std::string &text, int x, int y, HAlign halign);
-	void write(SDL_Surface *surface, const std::string &text, int x, int y, HAlign halign, VAlign valign);
-	void write(SDL_Surface *surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign);
+	void writeLine(Surface *surface, const std::string &text, int x, int y);
+	void writeLine(Surface *surface, const std::string &text, int x, int y, HAlign halign);
+	void writeLine(Surface *surface, const std::string &text, int x, int y, HAlign halign, VAlign valign);
+	void writeLine(Surface *surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign);
 
 	SDL_Surface *surface;
 	std::vector<unsigned> charpos;

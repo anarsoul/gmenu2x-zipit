@@ -100,7 +100,7 @@ bool ASFont::utf8Code(unsigned char c) {
 	//return c>=194;
 }
 
-void ASFont::write(SDL_Surface *s, const std::string &text, int x, int y) {
+void ASFont::writeLine(Surface *s, const std::string &text, int x, int y) {
 	if (text.empty()) return;
 
 	std::string::size_type pos;
@@ -129,7 +129,7 @@ void ASFont::write(SDL_Surface *s, const std::string &text, int x, int y) {
 		srcrect.w = charpos[pos+2] - charpos[pos];
 		dstrect.x = x - charpos[pos+1] + charpos[pos];
 
-		SDL_BlitSurface(surface, &srcrect, s, &dstrect);
+		SDL_BlitSurface(surface, &srcrect, s->raw, &dstrect);
 
 		x += charpos[pos+2] - charpos[pos+1];
 	}
@@ -165,7 +165,7 @@ int ASFont::getTextWidth(const std::string& text) {
 	return getTextWidth(text.c_str());
 }
 
-void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign) {
+void ASFont::writeLine(Surface* surface, const std::string& text, int x, int y, HAlign halign) {
 	switch (halign) {
 	case HAlignLeft:
 		break;
@@ -176,10 +176,10 @@ void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, 
 		x -= getTextWidth(text);
 		break;
 	}
-	write(surface, text, x, y);
+	writeLine(surface, text, x, y);
 }
 
-void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
+void ASFont::writeLine(Surface* surface, const std::string& text, int x, int y, HAlign halign, VAlign valign) {
 	switch (valign) {
 	case VAlignTop:
 		break;
@@ -190,10 +190,10 @@ void ASFont::write(SDL_Surface* surface, const std::string& text, int x, int y, 
 		y -= getHeight();
 		break;
 	}
-	write(surface, text, x, y, halign);
+	writeLine(surface, text, x, y, halign);
 }
 
-void ASFont::write(SDL_Surface* surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign) {
+void ASFont::writeLine(Surface* surface, const std::vector<std::string> &text, int x, int y, HAlign halign, VAlign valign) {
 	switch (valign) {
 	case VAlignTop:
 		break;
@@ -215,7 +215,7 @@ void ASFont::write(Surface* surface, const std::string& text, int x, int y, HAli
 	if (text.find("\n", 0) != std::string::npos) {
 		std::vector<std::string> textArr;
 		split(textArr, text, "\n");
-		write(surface->raw, textArr, x, y, halign, valign);
+		writeLine(surface, textArr, x, y, halign, valign);
 	} else
-		write(surface->raw, text, x, y, halign, valign);
+		writeLine(surface, text, x, y, halign, valign);
 }
