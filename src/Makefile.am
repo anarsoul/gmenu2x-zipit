@@ -12,7 +12,7 @@ gmenu2x_SOURCES = asfont.cpp button.cpp cpu.cpp dirdialog.cpp filedialog.cpp \
 	textdialog.cpp textmanualdialog.cpp touchscreen.cpp translator.cpp \
 	utilities.cpp wallpaperdialog.cpp \
 	browsedialog.cpp buttonbox.cpp dialog.cpp \
-	imageio.cpp
+	imageio.cpp powersaver.cpp
 
 noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 	filedialog.h filelister.h gmenu2x.h gp2x.h iconbutton.h imagedialog.h \
@@ -25,7 +25,7 @@ noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 	surfacecollection.h surface.h textdialog.h textmanualdialog.h \
 	touchscreen.h translator.h utilities.h wallpaperdialog.h \
 	browsedialog.h buttonbox.h dialog.h \
-	imageio.h
+	imageio.h powersaver.h
 
 AM_CFLAGS= @CFLAGS@ @SDL_CFLAGS@
 

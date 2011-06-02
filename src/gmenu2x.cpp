@@ -194,6 +194,7 @@ void GMenu2X::gp2x_tvout_off() {
 #endif
 }
 
+
 GMenu2X::GMenu2X() {
 	//Detect firmware version and type
 	if (fileExists("/etc/open2x")) {
@@ -271,7 +272,7 @@ GMenu2X::GMenu2X() {
 #endif
 
 	//Screen
-	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK)<0 ) {
+	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK|SDL_INIT_TIMER)<0 ) {
 		ERROR("Could not initialize SDL: %s\n", SDL_GetError());
 		quit();
 	}
@@ -309,6 +310,7 @@ GMenu2X::GMenu2X() {
 
 	initBG();
 	input.init(path+"input.conf");
+    PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
 	setInputSpeed();
 	initServices();
 	setBacklight(confInt["backlight"]);
@@ -319,6 +321,7 @@ GMenu2X::GMenu2X() {
 	readTmp();
 	if (lastSelectorElement>-1 && menu->selLinkApp()!=NULL && (!menu->selLinkApp()->getSelectorDir().empty() || !lastSelectorDir.empty()))
 		menu->selLinkApp()->selector(lastSelectorElement,lastSelectorDir);
+
 }
 
 GMenu2X::~GMenu2X() {
@@ -561,6 +564,7 @@ void GMenu2X::readConfig() {
 	evalIntConf( &confInt["maxClock"], 430, 30, 500 );
 	evalIntConf( &confInt["menuClock"], 200, 30, 430 );
 	evalIntConf( &confInt["globalVolume"], 67, 0,100 );
+	evalIntConf( &confInt["backlightTimeout"], 15, 0,120 );
 	evalIntConf( &confInt["backlight"], 100, 5,100 );
 	evalIntConf( &confInt["videoBpp"], 32,32,32 ); // 8,16
 
@@ -815,7 +819,6 @@ void GMenu2X::main() {
 
 	if (!fileExists(CARD_ROOT))
 		CARD_ROOT = "/";
-
 
 	while (!quit) {
 		tickNow = SDL_GetTicks();
@@ -1112,6 +1115,7 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingBool(this,tr["Output logs"],tr["Logs the output of the links. Use the Log Viewer to read them."],&confInt["outputLogs"]));
 	//G
 	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set dingoo's Lcd Backlight value (default: 100)"],&confInt["backlight"],5,100));
+	sd.addSetting(new MenuSettingInt(this,tr["Screen Timeout"],tr["Set screen's backlight timeout in seconds"],&confInt["backlightTimeout"],0,120));
 //	sd.addSetting(new MenuSettingMultiString(this,tr["Tv-Out encoding"],tr["Encoding of the tv-out signal"],&confStr["tvoutEncoding"],&encodings));
 	sd.addSetting(new MenuSettingBool(this,tr["Show root"],tr["Show root folder in the file selection dialogs"],&showRootFolder));
 
@@ -1120,6 +1124,7 @@ void GMenu2X::options() {
 		if (prevbacklight != confInt["backlight"]) setBacklight(confInt["backlight"]);
 		if (curMenuClock!=confInt["menuClock"]) setClock(confInt["menuClock"]);
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
+        PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) {
 			tr.setLang(lang);
