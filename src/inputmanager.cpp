@@ -21,6 +21,7 @@
 #include "debug.h"
 #include "inputmanager.h"
 #include "utilities.h"
+#include "powersaver.h"
 
 #include <iostream>
 #include <fstream>
@@ -179,6 +180,8 @@ bool InputManager::getEvent(bevent_t *bevent, bool wait) {
               break;
           }
     }
-
+    if ( wait ) {
+        PowerSaver::getInstance()->resetScreenTimer();
+    }
     return true;
 }
