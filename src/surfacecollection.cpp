@@ -80,8 +80,10 @@ Surface *SurfaceCollection::add(const string &path) {
 			return NULL;
 	} else if (!fileExists(filePath)) return NULL;
 
-	Surface *s = new Surface(filePath);
-	surfaces[path] = s;
+	Surface *s = Surface::loadImage(filePath);
+	if (s != NULL) {
+		surfaces[path] = s;
+	}
 	return s;
 }
 
@@ -94,9 +96,10 @@ Surface *SurfaceCollection::addSkinRes(const string &path) {
 	string skinpath = getSkinFilePath(path);
 	if (skinpath.empty())
 		return NULL;
-	Surface *s = new Surface(skinpath);
-	if (s != NULL)
+	Surface *s = Surface::loadImage(skinpath);
+	if (s != NULL) {
 		surfaces[path] = s;
+	}
 	return s;
 }
 

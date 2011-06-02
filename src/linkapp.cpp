@@ -300,14 +300,17 @@ void LinkApp::showManual() {
 		//Raise the clock to speed-up the loading of the manual
 		gmenu2x->setClock(336);
 
-		Surface pngman(manual);
+		Surface *pngman = Surface::loadImage(manual);
+		if (!pngman) {
+			return;
+		}
 		// Note: Copy constructor converts to display format.
-		Surface bg(Surface(gmenu2x->confStr["wallpaper"]));
+		Surface bg(Surface::loadImage(gmenu2x->confStr["wallpaper"]));
 		stringstream ss;
 		string pageStatus;
 
 		bool close = false, repaint = true;
-		int page=0, pagecount=pngman.raw->w/320;
+		int page=0, pagecount=pngman->raw->w/320;
 
 		ss << pagecount;
 		string spagecount;
@@ -319,7 +322,7 @@ void LinkApp::showManual() {
 		while (!close) {
 			if (repaint) {
 				bg.blit(gmenu2x->s, 0, 0);
-				pngman.blit(gmenu2x->s, -page*320, 0);
+				pngman->blit(gmenu2x->s, -page*320, 0);
 
 				gmenu2x->drawBottomBar();
 				gmenu2x->drawButton(gmenu2x->s, "x", gmenu2x->tr["Exit"],

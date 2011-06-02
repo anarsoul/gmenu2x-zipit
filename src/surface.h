@@ -40,9 +40,9 @@ RGBAColor strtorgba(const string &strColor);
 class Surface {
 public:
 	static Surface *openOutputSurface(int width, int height, int bitsperpixel);
+	static Surface *loadImage(const string &img, const string &skin="");
 
 	Surface(Surface *s);
-	Surface(const string &img, const string &skin="");
 	~Surface();
 
 	SDL_Surface *raw;
@@ -74,7 +74,6 @@ public:
 private:
 	Surface(SDL_Surface *raw, bool freeWhenDone);
 	SDL_PixelFormat *format();
-	void load(const string &img, const string &skin);
 	bool blit(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);

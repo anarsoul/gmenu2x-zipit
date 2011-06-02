@@ -351,7 +351,7 @@ void GMenu2X::initBG() {
 		bg->box(0,0,resX,resY,0,0,0);
 	} else {
 		// Note: Copy constructor converts to display format.
-		bg = new Surface(Surface(confStr["wallpaper"]));
+		bg = new Surface(Surface::loadImage(confStr["wallpaper"]));
 	}
 
 	drawTopBar(bg);
@@ -360,37 +360,46 @@ void GMenu2X::initBG() {
 	Surface *bgmain = new Surface(bg);
 	sc.add(bgmain,"bgmain");
 
-	Surface sd("imgs/sd.png", confStr["skin"]);
-	Surface cpu("imgs/cpu.png", confStr["skin"]);
-	Surface volume("imgs/volume.png", confStr["skin"]);
+	Surface *sd = Surface::loadImage("imgs/sd.png", confStr["skin"]);
+	if (sd) sd->blit(sc["bgmain"], 3, bottomBarIconY);
 	string df = getDiskFree();
+	sc["bgmain"]->write(font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle);
+	free(sd);
 
-	sd.blit( sc["bgmain"], 3, bottomBarIconY );
-	sc["bgmain"]->write( font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
+	Surface *volume = Surface::loadImage("imgs/volume.png", confStr["skin"]);
 	volumeX = 27+font->getTextWidth(df);
-	volume.blit( sc["bgmain"], volumeX, bottomBarIconY );
+	if (volume) volume->blit(sc["bgmain"], volumeX, bottomBarIconY);
 	volumeX += 19;
+	free(volume);
+
+	Surface *cpu = Surface::loadImage("imgs/cpu.png", confStr["skin"]);
 	cpuX = volumeX+font->getTextWidth("100")+5;
-	cpu.blit( sc["bgmain"], cpuX, bottomBarIconY );
+	if (cpu) cpu->blit(sc["bgmain"], cpuX, bottomBarIconY);
 	cpuX += 19;
 	manualX = cpuX+font->getTextWidth("300Mhz")+5;
+	free(cpu);
 
 	int serviceX = resX-38;
 	if (usbnet) {
 		if (web) {
-			Surface webserver("imgs/webserver.png", confStr["skin"]);
-			webserver.blit( sc["bgmain"], serviceX, bottomBarIconY );
+			Surface *webserver = Surface::loadImage(
+				"imgs/webserver.png", confStr["skin"]);
+			if (webserver) webserver->blit(sc["bgmain"], serviceX, bottomBarIconY);
 			serviceX -= 19;
+			free(webserver);
 		}
 		if (samba) {
-			Surface sambaS("imgs/samba.png", confStr["skin"]);
-			sambaS.blit( sc["bgmain"], serviceX, bottomBarIconY );
+			Surface *sambaS = Surface::loadImage(
+				"imgs/samba.png", confStr["skin"]);
+			if (sambaS) sambaS->blit(sc["bgmain"], serviceX, bottomBarIconY);
 			serviceX -= 19;
+			free(sambaS);
 		}
 		if (inet) {
-			Surface inetS("imgs/inet.png", confStr["skin"]);
-			inetS.blit( sc["bgmain"], serviceX, bottomBarIconY );
+			Surface *inetS = Surface::loadImage("imgs/inet.png", confStr["skin"]);
+			if (inetS) inetS->blit(sc["bgmain"], serviceX, bottomBarIconY);
 			serviceX -= 19;
+			free(inetS);
 		}
 	}
 }

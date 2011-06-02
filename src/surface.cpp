@@ -44,23 +44,36 @@ Surface *Surface::openOutputSurface(int width, int height, int bitsperpixel) {
 	return raw ? new Surface(raw, false) : NULL;
 }
 
+Surface *Surface::loadImage(const string &img, const string &skin) {
+	string skinpath;
+	if (!skin.empty() && !img.empty() && img[0]!='/') {
+		skinpath = "skins/"+skin+"/"+img;
+		if (!fileExists(skinpath))
+			skinpath = "skins/Default/"+img;
+	} else {
+		skinpath = img;
+	}
+
+	SDL_Surface *raw = loadPNG(skinpath);
+	if (!raw) {
+		ERROR("Couldn't load surface '%s'\n", img.c_str());
+		return NULL;
+	}
+
+	return new Surface(raw, true);
+}
+
 Surface::Surface(SDL_Surface *raw_, bool freeWhenDone_)
 	: raw(raw_)
 	, freeWhenDone(freeWhenDone_)
 {
+	halfW = raw->w/2;
+	halfH = raw->h/2;
 }
 
 Surface::Surface(Surface *s) {
 	raw = SDL_DisplayFormat(s->raw);
 	freeWhenDone = true;
-	halfW = raw->w/2;
-	halfH = raw->h/2;
-}
-
-Surface::Surface(const string &img, const string &skin) {
-	raw = NULL;
-	load(img, skin);
-	freeWhenDone = (raw != NULL);
 	halfW = raw->w/2;
 	halfH = raw->h/2;
 }
@@ -76,22 +89,6 @@ SDL_PixelFormat *Surface::format() {
 		return NULL;
 	else
 		return raw->format;
-}
-
-void Surface::load(const string &img, const string &skin) {
-	string skinpath;
-	if (!skin.empty() && !img.empty() && img[0]!='/') {
-		skinpath = "skins/"+skin+"/"+img;
-		if (!fileExists(skinpath))
-			skinpath = "skins/Default/"+img;
-	} else {
-		skinpath = img;
-	}
-
-	raw = loadPNG(skinpath);
-	if (!raw) {
-		ERROR("Couldn't load surface '%s'\n", img.c_str());
-	}
 }
 
 void Surface::flip() {
