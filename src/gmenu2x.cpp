@@ -277,18 +277,7 @@ GMenu2X::GMenu2X() {
 		quit();
 	}
 
-	s = new Surface();
-#ifdef TARGET_GP2X
-	{
-		//I use a tmp variable to hide the cursor as soon as possible (and create the double buffer surface only after that)
-		//I'm forced to use SW surfaces since with HW there are issuse with changing the clock frequency
-		SDL_Surface *tmps = SDL_SetVideoMode(resX, resY, confInt["videoBpp"], SDL_SWSURFACE);
-		SDL_ShowCursor(0);
-		s->enableVirtualDoubleBuffer(tmps);
-	}
-#else
-	s->raw = SDL_SetVideoMode(resX, resY, confInt["videoBpp"], SDL_HWSURFACE|SDL_DOUBLEBUF);
-#endif
+	s = Surface::openOutputSurface(resX, resY, confInt["videoBpp"]);
 
 	bg = NULL;
 	font = NULL;

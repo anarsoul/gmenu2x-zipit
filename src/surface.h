@@ -39,12 +39,11 @@ RGBAColor strtorgba(const string &strColor);
 */
 class Surface {
 public:
-	Surface();
+	static Surface *openOutputSurface(int width, int height, int bitsperpixel);
+
 	Surface(Surface *s);
 	Surface(const string &img, const string &skin="");
 	~Surface();
-
-	void enableVirtualDoubleBuffer(SDL_Surface *surface);
 
 	SDL_Surface *raw;
 
@@ -74,15 +73,16 @@ public:
 	int hline(Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8);
 
 private:
+	Surface(SDL_Surface *raw, bool freeWhenDone);
 	SDL_PixelFormat *format();
 	void load(const string &img, const string &skin);
 	bool blit(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 
+	bool freeWhenDone;
 	bool locked;
 	int halfW, halfH;
-	SDL_Surface *dblbuffer;
 };
 
 #endif

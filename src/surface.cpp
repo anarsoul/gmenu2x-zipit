@@ -37,13 +37,20 @@ RGBAColor strtorgba(const string &strColor) {
 	return c;
 }
 
-Surface::Surface() {
-	raw = NULL;
-	dblbuffer = NULL;
+Surface *Surface::openOutputSurface(int width, int height, int bitsperpixel) {
+	SDL_ShowCursor(SDL_DISABLE);
+	SDL_Surface *raw = SDL_SetVideoMode(
+		width, height, bitsperpixel, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	return raw ? new Surface(raw, false) : NULL;
+}
+
+Surface::Surface(SDL_Surface *raw_, bool freeWhenDone_)
+	: raw(raw_)
+	, freeWhenDone(freeWhenDone_)
+{
 }
 
 Surface::Surface(Surface *s) {
-	dblbuffer = NULL;
 	raw = SDL_DisplayFormat(s->raw);
 	halfW = raw->w/2;
 	halfH = raw->h/2;
@@ -51,7 +58,6 @@ Surface::Surface(Surface *s) {
 
 Surface::Surface(const string &img, const string &skin) {
 	raw = NULL;
-	dblbuffer = NULL;
 	load(img, skin);
 	halfW = raw->w/2;
 	halfH = raw->h/2;
@@ -61,14 +67,10 @@ Surface::~Surface() {
 	free();
 }
 
-void Surface::enableVirtualDoubleBuffer(SDL_Surface *surface) {
-	dblbuffer = surface;
-	raw = SDL_DisplayFormat(dblbuffer);
-}
-
 void Surface::free() {
-	if (raw!=NULL) SDL_FreeSurface( raw );
-	if (dblbuffer!=NULL) SDL_FreeSurface( dblbuffer );
+	if (freeWhenDone) {
+		SDL_FreeSurface(raw);
+	}
 }
 
 SDL_PixelFormat *Surface::format() {
@@ -97,12 +99,7 @@ void Surface::load(const string &img, const string &skin) {
 }
 
 void Surface::flip() {
-	if (dblbuffer!=NULL) {
-		this->blit(dblbuffer,0,0);
-		SDL_Flip(dblbuffer);
-	} else {
-		SDL_Flip(raw);
-	}
+	SDL_Flip(raw);
 }
 
 bool Surface::blit(SDL_Surface *destination, int x, int y, int w, int h, int a) {
