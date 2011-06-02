@@ -49,10 +49,10 @@ Surface::Surface(Surface *s) {
 	halfH = raw->h/2;
 }
 
-Surface::Surface(const string &img, const string &skin, bool alpha) {
+Surface::Surface(const string &img, const string &skin) {
 	raw = NULL;
 	dblbuffer = NULL;
-	load(img, alpha, skin);
+	load(img, skin);
 	halfW = raw->w/2;
 	halfH = raw->h/2;
 }
@@ -78,7 +78,7 @@ SDL_PixelFormat *Surface::format() {
 		return raw->format;
 }
 
-void Surface::load(const string &img, bool alpha, const string &skin) {
+void Surface::load(const string &img, const string &skin) {
 	free();
 
 	string skinpath;
@@ -92,10 +92,7 @@ void Surface::load(const string &img, bool alpha, const string &skin) {
 
 	SDL_Surface *buf = loadPNG(skinpath);
 	if (buf!=NULL) {
-		if (alpha)
-			raw = SDL_DisplayFormatAlpha(buf);
-		else
-			raw = SDL_DisplayFormat(buf);
+		raw = SDL_DisplayFormatAlpha(buf);
 		SDL_FreeSurface(buf);
 	} else {
 		ERROR("Couldn't load surface '%s'\n", img.c_str());

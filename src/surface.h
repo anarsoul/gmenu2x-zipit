@@ -41,7 +41,7 @@ class Surface {
 public:
 	Surface();
 	Surface(Surface *s);
-	Surface(const string &img, const string &skin="", bool alpha=true);
+	Surface(const string &img, const string &skin="");
 	~Surface();
 
 	void enableVirtualDoubleBuffer(SDL_Surface *surface);
@@ -75,7 +75,7 @@ public:
 
 private:
 	SDL_PixelFormat *format();
-	void load(const string &img, bool alpha=true, const string &skin="");
+	void load(const string &img, const string &skin);
 	bool blit(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
