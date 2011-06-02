@@ -327,7 +327,7 @@ GMenu2X::~GMenu2X() {
 void GMenu2X::quit() {
 	fflush(NULL);
 	sc.clear();
-	s->free();
+	free(s);
 	SDL_Quit();
 #ifdef TARGET_GP2X
 /*	if (gp2x_mem!=0) {

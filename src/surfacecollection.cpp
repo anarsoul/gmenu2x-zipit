@@ -109,11 +109,7 @@ void SurfaceCollection::del(const string &path) {
 }
 
 void SurfaceCollection::clear() {
-	while (surfaces.size()>0) {
-		surfaces.begin()->second->free();
-		free(surfaces.begin()->second);
-		surfaces.erase(surfaces.begin());
-	}
+	surfaces.clear();
 }
 
 void SurfaceCollection::move(const string &from, const string &to) {

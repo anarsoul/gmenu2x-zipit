@@ -66,10 +66,6 @@ Surface::Surface(const string &img, const string &skin) {
 }
 
 Surface::~Surface() {
-	free();
-}
-
-void Surface::free() {
 	if (freeWhenDone) {
 		SDL_FreeSurface(raw);
 	}
@@ -83,8 +79,6 @@ SDL_PixelFormat *Surface::format() {
 }
 
 void Surface::load(const string &img, const string &skin) {
-	free();
-
 	string skinpath;
 	if (!skin.empty() && !img.empty() && img[0]!='/') {
 		skinpath = "skins/"+skin+"/"+img;

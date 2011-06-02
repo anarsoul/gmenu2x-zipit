@@ -47,7 +47,6 @@ public:
 
 	SDL_Surface *raw;
 
-	void free();
 	void flip();
 
 	void clearClipRect();
