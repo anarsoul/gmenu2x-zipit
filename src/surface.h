@@ -73,13 +73,11 @@ public:
 
 private:
 	Surface(SDL_Surface *raw, bool freeWhenDone);
-	SDL_PixelFormat *format();
 	bool blit(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 
 	bool freeWhenDone;
-	bool locked;
 	int halfW, halfH;
 };
 

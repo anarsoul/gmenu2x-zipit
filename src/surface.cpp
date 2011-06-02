@@ -84,13 +84,6 @@ Surface::~Surface() {
 	}
 }
 
-SDL_PixelFormat *Surface::format() {
-	if (raw==NULL)
-		return NULL;
-	else
-		return raw->format;
-}
-
 void Surface::flip() {
 	SDL_Flip(raw);
 }
@@ -134,7 +127,7 @@ int Surface::box(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8
 }
 int Surface::box(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b) {
 	SDL_Rect re = {x,y,w,h};
-	return SDL_FillRect(raw, &re, SDL_MapRGBA(format(),r,g,b,255));
+	return SDL_FillRect(raw, &re, SDL_MapRGBA(raw->format,r,g,b,255));
 }
 int Surface::box(Sint16 x, Sint16 y, Sint16 w, Sint16 h, RGBAColor c) {
 	return box(x,y,w,h,c.r,c.g,c.b,c.a);
