@@ -11,34 +11,9 @@
 ASFont::ASFont(const std::string &fontImagePath)
 	: characters(SFONTPLUS_CHARSET)
 {
-	// Load PNG file into an SDL surface.
-	SDL_Surface *buf = loadPNG(fontImagePath);
-	if (!buf) {
-		surface = NULL;
+	surface = loadPNG(fontImagePath);
+	if (!surface) {
 		return;
-	}
-
-	// Make sure we have a surface that can be blitted using alpha blending.
-	if (buf->format->BytesPerPixel == 4) {
-		surface = buf;
-		SDL_SetAlpha(surface, SDL_SRCALPHA, 255);
-	} else {
-		SDL_PixelFormat format32;
-		memset(&format32, 0, sizeof(format32));
-		format32.BitsPerPixel = 32;
-		format32.BytesPerPixel = 4;
-		format32.Rmask =
-			SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0x00FF0000 : 0x000000FF;
-		format32.Gmask = 0x0000FF00;
-		format32.Bmask =
-			SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0x000000FF : 0x00FF0000;
-		format32.Amask = 0xFF000000;
-		format32.Rshift = SDL_BYTEORDER == SDL_BIG_ENDIAN ? 16 : 0;
-		format32.Gshift = 8;
-		format32.Bshift = SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0 : 16;
-		format32.Ashift = 24;
-		surface = SDL_ConvertSurface(buf, &format32, SDL_SRCALPHA);
-		SDL_FreeSurface(buf);
 	}
 	assert(surface->format->BytesPerPixel == 4);
 

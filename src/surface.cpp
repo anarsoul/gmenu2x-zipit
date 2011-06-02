@@ -90,11 +90,8 @@ void Surface::load(const string &img, const string &skin) {
 		skinpath = img;
 	}
 
-	SDL_Surface *buf = loadPNG(skinpath);
-	if (buf!=NULL) {
-		raw = SDL_DisplayFormatAlpha(buf);
-		SDL_FreeSurface(buf);
-	} else {
+	raw = loadPNG(skinpath);
+	if (!raw) {
 		ERROR("Couldn't load surface '%s'\n", img.c_str());
 	}
 }
