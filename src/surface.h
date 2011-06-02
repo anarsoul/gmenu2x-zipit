@@ -38,18 +38,11 @@ RGBAColor strtorgba(const string &strColor);
 	@author Massimiliano Torromeo <massimiliano.torromeo@gmail.com>
 */
 class Surface {
-private:
-	bool locked;
-	int halfW, halfH;
-	SDL_Surface *dblbuffer;
-
 public:
 	Surface();
 	Surface(const string &img, const string &skin="", bool alpha=true);
 	Surface(const string &img, bool alpha, const string &skin="");
-	Surface(SDL_Surface *s, SDL_PixelFormat *fmt = NULL, Uint32 flags = 0);
 	Surface(Surface *s);
-	Surface(int w, int h, Uint32 flags = SDL_HWSURFACE|SDL_SRCALPHA);
 	~Surface();
 
 	void enableVirtualDoubleBuffer(SDL_Surface *surface);
@@ -57,18 +50,7 @@ public:
 	SDL_Surface *raw;
 
 	void free();
-	void load(const string &img, bool alpha=true, const string &skin="");
-	void lock();
-	void unlock();
 	void flip();
-	SDL_PixelFormat *format();
-
-	void putPixel(int,int,SDL_Color);
-	void putPixel(int,int,Uint32);
-	SDL_Color pixelColor(int,int);
-	Uint32 pixel(int,int);
-
-	void blendAdd(Surface*, int,int);
 
 	void clearClipRect();
 	void setClipRect(int x, int y, int w, int h);
@@ -76,11 +58,8 @@ public:
 
 	bool blit(Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blit(Surface *destination, SDL_Rect container, ASFont::HAlign halign = ASFont::HAlignLeft, ASFont::VAlign valign = ASFont::VAlignTop);
-	bool blit(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitCenter(Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
-	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
-	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 
 	void write(ASFont *font, const string &text, int x, int y, ASFont::HAlign halign = ASFont::HAlignLeft, ASFont::VAlign valign = ASFont::VAlignTop) {
 		font->write(this, text, x, y, halign, valign);
@@ -89,20 +68,22 @@ public:
 	int box(Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8);
 	int box(Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8);
 	int box(Sint16, Sint16, Sint16, Sint16, RGBAColor);
-	int box(SDL_Rect, Uint8, Uint8, Uint8, Uint8);
-	int box(SDL_Rect, Uint8, Uint8, Uint8);
 	int box(SDL_Rect, RGBAColor);
 	int rectangle(Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8);
-	int rectangle(Sint16, Sint16, Sint16, Sint16, Uint8, Uint8, Uint8);
 	int rectangle(Sint16, Sint16, Sint16, Sint16, RGBAColor);
-	int rectangle(SDL_Rect, Uint8, Uint8, Uint8, Uint8);
-	int rectangle(SDL_Rect, Uint8, Uint8, Uint8);
 	int rectangle(SDL_Rect, RGBAColor);
 	int hline(Sint16, Sint16, Sint16, Uint8, Uint8, Uint8, Uint8);
-	int hline(Sint16, Sint16, Sint16, RGBAColor);
 
-	void operator = (SDL_Surface*);
-	void operator = (Surface*);
+private:
+	SDL_PixelFormat *format();
+	void load(const string &img, bool alpha=true, const string &skin="");
+	bool blit(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
+	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
+	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
+
+	bool locked;
+	int halfW, halfH;
+	SDL_Surface *dblbuffer;
 };
 
 #endif
