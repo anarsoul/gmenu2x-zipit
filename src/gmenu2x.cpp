@@ -1441,24 +1441,6 @@ void GMenu2X::changeWallpaper() {
 	}
 }
 
-void GMenu2X::saveScreenshot() {
-	ledOn();
-	uint x = 0;
-	stringstream ss;
-	string fname;
-	do {
-		x++;
-		fname = "";
-		ss.clear();
-		ss << x;
-		ss >> fname;
-		fname = "screen"+fname+".bmp";
-	} while (fileExists(fname));
-	SDL_SaveBMP(s->raw,fname.c_str());
-	sync();
-	ledOff();
-}
-
 void GMenu2X::addLink() {
 	FileDialog fd(this,tr["Select an application"]);
 	if (fd.exec()) {
@@ -1994,7 +1976,7 @@ int GMenu2X::drawButton(Surface *s, const string &btn, const string &text, int x
 	SDL_Rect re = {x, y-7, 0, 16};
 	if (sc.skinRes("imgs/buttons/"+btn+".png") != NULL) {
 		sc["imgs/buttons/"+btn+".png"]->blit(s, x, y-7);
-		re.w = sc["imgs/buttons/"+btn+".png"]->raw->w+3;
+		re.w = sc["imgs/buttons/"+btn+".png"]->width() + 3;
 		s->write(font, text, x+re.w, y, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 		re.w += font->getTextWidth(text);
 	}
@@ -2046,7 +2028,7 @@ void GMenu2X::drawBottomBar(Surface *s) {
 
 	Surface *bar = sc.skinRes("imgs/bottombar.png");
 	if (bar != NULL)
-		bar->blit(s, 0, resY-bar->raw->h);
+		bar->blit(s, 0, resY-bar->height());
 	else
 		s->box(0, resY-20, resX, 20, skinConfColors[COLOR_BOTTOM_BAR_BG]);
 }

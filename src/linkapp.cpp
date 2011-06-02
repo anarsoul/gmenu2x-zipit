@@ -310,7 +310,7 @@ void LinkApp::showManual() {
 		string pageStatus;
 
 		bool close = false, repaint = true;
-		int page=0, pagecount=pngman->raw->w/320;
+		int page = 0, pagecount = pngman->width() / 320;
 
 		ss << pagecount;
 		string spagecount;

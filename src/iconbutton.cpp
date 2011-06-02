@@ -52,8 +52,8 @@ void IconButton::recalcSize() {
 		margin = 0;
 
 	if (iconSurface != NULL) {
-		w += iconSurface->raw->w;
-		h += iconSurface->raw->h;
+		w += iconSurface->width();
+		h += iconSurface->height();
 		iconRect.w = w;
 		iconRect.h = h;
 		iconRect.x = rect.x;

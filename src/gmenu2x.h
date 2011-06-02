@@ -210,7 +210,6 @@ public:
 	void viewLog();
 	void contextMenu();
 	void changeWallpaper();
-	void saveScreenshot();
 
 	void applyRamTimings();
 	void applyDefaultTimings();

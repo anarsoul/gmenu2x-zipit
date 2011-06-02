@@ -45,7 +45,8 @@ public:
 	Surface(Surface *s);
 	~Surface();
 
-	SDL_Surface *raw;
+	int width() { return raw->w; }
+	int height() { return raw->h; }
 
 	void flip();
 
@@ -77,8 +78,12 @@ private:
 	bool blitCenter(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 	bool blitRight(SDL_Surface *destination, int x, int y, int w=0, int h=0, int a=-1);
 
+	SDL_Surface *raw;
 	bool freeWhenDone;
 	int halfW, halfH;
+
+	// For direct access to "raw".
+	friend class ASFont;
 };
 
 #endif
