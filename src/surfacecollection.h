@@ -33,13 +33,8 @@ Hash Map of surfaces that loads surfaces not already loaded and reuses already l
 	@author Massimiliano Torromeo <massimiliano.torromeo@gmail.com>
 */
 class SurfaceCollection {
-private:
-	SurfaceHash surfaces;
-	std::string skin;
-
 public:
-	SurfaceCollection(
-			bool defaultAlpha = true, const std::string &skin = "default");
+	SurfaceCollection();
 	~SurfaceCollection();
 
 	void setSkin(const std::string &skin);
@@ -49,8 +44,8 @@ public:
 	void debug();
 
 	Surface *add(Surface *s, const std::string &path);
-	Surface *add(const std::string &path, bool alpha=true);
-	Surface *addSkinRes(const std::string &path, bool alpha=true);
+	Surface *add(const std::string &path);
+	Surface *addSkinRes(const std::string &path);
 	void     del(const std::string &path);
 	void     clear();
 	void     move(const std::string &from, const std::string &to);
@@ -58,6 +53,10 @@ public:
 
 	Surface *operator[](const std::string &);
 	Surface *skinRes(const std::string &);
+
+private:
+	SurfaceHash surfaces;
+	std::string skin;
 };
 
 #endif
