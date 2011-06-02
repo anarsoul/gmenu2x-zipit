@@ -42,10 +42,9 @@ Surface::Surface() {
 	dblbuffer = NULL;
 }
 
-Surface::Surface(const string &img, bool alpha, const string &skin) {
-	raw = NULL;
+Surface::Surface(Surface *s) {
 	dblbuffer = NULL;
-	load(img, alpha, skin);
+	raw = SDL_DisplayFormat(s->raw);
 	halfW = raw->w/2;
 	halfH = raw->h/2;
 }
@@ -54,13 +53,6 @@ Surface::Surface(const string &img, const string &skin, bool alpha) {
 	raw = NULL;
 	dblbuffer = NULL;
 	load(img, alpha, skin);
-	halfW = raw->w/2;
-	halfH = raw->h/2;
-}
-
-Surface::Surface(Surface *s) {
-	dblbuffer = NULL;
-	raw = SDL_DisplayFormat(s->raw);
 	halfW = raw->w/2;
 	halfH = raw->h/2;
 }

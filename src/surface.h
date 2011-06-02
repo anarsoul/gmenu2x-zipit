@@ -40,9 +40,8 @@ RGBAColor strtorgba(const string &strColor);
 class Surface {
 public:
 	Surface();
-	Surface(const string &img, const string &skin="", bool alpha=true);
-	Surface(const string &img, bool alpha, const string &skin="");
 	Surface(Surface *s);
+	Surface(const string &img, const string &skin="", bool alpha=true);
 	~Surface();
 
 	void enableVirtualDoubleBuffer(SDL_Surface *surface);
