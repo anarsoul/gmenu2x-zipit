@@ -44,6 +44,14 @@ Surface *Surface::openOutputSurface(int width, int height, int bitsperpixel) {
 	return raw ? new Surface(raw, false) : NULL;
 }
 
+Surface *Surface::emptySurface(int width, int height) {
+	SDL_Surface *raw = SDL_CreateRGBSurface(
+		SDL_SWSURFACE, width, height, 32, 0, 0, 0, 0);
+	if (!raw) return NULL;
+	SDL_FillRect(raw, NULL, SDL_MapRGB(raw->format, 0, 0, 0));
+	return new Surface(raw, true);
+}
+
 Surface *Surface::loadImage(const string &img, const string &skin) {
 	string skinpath;
 	if (!skin.empty() && !img.empty() && img[0]!='/') {
@@ -72,7 +80,7 @@ Surface::Surface(SDL_Surface *raw_, bool freeWhenDone_)
 }
 
 Surface::Surface(Surface *s) {
-	raw = SDL_DisplayFormat(s->raw);
+	raw = SDL_ConvertSurface(s->raw, s->raw->format, SDL_SWSURFACE);
 	freeWhenDone = true;
 	halfW = raw->w/2;
 	halfH = raw->h/2;
@@ -81,6 +89,17 @@ Surface::Surface(Surface *s) {
 Surface::~Surface() {
 	if (freeWhenDone) {
 		SDL_FreeSurface(raw);
+	}
+}
+
+void Surface::convertToDisplayFormat() {
+	SDL_Surface *newSurface = SDL_DisplayFormat(raw);
+	if (newSurface) {
+		if (freeWhenDone) {
+			SDL_FreeSurface(raw);
+		}
+		raw = newSurface;
+		freeWhenDone = true;
 	}
 }
 

@@ -80,6 +80,8 @@ void TextManualDialog::exec() {
 	gmenu2x->drawButton(&bg, "down", gmenu2x->tr["Scroll"],
 	gmenu2x->drawButton(&bg, "up", "", 5)-10))-10));
 
+	bg.convertToDisplayFormat();
+
 	uint firstRow = 0, rowsPerPage = 180/gmenu2x->font->getHeight();
 	stringstream ss;
 	ss << pages.size();

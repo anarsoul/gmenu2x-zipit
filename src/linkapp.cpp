@@ -304,8 +304,12 @@ void LinkApp::showManual() {
 		if (!pngman) {
 			return;
 		}
-		// Note: Copy constructor converts to display format.
-		Surface bg(Surface::loadImage(gmenu2x->confStr["wallpaper"]));
+		Surface *bg = Surface::loadImage(gmenu2x->confStr["wallpaper"]);
+		if (!bg) {
+			bg = Surface::emptySurface(gmenu2x->s->width(), gmenu2x->s->height());
+		}
+		bg->convertToDisplayFormat();
+
 		stringstream ss;
 		string pageStatus;
 
@@ -321,7 +325,7 @@ void LinkApp::showManual() {
 
 		while (!close) {
 			if (repaint) {
-				bg.blit(gmenu2x->s, 0, 0);
+				bg->blit(gmenu2x->s, 0, 0);
 				pngman->blit(gmenu2x->s, -page*320, 0);
 
 				gmenu2x->drawBottomBar();
@@ -361,6 +365,7 @@ void LinkApp::showManual() {
                     break;
             }
         }
+		free(bg);
 		return;
 	}
 

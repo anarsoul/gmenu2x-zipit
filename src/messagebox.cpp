@@ -99,6 +99,7 @@ int MessageBox::exec() {
 		}
 	}
 
+	bg.convertToDisplayFormat();
 	bg.blit(gmenu2x->s,0,0);
 	gmenu2x->s->flip();
 

@@ -110,6 +110,8 @@ void TextDialog::exec() {
 	gmenu2x->drawButton(&bg, "down", gmenu2x->tr["Scroll"],
 	gmenu2x->drawButton(&bg, "up", "", 5)-10));
 
+	bg.convertToDisplayFormat();
+
 	uint firstRow = 0, rowsPerPage = (gmenu2x->resY-60)/gmenu2x->font->getHeight();
 	while (!close) {
 		bg.blit(gmenu2x->s,0,0);

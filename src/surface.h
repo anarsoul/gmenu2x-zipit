@@ -40,10 +40,17 @@ RGBAColor strtorgba(const string &strColor);
 class Surface {
 public:
 	static Surface *openOutputSurface(int width, int height, int bitsperpixel);
+	static Surface *emptySurface(int width, int height);
 	static Surface *loadImage(const string &img, const string &skin="");
 
 	Surface(Surface *s);
 	~Surface();
+
+	/** Converts the underlying surface to the same pixel format as the frame
+	  * buffer, for faster blitting. This removes the alpha channel if the
+	  * image has done.
+	  */
+	void convertToDisplayFormat();
 
 	int width() { return raw->w; }
 	int height() { return raw->h; }

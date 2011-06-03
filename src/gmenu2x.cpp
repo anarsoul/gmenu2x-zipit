@@ -344,14 +344,11 @@ void GMenu2X::quit() {
 void GMenu2X::initBG() {
 	sc.del("bgmain");
 
-	if (bg != NULL) free(bg);
-
-	if (!fileExists(confStr["wallpaper"])) {
-		bg = new Surface(s);
-		bg->box(0,0,resX,resY,0,0,0);
-	} else {
-		// Note: Copy constructor converts to display format.
-		bg = new Surface(Surface::loadImage(confStr["wallpaper"]));
+	// Load wallpaper.
+	free(bg);
+	bg = Surface::loadImage(confStr["wallpaper"]);
+	if (!bg) {
+		bg = Surface::emptySurface(resX, resY);
 	}
 
 	drawTopBar(bg);
@@ -361,20 +358,20 @@ void GMenu2X::initBG() {
 	sc.add(bgmain,"bgmain");
 
 	Surface *sd = Surface::loadImage("imgs/sd.png", confStr["skin"]);
-	if (sd) sd->blit(sc["bgmain"], 3, bottomBarIconY);
+	if (sd) sd->blit(bgmain, 3, bottomBarIconY);
 	string df = getDiskFree();
-	sc["bgmain"]->write(font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle);
+	bgmain->write(font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 	free(sd);
 
 	Surface *volume = Surface::loadImage("imgs/volume.png", confStr["skin"]);
 	volumeX = 27+font->getTextWidth(df);
-	if (volume) volume->blit(sc["bgmain"], volumeX, bottomBarIconY);
+	if (volume) volume->blit(bgmain, volumeX, bottomBarIconY);
 	volumeX += 19;
 	free(volume);
 
 	Surface *cpu = Surface::loadImage("imgs/cpu.png", confStr["skin"]);
 	cpuX = volumeX+font->getTextWidth("100")+5;
-	if (cpu) cpu->blit(sc["bgmain"], cpuX, bottomBarIconY);
+	if (cpu) cpu->blit(bgmain, cpuX, bottomBarIconY);
 	cpuX += 19;
 	manualX = cpuX+font->getTextWidth("300Mhz")+5;
 	free(cpu);
@@ -384,24 +381,26 @@ void GMenu2X::initBG() {
 		if (web) {
 			Surface *webserver = Surface::loadImage(
 				"imgs/webserver.png", confStr["skin"]);
-			if (webserver) webserver->blit(sc["bgmain"], serviceX, bottomBarIconY);
+			if (webserver) webserver->blit(bgmain, serviceX, bottomBarIconY);
 			serviceX -= 19;
 			free(webserver);
 		}
 		if (samba) {
 			Surface *sambaS = Surface::loadImage(
 				"imgs/samba.png", confStr["skin"]);
-			if (sambaS) sambaS->blit(sc["bgmain"], serviceX, bottomBarIconY);
+			if (sambaS) sambaS->blit(bgmain, serviceX, bottomBarIconY);
 			serviceX -= 19;
 			free(sambaS);
 		}
 		if (inet) {
 			Surface *inetS = Surface::loadImage("imgs/inet.png", confStr["skin"]);
-			if (inetS) inetS->blit(sc["bgmain"], serviceX, bottomBarIconY);
+			if (inetS) inetS->blit(bgmain, serviceX, bottomBarIconY);
 			serviceX -= 19;
 			free(inetS);
 		}
 	}
+
+	bgmain->convertToDisplayFormat();
 }
 
 void GMenu2X::initFont() {
@@ -1632,6 +1631,7 @@ void GMenu2X::scanner() {
 	drawButton(&scanbg, "x", tr["Exit"],
 	drawButton(&scanbg, "b", "", 5)-10);
 	scanbg.write(font,tr["Link Scanner"],halfX,7,ASFont::HAlignCenter,ASFont::VAlignMiddle);
+	scanbg.convertToDisplayFormat();
 
 	uint lineY = 42;
 

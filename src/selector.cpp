@@ -71,6 +71,8 @@ int Selector::exec(int startSelection) {
 		gmenu2x->drawButton(&bg, "b", gmenu2x->tr["Select a file"], 5));
 	}
 
+	bg.convertToDisplayFormat();
+
 	Uint32 selTick = SDL_GetTicks(), curTick;
 	uint i, firstElement = 0, iY;
 
