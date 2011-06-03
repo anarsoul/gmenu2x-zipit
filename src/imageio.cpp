@@ -14,6 +14,7 @@ SDL_Surface *loadPNG(const std::string &path) {
 		SDL_SetAlpha(surface, SDL_SRCALPHA, 255);
 		return surface;
 	} else {
+		bool hasAlphaChannel = surface->format->Amask != 0;
 		SDL_PixelFormat format32;
 		memset(&format32, 0, sizeof(format32));
 		format32.BitsPerPixel = 32;
@@ -23,13 +24,13 @@ SDL_Surface *loadPNG(const std::string &path) {
 		format32.Gmask = 0x0000FF00;
 		format32.Bmask =
 			SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0x000000FF : 0x00FF0000;
-		format32.Amask = 0xFF000000;
+		format32.Amask = hasAlphaChannel ? 0xFF000000 : 0;
 		format32.Rshift = SDL_BYTEORDER == SDL_BIG_ENDIAN ? 16 : 0;
 		format32.Gshift = 8;
 		format32.Bshift = SDL_BYTEORDER == SDL_BIG_ENDIAN ? 0 : 16;
-		format32.Ashift = 24;
-		SDL_Surface *surface32 =
-			SDL_ConvertSurface(surface, &format32, SDL_SRCALPHA);
+		format32.Ashift = hasAlphaChannel ? 24 : 0;
+		SDL_Surface *surface32 = SDL_ConvertSurface(
+			surface, &format32, hasAlphaChannel ? SDL_SRCALPHA : 0);
 		SDL_FreeSurface(surface);
 		return surface32;
 	}
