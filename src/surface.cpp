@@ -81,6 +81,11 @@ Surface::Surface(SDL_Surface *raw_, bool freeWhenDone_)
 
 Surface::Surface(Surface *s) {
 	raw = SDL_ConvertSurface(s->raw, s->raw->format, SDL_SWSURFACE);
+	// Note: A bug in SDL_ConvertSurface() leaves the per-surface alpha
+	//       undefined when converting from RGBA to RGBA. This can cause
+	//       problems if the surface is later converted to a format without
+	//       an alpha channel, such as the display format.
+	raw->format->alpha = s->raw->format->alpha;
 	freeWhenDone = true;
 	halfW = raw->w/2;
 	halfH = raw->h/2;
