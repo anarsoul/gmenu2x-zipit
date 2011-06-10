@@ -998,7 +998,10 @@ void GMenu2X::main() {
                 menu->linkRight();
                 break;
             case MANUAL:
-			    menu->selLinkApp()->showManual();
+                {
+			    LinkApp* app = menu->selLinkApp();
+                if ( app ) { app->showManual(); }
+                }
                 break;
             case ALTLEFT:
 				menu->decSectionIndex();
