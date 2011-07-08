@@ -72,13 +72,6 @@ string SurfaceCollection::getSkinFilePath(const string &skin, const string &file
 	if (fileExists(path))
 	  return path;
 
-	/* If it is nowhere to be found, as a last resort we check the
-	 * "Default" skin on the system directory for a corresponding
-	 * (but probably not similar) file. */
-	path = GMENU2X_SYSTEM_DIR "/skins/Default/" + file;
-	if (fileExists(path))
-	  return path;
-
 	return "";
 }
 
