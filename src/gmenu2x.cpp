@@ -1377,7 +1377,7 @@ void GMenu2X::setSkin(const string &skin, bool setWallpaper) {
 	if (menu != NULL) menu->loadIcons();
 
 	//Selection png
-	useSelectionPng = sc.addSkinRes("imgs/selection.png") != NULL;
+	useSelectionPng = sc.addSkinRes("imgs/selection.png", false) != NULL;
 
 	//font
 	initFont();
@@ -2140,7 +2140,7 @@ void GMenu2X::drawScrollBar(uint pagesize, uint totalsize, uint pagepos, uint to
 void GMenu2X::drawTopBar(Surface *s) {
 	if (s==NULL) s = this->s;
 
-	Surface *bar = sc.skinRes("imgs/topbar.png");
+	Surface *bar = sc.skinRes("imgs/topbar.png", false);
 	if (bar != NULL)
 		bar->blit(s, 0, 0);
 	else
@@ -2151,7 +2151,7 @@ void GMenu2X::drawTopBar(Surface *s) {
 void GMenu2X::drawBottomBar(Surface *s) {
 	if (s==NULL) s = this->s;
 
-	Surface *bar = sc.skinRes("imgs/bottombar.png");
+	Surface *bar = sc.skinRes("imgs/bottombar.png", false);
 	if (bar != NULL)
 		bar->blit(s, 0, resY-bar->height());
 	else

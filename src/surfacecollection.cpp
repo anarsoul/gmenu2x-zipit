@@ -55,12 +55,12 @@ string SurfaceCollection::getSkinPath(const string &skin)
 	return "";
 }
 
-string SurfaceCollection::getSkinFilePath(const string &file)
+string SurfaceCollection::getSkinFilePath(const string &file, bool useDefault)
 {
-	return SurfaceCollection::getSkinFilePath(skin, file);
+	return SurfaceCollection::getSkinFilePath(skin, file, useDefault);
 }
 
-string SurfaceCollection::getSkinFilePath(const string &skin, const string &file)
+string SurfaceCollection::getSkinFilePath(const string &skin, const string &file, bool useDefault)
 {
 	/* We first search the skin file on the user-specific directory. */
 	string path = GMenu2X::getHome() + "/skins/" + skin + "/" + file;
@@ -75,9 +75,11 @@ string SurfaceCollection::getSkinFilePath(const string &skin, const string &file
 	/* If it is nowhere to be found, as a last resort we check the
 	 * "Default" skin on the system directory for a corresponding
 	 * (but probably not similar) file. */
-	path = GMENU2X_SYSTEM_DIR "/skins/Default/" + file;
-	if (fileExists(path))
-	  return path;
+	if (useDefault) {
+		path = GMENU2X_SYSTEM_DIR "/skins/Default/" + file;
+		if (fileExists(path))
+		  return path;
+	}
 
 	return "";
 }
@@ -100,8 +102,7 @@ Surface *SurfaceCollection::add(Surface *s, const string &path) {
 }
 
 Surface *SurfaceCollection::add(const string &path) {
-	DEBUG("Adding surface: '%s'\n", path.c_str());
-
+	if (path.empty()) return NULL;
 	if (exists(path)) del(path);
 	string filePath = path;
 
@@ -111,6 +112,7 @@ Surface *SurfaceCollection::add(const string &path) {
 			return NULL;
 	} else if (!fileExists(filePath)) return NULL;
 
+	DEBUG("Adding surface: '%s'\n", path.c_str());
 	Surface *s = Surface::loadImage(filePath);
 	if (s != NULL) {
 		surfaces[path] = s;
@@ -118,15 +120,15 @@ Surface *SurfaceCollection::add(const string &path) {
 	return s;
 }
 
-Surface *SurfaceCollection::addSkinRes(const string &path) {
-	DEBUG("Adding skin surface: '%s'\n", path.c_str());
-
+Surface *SurfaceCollection::addSkinRes(const string &path, bool useDefault) {
 	if (path.empty()) return NULL;
 	if (exists(path)) del(path);
 
-	string skinpath = getSkinFilePath(path);
+	string skinpath = getSkinFilePath(path, useDefault);
 	if (skinpath.empty())
 		return NULL;
+
+	DEBUG("Adding skin surface: '%s'\n", path.c_str());
 	Surface *s = Surface::loadImage(skinpath);
 	if (s != NULL) {
 		surfaces[path] = s;
@@ -160,12 +162,12 @@ Surface *SurfaceCollection::operator[](const string &key) {
 		return i->second;
 }
 
-Surface *SurfaceCollection::skinRes(const string &key) {
+Surface *SurfaceCollection::skinRes(const string &key, bool useDefault) {
 	if (key.empty()) return NULL;
 
 	SurfaceHash::iterator i = surfaces.find(key);
 	if (i == surfaces.end())
-		return addSkinRes(key);
+		return addSkinRes(key, useDefault);
 	else
 		return i->second;
 }

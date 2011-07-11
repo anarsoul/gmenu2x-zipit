@@ -38,8 +38,8 @@ public:
 	~SurfaceCollection();
 
 	void setSkin(const std::string &skin);
-	std::string getSkinFilePath(const std::string &file);
-	static std::string getSkinFilePath(const std::string &skin, const std::string &file);
+	std::string getSkinFilePath(const std::string &file, bool useDefault = true);
+	static std::string getSkinFilePath(const std::string &skin, const std::string &file, bool useDefault = true);
 	static std::string getSkinPath(const std::string &skin);
 
 	bool defaultAlpha;
@@ -47,14 +47,14 @@ public:
 
 	Surface *add(Surface *s, const std::string &path);
 	Surface *add(const std::string &path);
-	Surface *addSkinRes(const std::string &path);
+	Surface *addSkinRes(const std::string &path, bool useDefault = true);
 	void     del(const std::string &path);
 	void     clear();
 	void     move(const std::string &from, const std::string &to);
 	bool     exists(const std::string &path);
 
 	Surface *operator[](const std::string &);
-	Surface *skinRes(const std::string &);
+	Surface *skinRes(const std::string &key, bool useDefault = true);
 
 private:
 	SurfaceHash surfaces;
