@@ -36,7 +36,7 @@ private:
 
 public:
 	FileLister(const string &startPath = "/boot/local", bool showDirectories = true, bool showFiles = true);
-	void browse();
+	void browse(bool clean = true);
 
 	unsigned int size();
 	unsigned int dirCount();

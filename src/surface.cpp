@@ -22,6 +22,7 @@
 #include "imageio.h"
 #include "utilities.h"
 #include "debug.h"
+#include "surfacecollection.h"
 
 #include <SDL_gfxPrimitives.h>
 
@@ -54,13 +55,10 @@ Surface *Surface::emptySurface(int width, int height) {
 
 Surface *Surface::loadImage(const string &img, const string &skin) {
 	string skinpath;
-	if (!skin.empty() && !img.empty() && img[0]!='/') {
-		skinpath = "skins/"+skin+"/"+img;
-		if (!fileExists(skinpath))
-			skinpath = "skins/Default/"+img;
-	} else {
-		skinpath = img;
-	}
+	if (!skin.empty() && !img.empty() && img[0]!='/')
+	  skinpath = SurfaceCollection::getSkinFilePath(skin, img);
+	else
+	  skinpath = img;
 
 	SDL_Surface *raw = loadPNG(skinpath);
 	if (!raw) {

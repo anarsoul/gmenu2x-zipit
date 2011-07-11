@@ -86,6 +86,7 @@ const char *CARD_ROOT = "/card/"; //Note: Add a trailing /!
 const int CARD_ROOT_LEN = 5;
 
 static GMenu2X *app;
+static string gmenu2x_home;
 
 using namespace std;
 using namespace fastdelegate;
@@ -120,12 +121,31 @@ static void quit_all(int err) {
     exit(err);
 }
 
+const string GMenu2X::getHome(void)
+{
+	return gmenu2x_home;
+}
+
 int main(int /*argc*/, char * /*argv*/[]) {
 	INFO("----\nGMenu2X starting: If you read this message in the logs, check http://gmenu2x.sourceforge.net/page/Troubleshooting for a solution\n----\n");
 
 	signal(SIGINT, &quit_all);
 	signal(SIGSEGV,&quit_all);
 	signal(SIGTERM,&quit_all);
+
+	char *home = getenv("HOME");
+	if (home == NULL) {
+		ERROR("Unable to find gmenu2x home directory. The $HOME variable is not defined.\n");
+		return 1;
+	}
+
+	gmenu2x_home = (string)home + (string)"/.gmenu2x";
+	if (!fileExists(gmenu2x_home) && mkdir(gmenu2x_home.c_str(), 0770) < 0) {
+		ERROR("Unable to create gmenu2x home directory.\n");
+		return 1;
+	}
+
+	DEBUG("Home path: %s.\n", gmenu2x_home.c_str());
 
 	app = new GMenu2X();
 	DEBUG("Starting main()\n");
@@ -286,19 +306,23 @@ GMenu2X::GMenu2X() {
 	initMenu();
 
 	if (!fileExists(confStr["wallpaper"])) {
-		DEBUG("Searching wallpaper\n");
-
-		FileLister fl("skins/"+confStr["skin"]+"/wallpapers",false,true);
-		fl.setFilter(".png,.jpg,.jpeg,.bmp");
-		fl.browse();
-		if (fl.getFiles().size()<=0 && confStr["skin"] != "Default")
-			fl.setPath("skins/Default/wallpapers",true);
-		if (fl.getFiles().size()>0)
-			confStr["wallpaper"] = fl.getPath()+fl.getFiles()[0];
+		DEBUG("No wallpaper defined; we will take the default one.\n");
+		confStr["wallpaper"] = DEFAULT_WALLPAPER_PATH;
 	}
 
 	initBG();
-	input.init(path+"input.conf");
+
+	/* If a user-specified input.conf file exists, we load it;
+	 * otherwise, we load the default one. */
+	const char *input_file = (getHome() + "/input.conf").c_str();
+	if (fileExists(input_file)) {
+		DEBUG("Loading user-specific input.conf file: %s.\n", input_file);
+	} else {
+		input_file = GMENU2X_SYSTEM_DIR "/input.conf";
+		DEBUG("Loading system input.conf file: %s.\n", input_file);
+	}
+
+	input.init(input_file);
     PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
 	setInputSpeed();
 	initServices();
@@ -441,7 +465,7 @@ void GMenu2X::initMenu() {
 				menu->addActionLink(i,"USB Nand",MakeDelegate(this,&GMenu2X::activateNandUsb),tr["Activate Usb on Nand"],"skin:icons/usb.png");
 			//menu->addActionLink(i,"USB Root",MakeDelegate(this,&GMenu2X::activateRootUsb),tr["Activate Usb on the root of the Gp2x Filesystem"],"skin:icons/usb.png");*/
 #endif
-			if (fileExists(path+"log.txt"))
+			if (fileExists(getHome()+"/log.txt"))
 				menu->addActionLink(i,tr["Log Viewer"],MakeDelegate(this,&GMenu2X::viewLog),tr["Displays last launched program's output"],"skin:icons/ebook.png");
 			menu->addActionLink(i,tr["About"],MakeDelegate(this,&GMenu2X::about),tr["Info about GMenu2X"],"skin:icons/about.png");
 		}
@@ -507,7 +531,7 @@ and all the anonymous donors...\n\
 }
 
 void GMenu2X::viewLog() {
-	string logfile = path+"log.txt";
+	string logfile = getHome()+"/log.txt";
 	if (fileExists(logfile)) {
 		ifstream inf(logfile.c_str(), ios_base::in);
 		if (inf.is_open()) {
@@ -536,7 +560,7 @@ void GMenu2X::viewLog() {
 }
 
 void GMenu2X::readConfig() {
-	string conffile = path+"gmenu2x.conf";
+	string conffile = getHome() + "/gmenu2x.conf";
 	if (fileExists(conffile)) {
 		ifstream inf(conffile.c_str(), ios_base::in);
 		if (inf.is_open()) {
@@ -573,7 +597,7 @@ void GMenu2X::readConfig() {
 
 void GMenu2X::writeConfig() {
 	ledOn();
-	string conffile = path+"gmenu2x.conf";
+	string conffile = getHome() + "/gmenu2x.conf";
 	ofstream inf(conffile.c_str());
 	if (inf.is_open()) {
 		ConfStrHash::iterator endS = confStr.end();
@@ -642,7 +666,15 @@ void GMenu2X::writeConfigOpen2x() {
 
 void GMenu2X::writeSkinConfig() {
 	ledOn();
-	string conffile = path+"skins/"+confStr["skin"]+"/skin.conf";
+
+	string conffile = getHome() + "/skins/";
+	if (!fileExists(conffile))
+	  mkdir(conffile.c_str(), 0770);
+	conffile = conffile + confStr["skin"];
+	if (!fileExists(conffile))
+	  mkdir(conffile.c_str(), 0770);
+	conffile = conffile + "/skin.conf";
+
 	ofstream inf(conffile.c_str());
 	if (inf.is_open()) {
 		ConfStrHash::iterator endS = skinConfStr.end();
@@ -1104,8 +1136,11 @@ void GMenu2X::options() {
 	int prevbacklight = confInt["backlight"];
 	bool showRootFolder = fileExists(CARD_ROOT);
 
-	FileLister fl_tr("translations");
+	FileLister fl_tr(getHome() + "/translations");
 	fl_tr.browse();
+	fl_tr.setPath(GMENU2X_SYSTEM_DIR "/translations", false);
+	fl_tr.browse(false);
+
 	fl_tr.insertFile("English");
 	string lang = tr.lang();
 
@@ -1172,9 +1207,12 @@ void GMenu2X::settingsOpen2x() {
 }
 
 void GMenu2X::skinMenu() {
-	FileLister fl_sk("skins",true,false);
+	FileLister fl_sk(getHome() + "/skins", true, false);
 	fl_sk.addExclude("..");
 	fl_sk.browse();
+	fl_sk.setPath(GMENU2X_SYSTEM_DIR "/skins", false);
+	fl_sk.browse(false);
+
 	string curSkin = confStr["skin"];
 
 	SettingsDialog sd(this, input, ts, tr["Skin"]);
@@ -1224,8 +1262,12 @@ void GMenu2X::setSkin(const string &skin, bool setWallpaper) {
 	skinConfColors[COLOR_MESSAGE_BOX_BORDER] = (RGBAColor){80,80,80,255};
 	skinConfColors[COLOR_MESSAGE_BOX_SELECTION] = (RGBAColor){160,160,160,255};
 
-	//load skin settings
-	string skinconfname = "skins/"+skin+"/skin.conf";
+	/* Load skin settings from user directory if present,
+	 * or from the system directory. */
+	string skinconfname = getHome() + "/skins/" + skin + "/skin.conf";
+	if (!fileExists(skinconfname))
+	  skinconfname = GMENU2X_SYSTEM_DIR "/skins/" + skin + "/skin.conf";
+
 	if (fileExists(skinconfname)) {
 		ifstream skinconf(skinconfname.c_str(), ios_base::in);
 		if (skinconf.is_open()) {
@@ -1597,19 +1639,22 @@ void GMenu2X::renameSection() {
 		 && find(menu->getSections().begin(),menu->getSections().end(), id.getInput())
 				== menu->getSections().end()) {
 			//section directory doesn't exists
-			string newsectiondir = "sections/" + id.getInput();
-			string sectiondir = "sections/" + menu->selSection();
+			string newsectiondir = getHome() + "/sections/" + id.getInput();
+			string sectiondir = getHome() + "/sections/" + menu->selSection();
 			ledOn();
-			if (rename(sectiondir.c_str(), "tmpsection")==0 && rename("tmpsection", newsectiondir.c_str())==0) {
-				string oldpng = sectiondir+".png", newpng = newsectiondir+".png";
-				string oldicon = sc.getSkinFilePath(oldpng), newicon = sc.getSkinFilePath(newpng);
+
+			if (!rename(sectiondir.c_str(), newsectiondir.c_str())) {
+				string oldpng = menu->selSection() + ".png";
+				string newpng = id.getInput() + ".png";
+				string oldicon = sc.getSkinFilePath(oldpng);
+				string newicon = sc.getSkinFilePath(newpng);
+
 				if (!oldicon.empty() && newicon.empty()) {
 					newicon = oldicon;
 					newicon.replace(newicon.find(oldpng), oldpng.length(), newpng);
 
 					if (!fileExists(newicon)) {
-						rename(oldicon.c_str(), "tmpsectionicon");
-						rename("tmpsectionicon", newicon.c_str());
+						rename(oldicon.c_str(), newicon.c_str());
 						sc.move("skin:"+oldpng, "skin:"+newpng);
 					}
 				}
@@ -1627,7 +1672,7 @@ void GMenu2X::deleteSection() {
 	mb.setButton(CLEAR, tr["No"]);
 	if (mb.exec() == ACCEPT) {
 		ledOn();
-		if (rmtree(path+"sections/"+menu->selSection())) {
+		if (rmtree(getHome() + "/sections/" + menu->selSection())) {
 			menu->deleteSelectedSection();
 			sync();
 		}

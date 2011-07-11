@@ -37,6 +37,15 @@
 #include <vector>
 #include <tr1/unordered_map>
 
+#ifndef GMENU2X_SYSTEM_DIR
+#define GMENU2X_SYSTEM_DIR "/usr/share/gmenu2x"
+#endif
+
+#ifndef DEFAULT_WALLPAPER_PATH
+#define DEFAULT_WALLPAPER_PATH \
+  GMENU2X_SYSTEM_DIR "/skins/Default/wallpapers/default.png"
+#endif
+
 const int MAX_VOLUME_SCALE_FACTOR = 200;
 // Default values - going to add settings adjustment, saving, loading and such
 const int VOLUME_SCALER_MUTE = 0;
@@ -152,6 +161,10 @@ public:
 	GMenu2X();
 	~GMenu2X();
 	void quit();
+
+	/* Returns the home directory of gmenu2x, usually
+	 * ~/.gmenu2x */
+	static const string getHome(void);
 
 	/*
 	 * Variables needed for elements disposition

@@ -48,6 +48,12 @@ private:
 	void readLinks();
 	void freeLinks();
 
+	// Load all the sections of the given "sections" directory.
+	void readSections(std::string parentDir);
+
+	// Load all the links on the given section directory.
+	void readLinksOfSection(std::string path, std::vector<std::string> &linkfiles);
+
 public:
 	Menu(GMenu2X *gmenu2x);
 	~Menu();
@@ -79,8 +85,6 @@ public:
 	void linkUp();
 	void linkDown();
 	void setLinkIndex(int i);
-
-	string sectionPath(int section = -1);
 
 	const vector<string> &getSections() { return sections; }
 	void renameSection(int index, const string &name);

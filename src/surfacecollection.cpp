@@ -22,6 +22,7 @@
 #include "surface.h"
 #include "utilities.h"
 #include "debug.h"
+#include "gmenu2x.h"
 
 #include <iostream>
 
@@ -39,16 +40,39 @@ void SurfaceCollection::setSkin(const string &skin) {
 	this->skin = skin;
 }
 
-string SurfaceCollection::getSkinFilePath(const string &file) {
-	string prefix = "/usr/share/gmenu2x/";
-	if (fileExists("skins/"+skin+"/"+file))
-		return "skins/"+skin+"/"+file;
-	else if (fileExists("skins/Default/"+file))
-		return "skins/Default/"+file;
-	else if (fileExists(prefix+"skins/Default/"+file))
-		return prefix+"skins/Default/"+file;
-	else
-		return "";
+/* Returns the location of a skin directory,
+ * from its name given as a parameter. */
+string SurfaceCollection::getSkinPath(const string &skin)
+{
+	string path = GMenu2X::getHome() + "/skins/" + skin;
+	if (fileExists(path))
+	  return path;
+
+	path = GMENU2X_SYSTEM_DIR "/skins/" + skin;
+	if (fileExists(path))
+	  return path;
+
+	return "";
+}
+
+string SurfaceCollection::getSkinFilePath(const string &file)
+{
+	return SurfaceCollection::getSkinFilePath(skin, file);
+}
+
+string SurfaceCollection::getSkinFilePath(const string &skin, const string &file)
+{
+	/* We first search the skin file on the user-specific directory. */
+	string path = GMenu2X::getHome() + "/skins/" + skin + "/" + file;
+	if (fileExists(path))
+	  return path;
+
+	/* If not found, we search that skin file on the system directory. */
+	path = GMENU2X_SYSTEM_DIR "/skins/" + skin + "/" + file;
+	if (fileExists(path))
+	  return path;
+
+	return "";
 }
 
 void SurfaceCollection::debug() {
