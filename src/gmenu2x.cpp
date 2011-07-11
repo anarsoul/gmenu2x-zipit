@@ -642,9 +642,14 @@ void GMenu2X::readConfig() {
 			inf.close();
 		}
 	}
-	if (!confStr["lang"].empty()) tr.setLang(confStr["lang"]);
-	if (!confStr["wallpaper"].empty() && !fileExists(confStr["wallpaper"])) confStr["wallpaper"] = "";
-	if (confStr["skin"].empty() || !fileExists("skins/"+confStr["skin"])) confStr["skin"] = "Default";
+	if (!confStr["lang"].empty())
+		tr.setLang(confStr["lang"]);
+
+	if (!confStr["wallpaper"].empty() && !fileExists(confStr["wallpaper"]))
+		confStr["wallpaper"] = "";
+
+	if (confStr["skin"].empty() || SurfaceCollection::getSkinPath(confStr["skin"]).empty())
+		confStr["skin"] = "Default";
 
 	evalIntConf( &confInt["outputLogs"], 0, 0,1 );
 	evalIntConf( &confInt["maxClock"], 430, 30, 500 );
@@ -1313,6 +1318,8 @@ void GMenu2X::setSkin(const string &skin, bool setWallpaper) {
 	//Clear previous skin settings
 	skinConfStr.clear();
 	skinConfInt.clear();
+
+	DEBUG("GMenu2X: setting new skin %s.\n", skin.c_str());
 
 	//clear collection and change the skin path
 	sc.clear();
