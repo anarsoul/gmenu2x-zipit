@@ -35,6 +35,13 @@
 #include "gp2x.h"
 #include <sys/fcntl.h> //for battery
 
+#ifdef PLATFORM_DINGUX
+#	define UNLOCK_VT
+#	include <sys/ioctl.h>
+#	include <linux/vt.h>
+#	include <linux/kd.h>
+#endif
+
 //for browsing the filesystem
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -120,6 +127,52 @@ static void quit_all(int err) {
     delete app;
     exit(err);
 }
+
+#ifdef UNLOCK_VT
+
+#define FB_TTY "/dev/tty%i"
+static void unlockVT()
+{
+	int i;
+	int fd;
+	char tty[10];
+
+	for (i=0; i < 10; i++) {
+		int mode;
+
+		sprintf(tty, FB_TTY, i);
+		fd = open(tty, O_RDWR);
+		if (fd < 0)
+		  continue;
+
+		if (ioctl(fd, KDGETMODE, &mode) < 0) {
+			WARNING("Unable to get mode for tty %i.\n", i);
+			close(fd);
+			return;
+		}
+
+		if (mode != KD_TEXT)
+		  break;
+
+		close(fd);
+	}
+
+	if (i==10) {
+		DEBUG("No graphic tty found.\n");
+		return;
+	}
+
+	DEBUG("Graphic tty found on %s.\n", tty);
+
+	if (ioctl(fd, KDSETMODE, KD_TEXT) < 0)
+		WARNING("unable to set keyboard mode.\n");
+
+	if (ioctl(fd, VT_UNLOCKSWITCH, 1) < 0)
+		WARNING("unable to unlock terminal.\n");
+
+	close(fd);
+}
+#endif
 
 const string GMenu2X::getHome(void)
 {
@@ -291,6 +344,10 @@ GMenu2X::GMenu2X() {
 	}*/
 #endif
 
+#ifdef UNLOCK_VT
+	unlockVT();
+#endif
+
 	//Screen
 	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK|SDL_INIT_TIMER)<0 ) {
 		ERROR("Could not initialize SDL: %s\n", SDL_GetError());
@@ -352,7 +409,14 @@ void GMenu2X::quit() {
 	fflush(NULL);
 	sc.clear();
 	free(s);
+
+#ifdef UNLOCK_VT
+	SDL_QuitSubSystem(SDL_INIT_EVERYTHING & ~SDL_INIT_VIDEO);
+	unlockVT();
+#else
 	SDL_Quit();
+#endif
+
 #ifdef TARGET_GP2X
 /*	if (gp2x_mem!=0) {
 		//Fix tv-out
