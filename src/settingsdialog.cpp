@@ -40,8 +40,8 @@ SettingsDialog::SettingsDialog(
 }
 
 SettingsDialog::~SettingsDialog() {
-	for (uint i=0; i<voices.size(); i++)
-		free(voices[i]);
+	for (vector<MenuSetting *>::iterator it = voices.begin(); it != voices.end(); ++it)
+		delete *it;
 }
 
 bool SettingsDialog::exec() {

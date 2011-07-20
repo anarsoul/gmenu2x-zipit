@@ -116,7 +116,7 @@ void Menu::loadIcons() {
 void Menu::freeLinks() {
 	for (vector<linklist>::iterator section = links.begin(); section<links.end(); section++)
 		for (linklist::iterator link = section->begin(); link<section->end(); link++)
-			free(*link);
+			delete *link;
 }
 
 linklist *Menu::sectionLinks(int i) {
@@ -454,7 +454,7 @@ void Menu::readLinks() {
 			if (link->targetExists())
 				links[i].push_back( link );
 			else
-				free(link);
+				delete link;
 		}
 	}
 }

@@ -365,7 +365,7 @@ void LinkApp::showManual() {
                     break;
             }
         }
-		free(bg);
+		delete bg;
 		return;
 	}
 

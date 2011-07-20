@@ -139,7 +139,7 @@ Surface *SurfaceCollection::addSkinRes(const string &path, bool useDefault) {
 void SurfaceCollection::del(const string &path) {
 	SurfaceHash::iterator i = surfaces.find(path);
 	if (i != surfaces.end()) {
-		free(i->second);
+		delete i->second;
 		surfaces.erase(i);
 	}
 }

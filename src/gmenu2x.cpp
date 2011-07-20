@@ -400,15 +400,14 @@ GMenu2X::~GMenu2X() {
 
 	quit();
 
-	free(menu);
-	free(s);
-	free(font);
+	delete menu;
+	delete font;
 }
 
 void GMenu2X::quit() {
 	fflush(NULL);
 	sc.clear();
-	free(s);
+	delete s;
 
 #ifdef UNLOCK_VT
 	SDL_QuitSubSystem(SDL_INIT_EVERYTHING & ~SDL_INIT_VIDEO);
@@ -433,7 +432,7 @@ void GMenu2X::initBG() {
 	sc.del("bgmain");
 
 	// Load wallpaper.
-	free(bg);
+	delete bg;
 	bg = Surface::loadImage(confStr["wallpaper"]);
 	if (!bg) {
 		bg = Surface::emptySurface(resX, resY);
@@ -449,20 +448,20 @@ void GMenu2X::initBG() {
 	if (sd) sd->blit(bgmain, 3, bottomBarIconY);
 	string df = getDiskFree();
 	bgmain->write(font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle);
-	free(sd);
+	delete sd;
 
 	Surface *volume = Surface::loadImage("imgs/volume.png", confStr["skin"]);
 	volumeX = 27+font->getTextWidth(df);
 	if (volume) volume->blit(bgmain, volumeX, bottomBarIconY);
 	volumeX += 19;
-	free(volume);
+	delete volume;
 
 	Surface *cpu = Surface::loadImage("imgs/cpu.png", confStr["skin"]);
 	cpuX = volumeX+font->getTextWidth("100")+5;
 	if (cpu) cpu->blit(bgmain, cpuX, bottomBarIconY);
 	cpuX += 19;
 	manualX = cpuX+font->getTextWidth("300Mhz")+5;
-	free(cpu);
+	delete cpu;
 
 	int serviceX = resX-38;
 	if (usbnet) {
@@ -471,20 +470,20 @@ void GMenu2X::initBG() {
 				"imgs/webserver.png", confStr["skin"]);
 			if (webserver) webserver->blit(bgmain, serviceX, bottomBarIconY);
 			serviceX -= 19;
-			free(webserver);
+			delete webserver;
 		}
 		if (samba) {
 			Surface *sambaS = Surface::loadImage(
 				"imgs/samba.png", confStr["skin"]);
 			if (sambaS) sambaS->blit(bgmain, serviceX, bottomBarIconY);
 			serviceX -= 19;
-			free(sambaS);
+			delete sambaS;
 		}
 		if (inet) {
 			Surface *inetS = Surface::loadImage("imgs/inet.png", confStr["skin"]);
 			if (inetS) inetS->blit(bgmain, serviceX, bottomBarIconY);
 			serviceX -= 19;
-			free(inetS);
+			delete inetS;
 		}
 	}
 
@@ -493,7 +492,7 @@ void GMenu2X::initBG() {
 
 void GMenu2X::initFont() {
 	if (font != NULL) {
-		free(font);
+		delete font;
 		font = NULL;
 	}
 
