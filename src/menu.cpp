@@ -204,7 +204,11 @@ bool Menu::addLink(string path, string file, string section) {
 		title = title.substr(0, pos);
 	}
 
-	string linkpath = GMenu2X::getHome()+"/sections/"+section;
+	string linkpath = GMenu2X::getHome() + "/sections";
+	if (!fileExists(linkpath))
+		mkdir(linkpath.c_str(), 0755);
+
+	linkpath = GMenu2X::getHome() + "/sections/" + section;
 	if (!fileExists(linkpath))
 		mkdir(linkpath.c_str(), 0755);
 
