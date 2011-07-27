@@ -348,6 +348,13 @@ GMenu2X::GMenu2X() {
 	unlockVT();
 #endif
 
+	/* Do not clear the screen on exit.
+	 * This may require an SDL patch available at
+	 * https://github.com/mthuurne/opendingux-buildroot/blob
+	 * 			/opendingux-2010.11/package/sdl/sdl-fbcon-clear-onexit.patch
+	 */
+	setenv("SDL_FBCON_DONT_CLEAR", "1", 0);
+
 	//Screen
 	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK|SDL_INIT_TIMER)<0 ) {
 		ERROR("Could not initialize SDL: %s\n", SDL_GetError());
@@ -409,12 +416,9 @@ void GMenu2X::quit() {
 	sc.clear();
 	delete s;
 
-#ifdef UNLOCK_VT
-	SDL_QuitSubSystem(SDL_INIT_EVERYTHING & ~SDL_INIT_VIDEO);
-	unlockVT();
-#else
 	SDL_Quit();
-#endif
+
+	unsetenv("SDL_FBCON_DONT_CLEAR");
 
 #ifdef TARGET_GP2X
 /*	if (gp2x_mem!=0) {
