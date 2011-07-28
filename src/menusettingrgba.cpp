@@ -191,7 +191,7 @@ unsigned short MenuSettingRGBA::getSelPart()
 
 void MenuSettingRGBA::adjustInput()
 {
-#ifdef TARGET_GP2X
+#ifdef PLATFORM_GP2X
     /*
 	gmenu2x->input.setInterval(30, ACTION_Y );
 	gmenu2x->input.setInterval(30, ACTION_X );

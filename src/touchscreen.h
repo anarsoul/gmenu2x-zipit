@@ -36,7 +36,7 @@ typedef struct {
 
 class Touchscreen {
 private:
-	int wm97xx;
+	int ts_fd;
 	bool calibrated, _handled;
 	TS_EVENT event;
 	int calibX, calibY;
@@ -50,8 +50,14 @@ public:
 	~Touchscreen();
 
 	bool init();
-	bool initialized();
 	void deinit();
+
+	bool initialized() {
+#ifdef PLATFORM_GP2X
+		return ts_fd>0;
+#endif
+		return false;
+	}
 
 	bool poll();
 	bool pressed();

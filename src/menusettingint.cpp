@@ -111,7 +111,7 @@ int MenuSettingInt::value()
 
 void MenuSettingInt::adjustInput()
 {
-#ifdef TARGET_GP2X
+#ifdef PLATFORM_GP2X
 //	gmenu2x->input.setInterval(30, ACTION_LEFT );
 //	gmenu2x->input.setInterval(30, ACTION_RIGHT);
 #endif

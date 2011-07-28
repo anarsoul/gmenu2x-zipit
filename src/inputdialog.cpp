@@ -160,7 +160,7 @@ bool InputDialog::exec() {
 
 		if (caretOn) gmenu2x->s->box(box.x+box.w-12, box.y+3, 8, box.h-6, gmenu2x->skinConfColors[COLOR_SELECTION_BG]);
 
-		if (gmenu2x->f200) ts.poll();
+		if (ts.initialized()) ts.poll();
 		action = drawVirtualKeyboard();
 		gmenu2x->s->flip();
 
@@ -311,7 +311,7 @@ int InputDialog::drawVirtualKeyboard() {
 			SDL_Rect re = {kbLeft+xc*KEY_WIDTH-1, KB_TOP+l*KEY_HEIGHT, KEY_WIDTH-1, KEY_HEIGHT-2};
 
 			//if ts on rect, change selection
-			if (gmenu2x->f200 && ts.pressed() && ts.inRect(re)) {
+			if (ts.initialized() && ts.pressed() && ts.inRect(re)) {
 				selCol = xc;
 				selRow = l;
 			}
@@ -325,7 +325,7 @@ int InputDialog::drawVirtualKeyboard() {
 	//Ok/Cancel
 	SDL_Rect re = {kbLeft-1, KB_TOP+kb->size()*KEY_HEIGHT, kbLength*KEY_WIDTH/2-1, KEY_HEIGHT-1};
 	gmenu2x->s->rectangle(re, gmenu2x->skinConfColors[COLOR_SELECTION_BG]);
-	if (gmenu2x->f200 && ts.pressed() && ts.inRect(re)) {
+	if (ts.initialized() && ts.pressed() && ts.inRect(re)) {
 		selCol = 0;
 		selRow = kb->size();
 	}
@@ -333,14 +333,14 @@ int InputDialog::drawVirtualKeyboard() {
 
 	re.x = kbLeft+kbLength*KEY_WIDTH/2-1;
 	gmenu2x->s->rectangle(re, gmenu2x->skinConfColors[COLOR_SELECTION_BG]);
-	if (gmenu2x->f200 && ts.pressed() && ts.inRect(re)) {
+	if (ts.initialized() && ts.pressed() && ts.inRect(re)) {
 		selCol = 1;
 		selRow = kb->size();
 	}
 	gmenu2x->s->write(gmenu2x->font, gmenu2x->tr["OK"], (int)(160+kbLength*KEY_WIDTH/4), KB_TOP+kb->size()*KEY_HEIGHT+KEY_HEIGHT/2, ASFont::HAlignCenter, ASFont::VAlignMiddle);
 
 	//if ts released
-	if (gmenu2x->f200 && ts.released() && ts.inRect(kbRect)) {
+	if (ts.initialized() && ts.released() && ts.inRect(kbRect)) {
 		action = ID_ACTION_SELECT;
 	}
 

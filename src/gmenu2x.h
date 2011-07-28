@@ -136,25 +136,27 @@ private:
 	string ip, defaultgw, lastSelectorDir;
 	int lastSelectorElement;
 	void readConfig();
-	void readConfigOpen2x();
 	void readTmp();
-	void readCommonIni();
-	void writeCommonIni();
 
 	void initServices();
 	void initFont();
 	void initMenu();
 
-#ifdef TARGET_GP2X
+#ifdef PLATFORM_GP2X
+	void readConfigOpen2x();
+	void readCommonIni();
+	void writeCommonIni();
+
 	unsigned long gp2x_mem;
 	unsigned short *gp2x_memregs;
 	volatile unsigned short *MEM_REG;
 	int cx25874; //tv-out
 #endif
-	void gp2x_tvout_on(bool pal);
-	void gp2x_tvout_off();
-	void gp2x_init();
-	void gp2x_deinit();
+
+	void tvout_on(bool pal);
+	void tvout_off();
+	void init();
+	void deinit();
 	void toggleTvOut();
 
 public:
@@ -191,15 +193,18 @@ public:
 	//Configuration settings
 	bool useSelectionPng;
 	void setSkin(const string &skin, bool setWallpaper = true);
+
+#ifdef PLATFORM_GP2X
 	//firmware type and version
 	string fwType, fwVersion;
-	//gp2x type
-	bool f200;
+
+	bool isF200() { return ts.initialized(); }
 
 	// Open2x settings ---------------------------------------------------------
 	bool o2x_usb_net_on_boot, o2x_ftp_on_boot, o2x_telnet_on_boot, o2x_gp2xjoy_on_boot, o2x_usb_host_on_boot, o2x_usb_hid_on_boot, o2x_usb_storage_on_boot;
 	string o2x_usb_net_ip;
 	int volumeMode, savedVolumeMode;		//	just use the const int scale values at top of source
+#endif
 
 	//  Volume scaling values to store from config files
 	int volumeScalerPhones;
@@ -214,11 +219,15 @@ public:
 	//Status functions
 	void main();
 	void options();
+#ifdef PLATFORM_GP2X
 	void settingsOpen2x();
+#endif
 	void skinMenu();
+	/*
 	void activateSdUsb();
 	void activateNandUsb();
 	void activateRootUsb();
+	*/
 	void about();
 	void viewLog();
 	void contextMenu();
@@ -241,7 +250,9 @@ public:
 	void setInputSpeed();
 
 	void writeConfig();
+#ifdef PLATFORM_GP2X
 	void writeConfigOpen2x();
+#endif
 	void writeSkinConfig();
 	void writeTmp(int selelem=-1, const string &selectordir="");
 

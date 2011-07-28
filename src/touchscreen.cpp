@@ -26,7 +26,7 @@
 using namespace std;
 
 Touchscreen::Touchscreen() {
-	wm97xx = 0;
+	ts_fd = 0;
 	calibrated = false;
 	wasPressed = false;
 	_handled = false;
@@ -40,29 +40,20 @@ Touchscreen::Touchscreen() {
 }
 
 Touchscreen::~Touchscreen() {
-	if (wm97xx) deinit();
+	deinit();
 }
 
 bool Touchscreen::init() {
-#ifdef TARGET_GP2X
-	wm97xx = open("/dev/touchscreen/wm97xx", O_RDONLY|O_NOCTTY);
+#ifdef PLATFORM_GP2X
+	ts_fd = open("/dev/touchscreen/wm97xx", O_RDONLY|O_NOCTTY);
 #endif
 	return initialized();
 }
 
-bool Touchscreen::initialized() {
-#ifdef TARGET_GP2X
-	return wm97xx>0;
-#else
-	return true;
-#endif
-}
-
-void Touchscreen::deinit() {
-#ifdef TARGET_GP2X
-	close(wm97xx);
-	wm97xx = 0;
-#endif
+void Touchscreen::deinit()
+{
+	if (ts_fd) close(ts_fd);
+	ts_fd = 0;
 }
 
 void Touchscreen::calibrate() {
@@ -75,8 +66,8 @@ void Touchscreen::calibrate() {
 
 bool Touchscreen::poll() {
 	wasPressed = pressed();
-#ifdef TARGET_GP2X
-	read(wm97xx, &event, sizeof(TS_EVENT));
+#ifdef PLATFORM_GP2X
+	read(ts_fd, &event, sizeof(TS_EVENT));
 	if (!calibrated) calibrate();
 
 	if (event.pressure>0) {

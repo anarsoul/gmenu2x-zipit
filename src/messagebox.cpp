@@ -105,6 +105,8 @@ int MessageBox::exec() {
 
     bevent_t event;
 	while (result<0) {
+
+#ifdef PLATFORM_GP2X
 		//touchscreen
 		if (gmenu2x->f200) {
 			if (gmenu2x->ts.poll()) {
@@ -115,6 +117,8 @@ int MessageBox::exec() {
 					}
 			}
 		}
+#endif
+
 /*
 		gmenu2x->input.update();
 		for (uint i=0; i<buttons.size(); i++)

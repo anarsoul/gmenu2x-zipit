@@ -29,7 +29,7 @@ noinst_HEADERS = asfont.h button.h cpu.h dirdialog.h FastDelegate.h \
 
 AM_CFLAGS= @CFLAGS@ @SDL_CFLAGS@
 
-AM_CXXFLAGS = @CXXFLAGS@ @SDL_CFLAGS@ -DTARGET_GP2X \
+AM_CXXFLAGS = @CXXFLAGS@ @SDL_CFLAGS@ \
 	-fno-exceptions \
 	-Wall -Wextra -Wundef -Wunused-macros
 

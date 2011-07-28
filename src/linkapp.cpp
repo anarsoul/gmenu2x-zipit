@@ -215,11 +215,8 @@ void LinkApp::setGamma(int gamma) {
 }
 // /G
 
-bool LinkApp::targetExists() {
-#ifndef TARGET_GP2X
-	return true; //For displaying elements during testing on pc
-#endif
-
+bool LinkApp::targetExists()
+{
 	string target = exec;
 	if (!exec.empty() && exec[0]!='/' && !workdir.empty())
 		target = workdir + "/" + exec;
@@ -417,10 +414,6 @@ void LinkApp::selector(int startSelection, const string &selectorDir) {
 void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 	drawRun();
 	save();
-#ifndef TARGET_GP2X
-	//delay for testing
-	SDL_Delay(1000);
-#endif
 
 	//Set correct working directory
 	string wd = workdir;
@@ -491,8 +484,12 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 	} else {
 		if (gmenu2x->confInt["saveSelection"] && (gmenu2x->confInt["section"]!=gmenu2x->menu->selSectionIndex() || gmenu2x->confInt["link"]!=gmenu2x->menu->selLinkIndex()))
 			gmenu2x->writeConfig();
+
+#ifdef PLATFORM_GP2X
 		if (gmenu2x->fwType == "open2x" && gmenu2x->savedVolumeMode != gmenu2x->volumeMode)
 			gmenu2x->writeConfigOpen2x();
+#endif
+
 		if (selectedFile=="")
 			gmenu2x->writeTmp();
          	gmenu2x->quit();
