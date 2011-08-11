@@ -87,10 +87,12 @@
 
 #ifdef _CARD_ROOT
 const char *CARD_ROOT = _CARD_ROOT;
+#elif defined(PLATFORM_DINGUX)
+const char *CARD_ROOT = "/media/";
 #else
 const char *CARD_ROOT = "/card/"; //Note: Add a trailing /!
 #endif
-const int CARD_ROOT_LEN = 5;
+const int CARD_ROOT_LEN = strlen(CARD_ROOT)-1;
 
 static GMenu2X *app;
 static string gmenu2x_home;
