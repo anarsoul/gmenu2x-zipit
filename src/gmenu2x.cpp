@@ -632,7 +632,14 @@ void GMenu2X::viewLog() {
 }
 
 void GMenu2X::readConfig() {
-	string conffile = getHome() + "/gmenu2x.conf";
+	string conffile = GMENU2X_SYSTEM_DIR "/gmenu2x.conf";
+	readConfig(conffile);
+
+	conffile = getHome() + "/gmenu2x.conf";
+	readConfig(conffile);
+}
+
+void GMenu2X::readConfig(string conffile) {
 	if (fileExists(conffile)) {
 		ifstream inf(conffile.c_str(), ios_base::in);
 		if (inf.is_open()) {

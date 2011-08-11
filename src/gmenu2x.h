@@ -136,6 +136,7 @@ private:
 	string ip, defaultgw, lastSelectorDir;
 	int lastSelectorElement;
 	void readConfig();
+	void readConfig(string path);
 	void readTmp();
 
 	void initServices();
