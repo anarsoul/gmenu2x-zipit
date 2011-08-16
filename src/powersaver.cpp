@@ -21,6 +21,10 @@ PowerSaver* PowerSaver::getInstance() {
     return instance;
 }
 
+bool PowerSaver::isRunning() {
+	return instance != NULL;
+}
+
 PowerSaver::PowerSaver( ) {
 	SDL_InitSubSystem(SDL_INIT_TIMER);
     setScreenTimeout(0);
@@ -30,6 +34,7 @@ PowerSaver::PowerSaver( ) {
 PowerSaver::~PowerSaver() {
 	SDL_RemoveTimer(screenTimer);
 	SDL_QuitSubSystem(SDL_INIT_TIMER);
+	instance = NULL;
 }
 
 void PowerSaver::setScreenTimeout( unsigned int seconds ) {

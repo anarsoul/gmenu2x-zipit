@@ -5,6 +5,7 @@ class PowerSaver {
 
     public:
         static PowerSaver* getInstance();
+		static bool isRunning();
         ~PowerSaver();
         void addScreenTimer();
         void resetScreenTimer();
