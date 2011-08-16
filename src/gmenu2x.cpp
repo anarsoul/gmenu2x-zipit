@@ -360,7 +360,7 @@ GMenu2X::GMenu2X()
 	setenv("SDL_FBCON_DONT_CLEAR", "1", 0);
 
 	//Screen
-	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO|SDL_INIT_JOYSTICK)<0 ) {
+	if( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK)<0 ) {
 		ERROR("Could not initialize SDL: %s\n", SDL_GetError());
 		quit();
 	}
