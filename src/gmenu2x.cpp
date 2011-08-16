@@ -391,7 +391,10 @@ GMenu2X::GMenu2X()
 	}
 
 	input.init(input_file);
-    PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
+
+	if (confInt["backlightTimeout"] > 0)
+        PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
+
 	setInputSpeed();
 	initServices();
 	setBacklight(confInt["backlight"]);
@@ -412,6 +415,8 @@ GMenu2X::~GMenu2X() {
 	if (fwType=="open2x") writeConfigOpen2x();
 #endif
 
+	if (PowerSaver::isRunning())
+		delete PowerSaver::getInstance();
 	quit();
 
 	delete menu;
@@ -1261,7 +1266,14 @@ void GMenu2X::options() {
 		if (prevbacklight != confInt["backlight"]) setBacklight(confInt["backlight"]);
 		if (curMenuClock!=confInt["menuClock"]) setClock(confInt["menuClock"]);
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
-        PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
+
+		if (confInt["backlightTimeout"] == 0) {
+			if (PowerSaver::isRunning())
+				delete PowerSaver::getInstance();
+		} else {
+			PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
+		}
+
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) {
 			tr.setLang(lang);
