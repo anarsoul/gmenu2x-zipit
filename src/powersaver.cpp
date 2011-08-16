@@ -7,7 +7,7 @@
 #include "powersaver.h"
 #include "debug.h"
 PowerSaver* PowerSaver::instance = NULL;
-Uint32 screenTimerCallback(Uint32 interval, void *param)
+Uint32 screenTimerCallback(Uint32, void *)
 {
     DEBUG("Disable Backlight Event\n");
     PowerSaver::getInstance()->disableScreen();
@@ -22,12 +22,14 @@ PowerSaver* PowerSaver::getInstance() {
 }
 
 PowerSaver::PowerSaver( ) {
+	SDL_InitSubSystem(SDL_INIT_TIMER);
     setScreenTimeout(0);
     screenTimer = NULL;
 }
 
 PowerSaver::~PowerSaver() {
-    SDL_RemoveTimer(screenTimer);
+	SDL_RemoveTimer(screenTimer);
+	SDL_QuitSubSystem(SDL_INIT_TIMER);
 }
 
 void PowerSaver::setScreenTimeout( unsigned int seconds ) {
@@ -39,6 +41,7 @@ void PowerSaver::resetScreenTimer() {
     if ( screenTimer != NULL ) {
         SDL_RemoveTimer(screenTimer);
     }
+
     addScreenTimer();
     //If display is off, turn on it
     if ( !screenState ) {
@@ -52,6 +55,7 @@ void PowerSaver::addScreenTimer() {
         screenTimer = NULL;
         return;
     }
+
     screenTimer = SDL_AddTimer(screenTimeout*1000, screenTimerCallback,NULL);
     if ( screenTimer == NULL ) {
 		ERROR("Could not initialize SDLTimer: %s\n", SDL_GetError());
