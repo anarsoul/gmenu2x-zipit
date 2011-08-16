@@ -180,8 +180,8 @@ bool InputManager::getEvent(bevent_t *bevent, bool wait) {
               break;
           }
     }
-    if ( wait ) {
+    if ( wait && PowerSaver::isRunning())
         PowerSaver::getInstance()->resetScreenTimer();
-    }
+
     return true;
 }
