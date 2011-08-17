@@ -7,5 +7,7 @@ source /etc/profile
 
 setfont /usr/share/kbd/consolefonts/kernel-6x11-font
 
+trap "" hup
+
 clear
-/usr/bin/gmenu2x.bin
+exec /usr/bin/gmenu2x.bin
