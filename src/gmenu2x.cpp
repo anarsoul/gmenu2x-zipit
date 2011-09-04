@@ -1037,10 +1037,19 @@ void GMenu2X::main() {
 
 
 		if (helpDisplayed) {
-			s->box(10,50,300,143, skinConfColors[COLOR_MESSAGE_BOX_BG]);
+			s->box(10,50,300,helpBoxHeight+4, skinConfColors[COLOR_MESSAGE_BOX_BG]);
 			s->rectangle( 12,52,296,helpBoxHeight,
 			skinConfColors[COLOR_MESSAGE_BOX_BORDER] );
 			s->write( font, tr["CONTROLS"], 20, 60 );
+#ifdef PLATFORM_DINGUX
+			s->write( font, tr["A: Launch link / Confirm action"], 20, 80 );
+			s->write( font, tr["B: Show this help menu"], 20, 95 );
+			s->write( font, tr["L, R: Change section"], 20, 110 );
+			s->write( font, tr["Y: Show manual / readme"], 20, 125 );
+			s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
+			s->write( font, tr["START: Show options menu"], 20, 170 );
+#endif
+#ifdef PLATFORM_GP2X
 			s->write( font, tr["B, Stick press: Launch link / Confirm action"], 20, 80 );
 			s->write( font, tr["L, R: Change section"], 20, 95 );
 			s->write( font, tr["Y: Show manual/readme"], 20, 110 );
@@ -1048,9 +1057,12 @@ void GMenu2X::main() {
 			s->write( font, tr["A+VOLUP, A+VOLDOWN: Change volume"], 20, 140 );
 			s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
 			s->write( font, tr["START: Show options menu"], 20, 170 );
-#ifdef PLATFORM_GP2X
 			if (fwType=="open2x") s->write( font, tr["X: Toggle speaker mode"], 20, 185 );
 #endif
+			s->flip();
+			while (input.waitForPressedButton() != CANCEL) {}
+			helpDisplayed=false;
+			continue;
 		}
 
 #ifdef WITH_DEBUG
@@ -1101,7 +1113,7 @@ void GMenu2X::main() {
                 if (menu->selLink() != NULL) menu->selLink()->run();
                 break;
             case CANCEL:
-                helpDisplayed = ! helpDisplayed;
+                helpDisplayed=true;
                 break;
             case SETTINGS:
                 options();
