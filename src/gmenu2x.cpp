@@ -409,12 +409,6 @@ GMenu2X::GMenu2X()
 }
 
 GMenu2X::~GMenu2X() {
-	writeConfig();
-
-#ifdef PLATFORM_GP2X
-	if (fwType=="open2x") writeConfigOpen2x();
-#endif
-
 	if (PowerSaver::isRunning())
 		delete PowerSaver::getInstance();
 	quit();
