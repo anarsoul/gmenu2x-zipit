@@ -1045,14 +1045,12 @@ void GMenu2X::main() {
 			s->write( font, tr["A: Launch link / Confirm action"], 20, 80 );
 			s->write( font, tr["B: Show this help menu"], 20, 95 );
 			s->write( font, tr["L, R: Change section"], 20, 110 );
-			s->write( font, tr["Y: Show manual / readme"], 20, 125 );
 			s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
 			s->write( font, tr["START: Show options menu"], 20, 170 );
 #endif
 #ifdef PLATFORM_GP2X
 			s->write( font, tr["B, Stick press: Launch link / Confirm action"], 20, 80 );
 			s->write( font, tr["L, R: Change section"], 20, 95 );
-			s->write( font, tr["Y: Show manual/readme"], 20, 110 );
 			s->write( font, tr["VOLUP, VOLDOWN: Change cpu clock"], 20, 125 );
 			s->write( font, tr["A+VOLUP, A+VOLDOWN: Change volume"], 20, 140 );
 			s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
@@ -1132,12 +1130,6 @@ void GMenu2X::main() {
                 break;
             case RIGHT:
                 menu->linkRight();
-                break;
-            case MANUAL:
-                {
-			    LinkApp* app = menu->selLinkApp();
-                if ( app ) { app->showManual(); }
-                }
                 break;
             case ALTLEFT:
 				menu->decSectionIndex();
