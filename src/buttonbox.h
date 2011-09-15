@@ -13,6 +13,7 @@ public:
 	~ButtonBox();
 
 	void add(Button *button);
+	void clear();
 
 	void paint(unsigned int posX);
 	void handleTS();

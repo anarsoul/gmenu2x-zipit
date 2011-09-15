@@ -10,13 +10,17 @@ ButtonBox::ButtonBox(GMenu2X *gmenu2x) : gmenu2x(gmenu2x)
 
 ButtonBox::~ButtonBox()
 {
-	for (ButtonList::const_iterator it = buttons.begin(); it != buttons.end(); ++it)
-		delete *it;
+	clear();
 }
 
 void ButtonBox::add(Button *button)
 {
 	buttons.push_back(button);
+}
+
+void ButtonBox::clear()
+{
+	buttons.clear();
 }
 
 void ButtonBox::paint(unsigned int posX)
