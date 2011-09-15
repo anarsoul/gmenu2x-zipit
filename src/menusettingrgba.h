@@ -48,7 +48,7 @@ public:
 
 	virtual void draw(int y);
 	virtual void handleTS();
-	virtual void manageInput(bevent_t *event);
+	virtual bool manageInput(bevent_t *event);
 	virtual void adjustInput();
 	virtual void drawSelected(int y);
 	virtual bool edited();

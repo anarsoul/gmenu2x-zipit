@@ -82,29 +82,30 @@ void MenuSettingRGBA::handleTS() {
 	MenuSetting::handleTS();
 }
 
-void MenuSettingRGBA::manageInput(bevent_t *event) {
-    switch(event->button) {
-        case MANUAL:
-            inc();
-            break;
-        case CLEAR:
-            dec();
-            break;
+bool MenuSettingRGBA::manageInput(bevent_t *event) {
+	switch(event->button) {
+		case MANUAL:
+			inc();
+			break;
+		case CLEAR:
+			dec();
+			break;
 		case ALTLEFT:
 			update_value(-10);
 			break;
 		case ALTRIGHT:
 			update_value(10);
 			break;
-        case LEFT:
-            leftComponent();
-            break;
-        case RIGHT:
-            rightComponent();
-            break;
-        default:
-            break;
-    }
+		case LEFT:
+			leftComponent();
+			break;
+		case RIGHT:
+			rightComponent();
+			break;
+		default:
+			return false;
+	}
+	return true;
 }
 
 void MenuSettingRGBA::update_value(int value)

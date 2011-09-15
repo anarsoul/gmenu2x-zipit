@@ -42,7 +42,7 @@ void MenuSettingStringBase::draw(int y)
 			ASFont::HAlignLeft, ASFont::VAlignTop);
 }
 
-void MenuSettingStringBase::manageInput(bevent_t *event)
+bool MenuSettingStringBase::manageInput(bevent_t *event)
 {
     switch (event->button) {
         case CLEAR:
@@ -52,8 +52,10 @@ void MenuSettingStringBase::manageInput(bevent_t *event)
             edit();
             break;
         default:
+			return false;
             break;
     }
+	return true;
 }
 
 void MenuSettingStringBase::clear()

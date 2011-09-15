@@ -65,7 +65,7 @@ void MenuSettingInt::draw(int y)
 	gmenu2x->s->write( gmenu2x->font, strvalue, 155, y, ASFont::HAlignLeft, ASFont::VAlignTop );
 }
 
-void MenuSettingInt::manageInput(bevent_t *event)
+bool MenuSettingInt::manageInput(bevent_t *event)
 {
     switch (event->button) {
         case LEFT:
@@ -81,8 +81,9 @@ void MenuSettingInt::manageInput(bevent_t *event)
             setValue(value() + 10);
             break;
         default:
-            break;
+			return false;
     }
+	return true;
 }
 
 void MenuSettingInt::inc()

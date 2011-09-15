@@ -49,7 +49,7 @@ MenuSettingMultiString::MenuSettingMultiString(
 	buttonBox.add(btn);
 }
 
-void MenuSettingMultiString::manageInput(bevent_t *event)
+bool MenuSettingMultiString::manageInput(bevent_t *event)
 {
     switch(event->button) {
         case LEFT:
@@ -59,8 +59,9 @@ void MenuSettingMultiString::manageInput(bevent_t *event)
             incSel();
             break;
         default:
-            break;
+			return false;
     }
+	return true;
 }
 
 void MenuSettingMultiString::incSel()

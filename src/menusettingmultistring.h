@@ -45,7 +45,7 @@ public:
 			const std::vector<std::string> *choices);
 	virtual ~MenuSettingMultiString() {};
 
-	virtual void manageInput(bevent_t *event);
+	virtual bool manageInput(bevent_t *event);
 };
 
 #endif

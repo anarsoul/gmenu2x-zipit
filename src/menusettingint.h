@@ -39,7 +39,7 @@ public:
 			const std::string &description, int *value, int min, int max);
 	virtual ~MenuSettingInt() {}
 
-	virtual void manageInput(bevent_t *event);
+	virtual bool manageInput(bevent_t *event);
 	virtual void adjustInput();
 	virtual void draw(int);
 	virtual bool edited();
