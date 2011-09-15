@@ -22,6 +22,7 @@
 
 #include "wallpaperdialog.h"
 #include "filelister.h"
+#include "buttonbox.h"
 #include "debug.h"
 
 using namespace std;
@@ -70,6 +71,9 @@ bool WallpaperDialog::exec()
 
 	uint i, selected = 0, firstElement = 0, iY;
 
+	ButtonBox buttonbox(gmenu2x);
+	buttonbox.add(new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Select wallpaper"]));
+
 	while (!close) {
 		if (selected>firstElement+9) firstElement=selected-9;
 		if (selected<firstElement) firstElement=selected;
@@ -84,7 +88,7 @@ bool WallpaperDialog::exec()
 		writeTitle("Wallpaper selection");
 		writeSubTitle("Select an image from the list, to use as a wallpaper");
 
-		gmenu2x->drawButton(gmenu2x->s, "b", gmenu2x->tr["Select wallpaper"],5);
+		buttonbox.paint(5);
 
 		//Selection
 		iY = selected-firstElement;
