@@ -1469,11 +1469,26 @@ void GMenu2X::activateRootUsb() {
 	}
 }
 */
+
+void GMenu2X::showManual() {
+	menu->selLinkApp()->showManual();
+}
+
 void GMenu2X::contextMenu() {
 	vector<MenuOption> voices;
 	{
 	MenuOption opt = {tr.translate("Add link in $1",menu->selSection().c_str(),NULL), MakeDelegate(this, &GMenu2X::addLink)};
 	voices.push_back(opt);
+	}
+
+	{
+		LinkApp* app = menu->selLinkApp();
+		if (app && fileExists(app->getManual())) {
+			MenuOption opt = {tr.translate("Show manual of $1",menu->selLink()->getTitle().c_str(),NULL),
+				MakeDelegate(this, &GMenu2X::showManual),
+			};
+			voices.push_back(opt);
+		}
 	}
 
 	if (menu->selLinkApp()!=NULL) {

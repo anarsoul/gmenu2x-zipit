@@ -160,6 +160,8 @@ private:
 	void deinit();
 	void toggleTvOut();
 
+	void showManual();
+
 public:
 	GMenu2X();
 	~GMenu2X();
