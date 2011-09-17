@@ -45,7 +45,7 @@ void MenuSettingStringBase::draw(int y)
 bool MenuSettingStringBase::manageInput(bevent_t *event)
 {
     switch (event->button) {
-        case CLEAR:
+        case CANCEL:
             clear();
             break;
         case ACCEPT:

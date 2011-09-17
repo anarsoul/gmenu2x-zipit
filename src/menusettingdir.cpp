@@ -31,7 +31,7 @@ MenuSettingDir::MenuSettingDir(
 {
 	IconButton *btn;
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/x.png", gmenu2x->tr["Clear"]);
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/a.png", gmenu2x->tr["Clear"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingDir::clear));
 	buttonBox.add(btn);
 
