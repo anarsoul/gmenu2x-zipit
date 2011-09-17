@@ -31,7 +31,7 @@ MenuSettingRGBA::MenuSettingRGBA(
 		const string &description, RGBAColor *value)
 	: MenuSetting(gmenu2x,name,description)
 {
-	IconButton *btn;
+	edit = false;
 
 	selPart = 0;
 	_value = value;
@@ -41,21 +41,7 @@ MenuSettingRGBA::MenuSettingRGBA(
 	this->setB(this->value().b);
 	this->setA(this->value().a);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/x.png", gmenu2x->tr["Decrease"]);
-	btn->setAction(MakeDelegate(this, &MenuSettingRGBA::dec));
-	buttonBox.add(btn);
-
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/y.png", gmenu2x->tr["Increase"]);
-	btn->setAction(MakeDelegate(this, &MenuSettingRGBA::inc));
-	buttonBox.add(btn);
-
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/left.png");
-	btn->setAction(MakeDelegate(this, &MenuSettingRGBA::leftComponent));
-	buttonBox.add(btn);
-
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Change color component"]);
-	btn->setAction(MakeDelegate(this, &MenuSettingRGBA::rightComponent));
-	buttonBox.add(btn);
+	updateButtonBox();
 }
 
 void MenuSettingRGBA::draw(int y) {
@@ -83,12 +69,13 @@ void MenuSettingRGBA::handleTS() {
 }
 
 bool MenuSettingRGBA::manageInput(bevent_t *event) {
+	if (edit) {
 	switch(event->button) {
-		case MANUAL:
-			inc();
-			break;
-		case CLEAR:
+		case LEFT:
 			dec();
+			break;
+		case RIGHT:
+			inc();
 			break;
 		case ALTLEFT:
 			update_value(-10);
@@ -96,14 +83,30 @@ bool MenuSettingRGBA::manageInput(bevent_t *event) {
 		case ALTRIGHT:
 			update_value(10);
 			break;
-		case LEFT:
-			leftComponent();
-			break;
-		case RIGHT:
-			rightComponent();
+		case ACCEPT:
+		case UP:
+		case DOWN:
+			edit = false;
+			updateButtonBox();
 			break;
 		default:
 			return false;
+	}
+	} else {
+		switch(event->button) {
+			case LEFT:
+				leftComponent();
+				break;
+			case RIGHT:
+				rightComponent();
+				break;
+			case ACCEPT:
+				edit = true;
+				updateButtonBox();
+				break;
+			default:
+				return false;
+		}
 	}
 	return true;
 }
@@ -212,4 +215,20 @@ void MenuSettingRGBA::drawSelected(int y)
 bool MenuSettingRGBA::edited()
 {
 	return originalValue.r != value().r || originalValue.g != value().g || originalValue.b != value().b || originalValue.a != value().a;
+}
+
+void MenuSettingRGBA::updateButtonBox()
+{
+	buttonBox.clear();
+	if (edit) {
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/l.png"));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png", gmenu2x->tr["Decrease"]));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/r.png"));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Increase"]));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Confirm"]));
+	} else {
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png"));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Change color component"]));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Edit"]));
+	}
 }

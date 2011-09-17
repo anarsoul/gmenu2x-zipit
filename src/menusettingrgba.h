@@ -40,6 +40,9 @@ private:
 	void leftComponent();
 	void rightComponent();
 
+	bool edit;
+	void updateButtonBox();
+
 public:
 	MenuSettingRGBA(
 			GMenu2X *gmenu2x, const std::string &name,
