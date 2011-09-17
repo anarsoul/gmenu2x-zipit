@@ -42,20 +42,20 @@ MenuSettingInt::MenuSettingInt(GMenu2X *gmenu2x, const string &name, const strin
 	ButtonAction actionInc = MakeDelegate(this, &MenuSettingInt::inc);
 	ButtonAction actionDec = MakeDelegate(this, &MenuSettingInt::dec);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/left.png");
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/l.png");
 	btn->setAction(actionDec);
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/y.png", gmenu2x->tr["Increase value"]);
-	btn->setAction(actionInc);
-	buttonBox.add(btn);
-
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/right.png");
-	btn->setAction(actionInc);
-	buttonBox.add(btn);
-
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/x.png", gmenu2x->tr["Decrease value"]);
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/left.png", gmenu2x->tr["Decrease"]);
 	btn->setAction(actionDec);
+	buttonBox.add(btn);
+
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/r.png");
+	btn->setAction(actionInc);
+	buttonBox.add(btn);
+
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Increase"]);
+	btn->setAction(actionInc);
 	buttonBox.add(btn);
 }
 
