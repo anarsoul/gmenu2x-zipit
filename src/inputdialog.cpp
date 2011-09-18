@@ -84,22 +84,22 @@ InputDialog::InputDialog(GMenu2X *gmenu2x, InputManager &inputMgr_,
 
 	setKeyboard(0);
 
-	ButtonAction actBackspace = MakeDelegate(this, &InputDialog::backspace);
+	buttonbox = new ButtonBox(gmenu2x);
+	IconButton *btnBackspace = new IconButton(gmenu2x, "skin:imgs/buttons/l.png", gmenu2x->tr["Backspace"]);
+	btnBackspace->setAction(MakeDelegate(this, &InputDialog::backspace));
+	buttonbox->add(btnBackspace);
 
-	btnBackspaceX = new IconButton(gmenu2x, "skin:imgs/buttons/x.png");
-	btnBackspaceX->setAction(actBackspace);
-
-	btnBackspaceL = new IconButton(gmenu2x, "skin:imgs/buttons/l.png", gmenu2x->tr["Backspace"]);
-	btnBackspaceL->setAction(actBackspace);
-
-	btnSpace = new IconButton(gmenu2x, "skin:imgs/buttons/r.png", gmenu2x->tr["Space"]);
+	IconButton *btnSpace = new IconButton(gmenu2x, "skin:imgs/buttons/r.png", gmenu2x->tr["Space"]);
 	btnSpace->setAction(MakeDelegate(this, &InputDialog::space));
+	buttonbox->add(btnSpace);
 
-	btnConfirm = new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Confirm"]);
+	IconButton *btnConfirm = new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Confirm"]);
 	btnConfirm->setAction(MakeDelegate(this, &InputDialog::confirm));
+	buttonbox->add(btnConfirm);
 
-	btnChangeKeys = new IconButton(gmenu2x, "skin:imgs/buttons/y.png", gmenu2x->tr["Change keys"]);
+	IconButton *btnChangeKeys = new IconButton(gmenu2x, "skin:imgs/buttons/a.png", gmenu2x->tr["Change keys"]);
 	btnChangeKeys->setAction(MakeDelegate(this, &InputDialog::changeKeys));
+	buttonbox->add(btnChangeKeys);
 }
 
 void InputDialog::setKeyboard(int kb) {
@@ -138,11 +138,7 @@ bool InputDialog::exec() {
 		writeSubTitle(text);
 		drawTitleIcon(icon);
 
-		gmenu2x->drawButton(gmenu2x->s, "y", gmenu2x->tr["Change keys"],
-		gmenu2x->drawButton(gmenu2x->s, "b", gmenu2x->tr["Confirm"],
-		gmenu2x->drawButton(gmenu2x->s, "r", gmenu2x->tr["Space"],
-		gmenu2x->drawButton(btnBackspaceL,
-		gmenu2x->drawButton(btnBackspaceX)-6))));
+		buttonbox->paint(5);
 
 		box.w = gmenu2x->font->getTextWidth(input)+18;
 		box.x = 160-box.w/2;
@@ -185,10 +181,9 @@ bool InputDialog::exec() {
             case ACCEPT:
                 confirm();
                 break;
-            case MANUAL:
+            case CANCEL:
                 changeKeys();
                 break;
-            case CLEAR:
             case ALTLEFT:
                 backspace();
                 break;
@@ -198,44 +193,6 @@ bool InputDialog::exec() {
             default:
                 break;
         }
-
-
-        /*
-		inputMgr.update();
-		if ( inputMgr[ACTION_START] ) action = ID_ACTION_CLOSE;
-		if ( inputMgr[ACTION_UP   ] ) action = ID_ACTION_UP;
-		if ( inputMgr[ACTION_DOWN ] ) action = ID_ACTION_DOWN;
-		if ( inputMgr[ACTION_LEFT ] ) action = ID_ACTION_LEFT;
-		if ( inputMgr[ACTION_RIGHT] ) action = ID_ACTION_RIGHT;
-		if ( inputMgr[ACTION_B]     ) action = ID_ACTION_SELECT;
-		if ( inputMgr[ACTION_Y]     ) action = ID_ACTION_KB_CHANGE;
-		if ( inputMgr[ACTION_X] || inputMgr[ACTION_L] ) action = ID_ACTION_BACKSPACE;
-		if ( inputMgr[ACTION_R    ] ) action = ID_ACTION_SPACE;
-
-		switch (action) {
-			case ID_ACTION_CLOSE: {
-				ok = false;
-				close = true;
-			} break;
-			case ID_ACTION_UP: {
-				selRow--;
-			} break;
-			case ID_ACTION_DOWN: {
-				selRow++;
-				if (selRow==(int)kb->size()) selCol = selCol<8 ? 0 : 1;
-			} break;
-			case ID_ACTION_LEFT: {
-				selCol--;
-			} break;
-			case ID_ACTION_RIGHT: {
-				selCol++;
-			} break;
-			case ID_ACTION_BACKSPACE: backspace(); break;
-			case ID_ACTION_SPACE: space(); break;
-			case ID_ACTION_KB_CHANGE: changeKeys(); break;
-			case ID_ACTION_SELECT: confirm(); break;
-		}
-*/
 	}
 
 	return ok;

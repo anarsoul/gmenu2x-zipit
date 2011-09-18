@@ -40,6 +40,7 @@
 #include <string>
 #include "gmenu2x.h"
 #include "dialog.h"
+#include "buttonbox.h"
 
 using std::string;
 using std::vector;
@@ -61,7 +62,7 @@ private:
 	stringlist *kb;
 	int kbLength, kbWidth, kbHeight, kbLeft;
 	SDL_Rect kbRect;
-	IconButton *btnBackspaceX, *btnBackspaceL, *btnSpace, *btnConfirm, *btnChangeKeys;
+	ButtonBox *buttonbox;
 	string input;
 
 	void backspace();
