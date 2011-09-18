@@ -142,6 +142,8 @@ void SurfaceCollection::del(const string &path) {
 		delete i->second;
 		surfaces.erase(i);
 	}
+
+	DEBUG("Unloading skin surface: '%s'\n", path.c_str());
 }
 
 void SurfaceCollection::clear() {
