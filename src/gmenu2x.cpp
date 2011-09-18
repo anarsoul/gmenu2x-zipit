@@ -620,7 +620,7 @@ void GMenu2X::viewLog() {
 
 			MessageBox mb(this, tr["Do you want to delete the log file?"], "icons/ebook.png");
 			mb.setButton(ACCEPT, tr["Yes"]);
-			mb.setButton(CLEAR, tr["No"]);
+			mb.setButton(CANCEL, tr["No"]);
 			if (mb.exec() == ACCEPT) {
 				ledOn();
 				unlink(logfile.c_str());
@@ -1728,7 +1728,7 @@ void GMenu2X::deleteLink() {
 	if (menu->selLinkApp()!=NULL) {
 		MessageBox mb(this, tr.translate("Deleting $1",menu->selLink()->getTitle().c_str(),NULL)+"\n"+tr["Are you sure?"], menu->selLink()->getIconPath());
 		mb.setButton(ACCEPT, tr["Yes"]);
-		mb.setButton(CLEAR, tr["No"]);
+		mb.setButton(CANCEL, tr["No"]);
 		if (mb.exec() == ACCEPT) {
 			ledOn();
 			menu->deleteSelectedLink();
@@ -1793,7 +1793,7 @@ void GMenu2X::renameSection() {
 void GMenu2X::deleteSection() {
 	MessageBox mb(this,tr["You will lose all the links in this section."]+"\n"+tr["Are you sure?"]);
 	mb.setButton(ACCEPT, tr["Yes"]);
-	mb.setButton(CLEAR, tr["No"]);
+	mb.setButton(CANCEL, tr["No"]);
 	if (mb.exec() == ACCEPT) {
 		ledOn();
 		if (rmtree(getHome() + "/sections/" + menu->selSection())) {
@@ -1806,7 +1806,7 @@ void GMenu2X::deleteSection() {
 
 void GMenu2X::scanner() {
 	Surface scanbg(bg);
-	drawButton(&scanbg, "x", tr["Exit"],
+	drawButton(&scanbg, "a", tr["Exit"],
 	drawButton(&scanbg, "b", "", 5)-10);
 	scanbg.write(font,tr["Link Scanner"],halfX,7,ASFont::HAlignCenter,ASFont::VAlignMiddle);
 	scanbg.convertToDisplayFormat();
@@ -1901,7 +1901,7 @@ void GMenu2X::scanner() {
         button = input.waitForPressedButton();
     } while ((button != SETTINGS)
                 && (button != ACCEPT)
-                && (button != CLEAR));
+                && (button != CANCEL));
 
     /*
     bevent_t event;
