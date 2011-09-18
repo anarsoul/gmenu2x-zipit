@@ -702,13 +702,7 @@ void GMenu2X::readConfig(string conffile) {
 	evalIntConf( &confInt["globalVolume"], 67, 0,100 );
 	evalIntConf( &confInt["backlightTimeout"], 15, 0,120 );
 	evalIntConf( &confInt["backlight"], 100, 5,100 );
-	evalIntConf( &confInt["videoBpp"],
-#ifdef PLATFORM_DINGUX
-				 32, // 16 would be better if the kernel could flip on vsync
-#else
-				 32,
-#endif
-				 16, 32 );
+	evalIntConf( &confInt["videoBpp"], 32, 16, 32 );
 
 	if (confStr["tvoutEncoding"] != "PAL") confStr["tvoutEncoding"] = "NTSC";
 	resX = constrain( confInt["resolutionX"], 320,1920 );
