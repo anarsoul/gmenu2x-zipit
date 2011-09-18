@@ -74,11 +74,12 @@ void TextManualDialog::exec() {
 		drawTitleIcon(icon,false,&bg);
 	writeTitle(title+(description.empty() ? "" : ": "+description),&bg);
 
-	gmenu2x->drawButton(&bg, "x", gmenu2x->tr["Exit"],
+	gmenu2x->drawButton(&bg, "start", gmenu2x->tr["Exit"],
+	gmenu2x->drawButton(&bg, "a", "",
 	gmenu2x->drawButton(&bg, "right", gmenu2x->tr["Change page"],
 	gmenu2x->drawButton(&bg, "left", "",
 	gmenu2x->drawButton(&bg, "down", gmenu2x->tr["Scroll"],
-	gmenu2x->drawButton(&bg, "up", "", 5)-10))-10));
+	gmenu2x->drawButton(&bg, "up", "", 5)-10))-10))-10);
 
 	bg.convertToDisplayFormat();
 
@@ -129,8 +130,8 @@ void TextManualDialog::exec() {
                 if (firstRow + rowsPerPage*2 -1 < pages[page].text.size()) firstRow += rowsPerPage-1;
                 else firstRow = max(0, pages[page].text.size() - rowsPerPage);
                 break;
+            case CANCEL:
             case SETTINGS:
-            case CLEAR:
                 close = true;
                 break;
             default:

@@ -326,9 +326,10 @@ void LinkApp::showManual() {
 				pngman->blit(gmenu2x->s, -page*320, 0);
 
 				gmenu2x->drawBottomBar();
-				gmenu2x->drawButton(gmenu2x->s, "x", gmenu2x->tr["Exit"],
+				gmenu2x->drawButton(gmenu2x->s, "start", gmenu2x->tr["Exit"],
+				gmenu2x->drawButton(gmenu2x->s, "a", "",
 				gmenu2x->drawButton(gmenu2x->s, "right", gmenu2x->tr["Change page"],
-				gmenu2x->drawButton(gmenu2x->s, "left", "", 5)-10));
+				gmenu2x->drawButton(gmenu2x->s, "left", "", 5)-10))-10);
 
 				ss.clear();
 				ss << page+1;
@@ -341,9 +342,8 @@ void LinkApp::showManual() {
 			}
 
             switch(inputMgr.waitForPressedButton()) {
-                case MANUAL:
-                case CLEAR:
                 case SETTINGS:
+                case CANCEL:
                     close = true;
                     break;
                 case LEFT:
