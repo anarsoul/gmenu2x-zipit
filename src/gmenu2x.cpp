@@ -704,7 +704,7 @@ void GMenu2X::readConfig(string conffile) {
 	evalIntConf( &confInt["backlight"], 100, 5,100 );
 	evalIntConf( &confInt["videoBpp"],
 #ifdef PLATFORM_DINGUX
-				 16,
+				 32, // 16 would be better if the kernel could flip on vsync
 #else
 				 32,
 #endif
