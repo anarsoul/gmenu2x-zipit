@@ -29,6 +29,7 @@ private:
 	int *_value;
 	std::string strvalue;
 	int min, max;
+	int increment;
 
 	void inc();
 	void dec();
@@ -36,7 +37,8 @@ private:
 public:
 	MenuSettingInt(
 			GMenu2X *gmenu2x, const std::string &name,
-			const std::string &description, int *value, int min, int max);
+			const std::string &description, int *value, int min, int max,
+			int increment = 1);
 	virtual ~MenuSettingInt() {}
 
 	virtual bool manageInput(bevent_t *event);

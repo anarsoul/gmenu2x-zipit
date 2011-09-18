@@ -27,7 +27,7 @@ using std::string;
 using std::stringstream;
 using fastdelegate::MakeDelegate;
 
-MenuSettingInt::MenuSettingInt(GMenu2X *gmenu2x, const string &name, const string &description, int *value, int min, int max)
+MenuSettingInt::MenuSettingInt(GMenu2X *gmenu2x, const string &name, const string &description, int *value, int min, int max, int increment)
 	: MenuSetting(gmenu2x,name,description)
 {
 	IconButton *btn;
@@ -36,6 +36,7 @@ MenuSettingInt::MenuSettingInt(GMenu2X *gmenu2x, const string &name, const strin
 	originalValue = *value;
 	this->min = min;
 	this->max = max;
+	this->increment = increment;
 	setValue(this->value());
 
 	//Delegates
@@ -75,10 +76,10 @@ bool MenuSettingInt::manageInput(bevent_t *event)
             inc();
             break;
         case ALTLEFT:
-            setValue(value() - 10);
+            setValue(value() - 10 * increment);
             break;
         case ALTRIGHT:
-            setValue(value() + 10);
+            setValue(value() + 10 * increment);
             break;
         default:
 			return false;
@@ -88,12 +89,12 @@ bool MenuSettingInt::manageInput(bevent_t *event)
 
 void MenuSettingInt::inc()
 {
-	setValue(value() + 1);
+	setValue(value() + increment);
 }
 
 void MenuSettingInt::dec()
 {
-	setValue(value() - 1);
+	setValue(value() - increment);
 }
 
 void MenuSettingInt::setValue(int value)

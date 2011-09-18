@@ -209,6 +209,27 @@ int main(int /*argc*/, char * /*argv*/[]) {
 	return 0;
 }
 
+void GMenu2X::initCPULimits() {
+	// Note: These values are for the Dingoo.
+	//       The NanoNote does not have cpufreq enabled in its kernel and
+	//       other devices are not actively maintained.
+	// TODO: Read min and max from sysfs.
+	cpuFreqMin = 30;
+	cpuFreqMax = 500;
+	cpuFreqSafeMax = 420;
+	cpuFreqMenuDefault = 200;
+	cpuFreqAppDefault = 384;
+	cpuFreqMultiple = 24;
+
+	// Round min and max values to the specified multiple.
+	cpuFreqMin = ((cpuFreqMin + cpuFreqMultiple - 1) / cpuFreqMultiple)
+			* cpuFreqMultiple;
+	cpuFreqMax = (cpuFreqMax / cpuFreqMultiple) * cpuFreqMultiple;
+	cpuFreqSafeMax = (cpuFreqSafeMax / cpuFreqMultiple) * cpuFreqMultiple;
+	cpuFreqMenuDefault = (cpuFreqMenuDefault / cpuFreqMultiple) * cpuFreqMultiple;
+	cpuFreqAppDefault = (cpuFreqAppDefault / cpuFreqMultiple) * cpuFreqMultiple;
+}
+
 void GMenu2X::init() {
 #ifdef PLATFORM_GP2X
 /*	gp2x_mem = open("/dev/mem", O_RDWR);
@@ -303,6 +324,7 @@ GMenu2X::GMenu2X()
 	usbnet = samba = inet = web = false;
 	useSelectionPng = false;
 
+	initCPULimits();
 	//load config data
 	readConfig();
 
@@ -673,8 +695,10 @@ void GMenu2X::readConfig(string conffile) {
 		confStr["skin"] = "Default";
 
 	evalIntConf( &confInt["outputLogs"], 0, 0,1 );
-	evalIntConf( &confInt["maxClock"], 430, 30, 500 );
-	evalIntConf( &confInt["menuClock"], 200, 30, 430 );
+	evalIntConf( &confInt["maxClock"],
+				 cpuFreqSafeMax, cpuFreqMin, cpuFreqMax );
+	evalIntConf( &confInt["menuClock"],
+				 cpuFreqMenuDefault, cpuFreqMin, cpuFreqSafeMax );
 	evalIntConf( &confInt["globalVolume"], 67, 0,100 );
 	evalIntConf( &confInt["backlightTimeout"], 15, 0,120 );
 	evalIntConf( &confInt["backlight"], 100, 5,100 );
@@ -1221,7 +1245,7 @@ void GMenu2X::explorer() {
 		string command = cmdclean(fd.getPath()+"/"+fd.getFile());
 		chdir(fd.getPath().c_str());
 		quit();
-		setClock(200);
+		setClock(cpuFreqAppDefault);
 		execlp("/bin/sh","/bin/sh","-c",command.c_str(),NULL);
 
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
@@ -1254,8 +1278,8 @@ void GMenu2X::options() {
 	SettingsDialog sd(this, input, ts, tr["Settings"]);
 	sd.addSetting(new MenuSettingMultiString(this,tr["Language"],tr["Set the language used by GMenu2X"],&lang,&fl_tr.getFiles()));
 	sd.addSetting(new MenuSettingBool(this,tr["Save last selection"],tr["Save the last selected link and section on exit"],&confInt["saveSelection"]));
-	sd.addSetting(new MenuSettingInt(this,tr["Clock for GMenu2X"],tr["Set the cpu working frequency when running GMenu2X"],&confInt["menuClock"],200,430));
-	sd.addSetting(new MenuSettingInt(this,tr["Maximum overclock"],tr["Set the maximum overclock for launching links"],&confInt["maxClock"],200,430));
+	sd.addSetting(new MenuSettingInt(this,tr["Clock for GMenu2X"],tr["Set the cpu working frequency when running GMenu2X"],&confInt["menuClock"],cpuFreqMin,cpuFreqSafeMax,cpuFreqMultiple));
+	sd.addSetting(new MenuSettingInt(this,tr["Maximum overclock"],tr["Set the maximum overclock for launching links"],&confInt["maxClock"],cpuFreqMin,cpuFreqMax,cpuFreqMultiple));
 	sd.addSetting(new MenuSettingInt(this,tr["Global Volume"],tr["Set the default volume for the gp2x soundcard"],&confInt["globalVolume"],0,100));
 	sd.addSetting(new MenuSettingBool(this,tr["Output logs"],tr["Logs the output of the links. Use the Log Viewer to read them."],&confInt["outputLogs"]));
 	//G
@@ -1584,7 +1608,7 @@ void GMenu2X::contextMenu() {
 			}
 		}
 
-        
+
         if (fadeAlpha < 200) {
             if (!input.pollEvent(&event) || event.state != PRESSED) continue;
         } else {
@@ -1666,7 +1690,7 @@ void GMenu2X::editLink() {
 	sd.addSetting(new MenuSettingMultiString(this,tr["Section"],tr["The section this link belongs to"],&newSection,&menu->getSections()));
 	sd.addSetting(new MenuSettingImage(this,tr["Icon"],tr.translate("Select an icon for the link: $1",linkTitle.c_str(),NULL),&linkIcon,".png,.bmp,.jpg,.jpeg"));
 	sd.addSetting(new MenuSettingFile(this,tr["Manual"],tr["Select a graphic/textual manual or a readme"],&linkManual,".man.png,.txt"));
-	sd.addSetting(new MenuSettingInt(this,tr["Clock (default: 336)"],tr["Cpu clock frequency to set when launching this link"],&linkClock,200,confInt["maxClock"]));
+	sd.addSetting(new MenuSettingInt(this,tr["Clock (default: 336)"],tr["Cpu clock frequency to set when launching this link"],&linkClock,cpuFreqMin,confInt["maxClock"],cpuFreqMultiple));
 //	sd.addSetting(new MenuSettingBool(this,tr["Tweak RAM Timings"],tr["This usually speeds up the application at the cost of stability"],&linkUseRamTimings));
 	sd.addSetting(new MenuSettingInt(this,tr["Volume (default: -1)"],tr["Volume to set for this link"],&linkVolume,-1,100));
 	sd.addSetting(new MenuSettingInt(this,tr["Backlight (default: -1)"],tr["LCD backlight value to set when launching this link"],&linkBacklight,-1,100));
@@ -1821,7 +1845,7 @@ void GMenu2X::scanner() {
 #ifdef PLATFORM_PANDORA
 	//char *configpath = pnd_conf_query_searchpath();
 #else
-	if (confInt["menuClock"]<430) {
+	if (confInt["menuClock"]<336) {
 		setClock(336);
 		scanbg.write(font,tr["Raising cpu clock to 336Mhz"],5,lineY);
 		scanbg.blit(s,0,0);
@@ -1889,7 +1913,7 @@ void GMenu2X::scanner() {
 	s->flip();
 	lineY += 26;
 
-	if (confInt["menuClock"]<430) {
+	if (confInt["menuClock"]<336) {
 		setClock(confInt["menuClock"]);
 		scanbg.write(font,tr["Decreasing cpu clock"],5,lineY);
 		scanbg.blit(s,0,0);

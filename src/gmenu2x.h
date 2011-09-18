@@ -106,6 +106,12 @@ private:
 	unsigned short cpuX; //!< Offset for displaying cpu clock information
 	unsigned short volumeX; //!< Offset for displaying volume level
 	unsigned short manualX; //!< Offset for displaying the manual indicator in the taskbar
+	unsigned cpuFreqMin; //!< Minimum CPU frequency
+	unsigned cpuFreqMax; //!< Maximum theoretical CPU frequency
+	unsigned cpuFreqSafeMax; //!< Maximum safe CPU frequency
+	unsigned cpuFreqMenuDefault; //!< Default CPU frequency for gmenu2x
+	unsigned cpuFreqAppDefault; //!< Default CPU frequency for launched apps
+	unsigned cpuFreqMultiple; //!< All valid CPU frequencies are a multiple of this
 	/*!
 	Reads the current battery state and returns a number representing it's level of charge
 	@return A number representing battery charge. 0 means fully discharged. 5 means fully charged. 6 represents a gp2x using AC power.
@@ -156,6 +162,7 @@ private:
 
 	void tvout_on(bool pal);
 	void tvout_off();
+	void initCPULimits();
 	void init();
 	void deinit();
 	void toggleTvOut();
