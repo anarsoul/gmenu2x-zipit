@@ -456,7 +456,12 @@ void GMenu2X::initBG() {
 
 	Surface *sd = Surface::loadImage("imgs/sd.png", confStr["skin"]);
 	if (sd) sd->blit(bgmain, 3, bottomBarIconY);
-	string df = getDiskFree();
+
+#ifdef PLATFORM_DINGUX
+	string df = getDiskFree("/boot");
+#else
+	string df = getDiskFree(CARD_ROOT);
+#endif
 	bgmain->write(font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 	delete sd;
 
@@ -2137,12 +2142,12 @@ const string &GMenu2X::getExePath() {
 	return path;
 }
 
-string GMenu2X::getDiskFree() {
+string GMenu2X::getDiskFree(const char *path) {
 	stringstream ss;
 	string df = "";
 	struct statvfs b;
 
-	int ret = statvfs(CARD_ROOT, &b);
+	int ret = statvfs(path, &b);
 	if (ret==0) {
 		// Make sure that the multiplication happens in 64 bits.
 		unsigned long long free =
