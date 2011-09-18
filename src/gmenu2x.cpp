@@ -1806,8 +1806,8 @@ void GMenu2X::deleteSection() {
 
 void GMenu2X::scanner() {
 	Surface scanbg(bg);
-	drawButton(&scanbg, "a", tr["Exit"],
-	drawButton(&scanbg, "b", "", 5)-10);
+	drawButton(&scanbg, "cancel", tr["Exit"],
+	drawButton(&scanbg, "accept", "", 5)-10);
 	scanbg.write(font,tr["Link Scanner"],halfX,7,ASFont::HAlignCenter,ASFont::VAlignMiddle);
 	scanbg.convertToDisplayFormat();
 

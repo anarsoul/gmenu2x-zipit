@@ -225,10 +225,10 @@ void MenuSettingRGBA::updateButtonBox()
 		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png", gmenu2x->tr["Decrease"]));
 		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/r.png"));
 		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Increase"]));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Confirm"]));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]));
 	} else {
 		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png"));
 		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Change color component"]));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Edit"]));
+		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Edit"]));
 	}
 }

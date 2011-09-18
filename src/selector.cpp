@@ -64,12 +64,12 @@ int Selector::exec(int startSelection) {
 
 	if (link->getSelectorBrowser()) {
 		gmenu2x->drawButton(&bg, "start", gmenu2x->tr["Exit"],
-		gmenu2x->drawButton(&bg, "b", gmenu2x->tr["Select a file"],
-		gmenu2x->drawButton(&bg, "a", gmenu2x->tr["Up one folder"],
+		gmenu2x->drawButton(&bg, "accept", gmenu2x->tr["Select a file"],
+		gmenu2x->drawButton(&bg, "cancel", gmenu2x->tr["Up one folder"],
 		gmenu2x->drawButton(&bg, "left", "", 5)-10)));
 	} else {
 		gmenu2x->drawButton(&bg, "start", gmenu2x->tr["Exit"],
-		gmenu2x->drawButton(&bg, "b", gmenu2x->tr["Select a file"], 5));
+		gmenu2x->drawButton(&bg, "accept", gmenu2x->tr["Select a file"], 5));
 	}
 
 	bg.convertToDisplayFormat();

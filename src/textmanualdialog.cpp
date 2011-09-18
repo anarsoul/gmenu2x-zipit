@@ -75,7 +75,7 @@ void TextManualDialog::exec() {
 	writeTitle(title+(description.empty() ? "" : ": "+description),&bg);
 
 	gmenu2x->drawButton(&bg, "start", gmenu2x->tr["Exit"],
-	gmenu2x->drawButton(&bg, "a", "",
+	gmenu2x->drawButton(&bg, "cancel", "",
 	gmenu2x->drawButton(&bg, "right", gmenu2x->tr["Change page"],
 	gmenu2x->drawButton(&bg, "left", "",
 	gmenu2x->drawButton(&bg, "down", gmenu2x->tr["Scroll"],

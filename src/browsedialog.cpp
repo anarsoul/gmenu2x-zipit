@@ -19,11 +19,11 @@ BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
 	IconButton *btn;
 
 	buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png"));
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/a.png", gmenu2x->tr["Up one folder"]);
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Up one folder"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::directoryUp));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Enter folder"]);
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Enter folder"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::directoryEnter));
 	buttonBox.add(btn);
 

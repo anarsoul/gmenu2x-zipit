@@ -47,8 +47,8 @@ MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon)
 	buttonLabels[DOWN] = "down";
 	buttonLabels[LEFT] = "left";
 	buttonLabels[RIGHT] = "right";
-	buttonLabels[CANCEL] = "a";
-	buttonLabels[ACCEPT] = "b";
+	buttonLabels[CANCEL] = "cancel";
+	buttonLabels[ACCEPT] = "accept";
 	buttonLabels[CLEAR] = "x";
 	buttonLabels[MANUAL] = "y";
 	buttonLabels[ALTLEFT] = "l";

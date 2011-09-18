@@ -93,11 +93,11 @@ InputDialog::InputDialog(GMenu2X *gmenu2x, InputManager &inputMgr_,
 	btnSpace->setAction(MakeDelegate(this, &InputDialog::space));
 	buttonbox->add(btnSpace);
 
-	IconButton *btnConfirm = new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Confirm"]);
+	IconButton *btnConfirm = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]);
 	btnConfirm->setAction(MakeDelegate(this, &InputDialog::confirm));
 	buttonbox->add(btnConfirm);
 
-	IconButton *btnChangeKeys = new IconButton(gmenu2x, "skin:imgs/buttons/a.png", gmenu2x->tr["Change keys"]);
+	IconButton *btnChangeKeys = new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Change keys"]);
 	btnChangeKeys->setAction(MakeDelegate(this, &InputDialog::changeKeys));
 	buttonbox->add(btnChangeKeys);
 }

@@ -327,7 +327,7 @@ void LinkApp::showManual() {
 
 				gmenu2x->drawBottomBar();
 				gmenu2x->drawButton(gmenu2x->s, "start", gmenu2x->tr["Exit"],
-				gmenu2x->drawButton(gmenu2x->s, "a", "",
+				gmenu2x->drawButton(gmenu2x->s, "cancel", "",
 				gmenu2x->drawButton(gmenu2x->s, "right", gmenu2x->tr["Change page"],
 				gmenu2x->drawButton(gmenu2x->s, "left", "", 5)-10))-10);
 

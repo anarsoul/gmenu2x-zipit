@@ -52,7 +52,7 @@ MenuSettingBool::MenuSettingBool(
 
 void MenuSettingBool::initButton()
 {
-	IconButton *btn = new IconButton(gmenu2x, "skin:imgs/buttons/b.png",
+	IconButton *btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png",
 									 gmenu2x->tr["Switch"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingBool::toggle));
 	buttonBox.add(btn);
