@@ -73,6 +73,7 @@ bool WallpaperDialog::exec()
 
 	ButtonBox buttonbox(gmenu2x);
 	buttonbox.add(new IconButton(gmenu2x, "skin:imgs/buttons/b.png", gmenu2x->tr["Select wallpaper"]));
+	buttonbox.add(new IconButton(gmenu2x, "skin:imgs/buttons/a.png", gmenu2x->tr["Exit"]));
 
 	while (!close) {
 		if (selected>firstElement+9) firstElement=selected-9;
@@ -107,8 +108,7 @@ bool WallpaperDialog::exec()
 		gmenu2x->s->flip();
 
         switch(gmenu2x->input.waitForPressedButton()) {
-            case MENU:
-            case CLEAR:
+            case CANCEL:
                 close = true;
                 result = false;
                 break;
