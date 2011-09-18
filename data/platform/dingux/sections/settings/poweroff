@@ -1,3 +1,4 @@
 title=power off
+description=Shut down the system
 icon=/usr/share/gmenu2x/skins/Default/icons/poweroff.png
 exec=/sbin/poweroff
