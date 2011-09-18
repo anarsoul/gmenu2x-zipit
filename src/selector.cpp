@@ -65,9 +65,10 @@ int Selector::exec(int startSelection) {
 	if (link->getSelectorBrowser()) {
 		gmenu2x->drawButton(&bg, "start", gmenu2x->tr["Exit"],
 		gmenu2x->drawButton(&bg, "b", gmenu2x->tr["Select a file"],
-		gmenu2x->drawButton(&bg, "x", gmenu2x->tr["Up one folder"], 5)));
+		gmenu2x->drawButton(&bg, "a", gmenu2x->tr["Up one folder"],
+		gmenu2x->drawButton(&bg, "left", "", 5)-10)));
 	} else {
-		gmenu2x->drawButton(&bg, "x", gmenu2x->tr["Exit"],
+		gmenu2x->drawButton(&bg, "start", gmenu2x->tr["Exit"],
 		gmenu2x->drawButton(&bg, "b", gmenu2x->tr["Select a file"], 5));
 	}
 
@@ -142,7 +143,8 @@ int Selector::exec(int startSelection) {
                 else selected += SELECTOR_ELEMENTS-1;
                 selTick = SDL_GetTicks();
                 break;
-            case CLEAR:
+            case CANCEL:
+            case LEFT:
                 if (link->getSelectorBrowser()) {
                     string::size_type p = dir.rfind("/", dir.size()-2);
                     if (p==string::npos || dir.compare(0, 1, "/") != 0 || dir.length() < 2) {
@@ -155,9 +157,6 @@ int Selector::exec(int startSelection) {
                         firstElement = 0;
                         prepare(&fl,&screens,&titles);
                     }
-                } else {
-                    close = true;
-                    result = false;
                 }
                 break;
             case ACCEPT:
