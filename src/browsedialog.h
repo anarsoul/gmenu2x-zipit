@@ -84,6 +84,7 @@ private:
 	void directoryUp();
 	void directoryEnter();
 	void confirm();
+	void quit();
 
 public:
 	bool exec();

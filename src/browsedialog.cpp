@@ -18,7 +18,8 @@ BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
 {
 	IconButton *btn;
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/x.png", gmenu2x->tr["Up one folder"]);
+	buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png"));
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/a.png", gmenu2x->tr["Up one folder"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::directoryUp));
 	buttonBox.add(btn);
 
@@ -28,6 +29,10 @@ BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
 
 	btn = new IconButton(gmenu2x, "skin:imgs/buttons/start.png", gmenu2x->tr["Confirm"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::confirm));
+	buttonBox.add(btn);
+
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/select.png", gmenu2x->tr["Exit"]);
+	btn->setAction(MakeDelegate(this, &BrowseDialog::quit));
 	buttonBox.add(btn);
 
 	iconGoUp = gmenu2x->sc.skinRes("imgs/go-up.png");
@@ -89,7 +94,7 @@ BrowseDialog::Action BrowseDialog::getAction(bevent_t *event)
             action = BrowseDialog::ACT_SCROLLDOWN;
             break;
         case LEFT:
-        case CLEAR:
+        case CANCEL:
             action = BrowseDialog::ACT_GOUP;
             break;
         case ACCEPT:
@@ -133,8 +138,7 @@ void BrowseDialog::handleInput()
 		action = BrowseDialog::ACT_GOUP;
 	switch (action) {
 	case BrowseDialog::ACT_CLOSE:
-		close = true;
-		result = false;
+		quit();
 		break;
 	case BrowseDialog::ACT_UP:
 		if (selected == 0)
@@ -190,8 +194,7 @@ void BrowseDialog::directoryUp()
 		p = path.rfind("/", p - 1);
 	
 	if (p == string::npos || path.compare(0, 1, "/") != 0 || path.length() < 2) {
-		close = true;
-		result = false;
+		quit();
 	} else {
 		selected = 0;
 		setPath(path.substr(0, p));
@@ -212,6 +215,12 @@ void BrowseDialog::directoryEnter()
 void BrowseDialog::confirm()
 {
 	result = true;
+	close = true;
+}
+
+void BrowseDialog::quit()
+{
+	result = false;
 	close = true;
 }
 
