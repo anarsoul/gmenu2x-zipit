@@ -497,7 +497,7 @@ void GMenu2X::initBG() {
 	cpuX = volumeX+font->getTextWidth("100")+5;
 	if (cpu) cpu->blit(bgmain, cpuX, bottomBarIconY);
 	cpuX += 19;
-	manualX = cpuX+font->getTextWidth("300Mhz")+5;
+	manualX = cpuX+font->getTextWidth("300MHz")+5;
 	delete cpu;
 
 	int serviceX = resX-38;
@@ -1847,7 +1847,7 @@ void GMenu2X::scanner() {
 #else
 	if (confInt["menuClock"]<336) {
 		setClock(336);
-		scanbg.write(font,tr["Raising cpu clock to 336Mhz"],5,lineY);
+		scanbg.write(font,tr["Raising cpu clock to 336MHz"],5,lineY);
 		scanbg.blit(s,0,0);
 		s->flip();
 		lineY += 26;

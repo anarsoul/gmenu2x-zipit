@@ -147,7 +147,7 @@ const string &LinkApp::clockStr(int maxClock) {
 void LinkApp::setClock(int mhz) {
 	stringstream ss;
 	sclock = "";
-	ss << mhz << "Mhz";
+	ss << mhz << "MHz";
 	ss >> sclock;
 
 	edited = true;
