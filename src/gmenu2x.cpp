@@ -2080,7 +2080,7 @@ void GMenu2X::applyDefaultTimings() {
 
 
 void GMenu2X::setClock(unsigned mhz) {
-	mhz = constrain(mhz, 30, confInt["maxClock"]);
+	mhz = constrain(mhz, cpuFreqMin, confInt["maxClock"]);
 #if defined(PLATFORM_DINGUX) || defined(PLATFORM_NANONOTE)
 	jz_cpuspeed(mhz);
 #endif
