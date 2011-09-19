@@ -145,10 +145,9 @@ const string &LinkApp::clockStr(int maxClock) {
 }
 
 void LinkApp::setClock(int mhz) {
-	iclock = constrain(mhz,200,430);
 	stringstream ss;
 	sclock = "";
-	ss << iclock << "Mhz";
+	ss << mhz << "Mhz";
 	ss >> sclock;
 
 	edited = true;
