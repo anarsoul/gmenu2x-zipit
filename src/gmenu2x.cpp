@@ -2017,10 +2017,8 @@ unsigned short GMenu2X::getBatteryLevel() {
 #else
 	if (!batteryHandle) return 0;
 	int battval = 0;
-	char battvalcstr[5];
-	fscanf(batteryHandle, "%s", &battvalcstr[0]);
+	fscanf(batteryHandle, "%d", &battval);
 	rewind(batteryHandle);
-	battval = atoi(battvalcstr);
 	if (battval>90) return 5;
 	if (battval>70) return 4;
 	if (battval>50) return 3;
@@ -2029,10 +2027,8 @@ unsigned short GMenu2X::getBatteryLevel() {
 
 	if (!usbHandle) return 0;
 	int usbval = 0;
-	char usbvalcstr[5];
-	fscanf(usbHandle, "%s", &usbvalcstr[0]);
+	fscanf(usbHandle, "%d", &usbval);
 	rewind(usbHandle);
-	usbval = atoi(usbvalcstr);
 	if (usbval==1) return 6;
 
 	return 0;
