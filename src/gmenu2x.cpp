@@ -243,8 +243,13 @@ void GMenu2X::init() {
 	batteryHandle = fopen("/sys/class/power_supply/battery/capacity", "r");
 	usbHandle = fopen("/sys/class/power_supply/USB/online", "r");
 	acHandle = fopen("/sys/class/power_supply/ac/online", "r");
-	backlightHandle =
-		fopen("/sys/class/backlight/gpm940b0-bl/brightness", "w+");
+	backlightHandle = fopen(
+#ifdef PLATFORM_NANONOTE
+		"/sys/class/backlight/gpm940b0-bl/brightness",
+#else
+		"/sys/class/backlight/pwm-backlight/brightness",
+#endif
+		"w+");
 #endif
 }
 
