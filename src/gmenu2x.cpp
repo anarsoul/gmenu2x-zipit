@@ -424,7 +424,6 @@ GMenu2X::GMenu2X()
 
 	setInputSpeed();
 	initServices();
-	setBacklight(confInt["backlight"]);
 	setVolume(confInt["globalVolume"]);
 	applyDefaultTimings();
 	setClock(confInt["menuClock"]);
@@ -705,7 +704,6 @@ void GMenu2X::readConfig(string conffile) {
 				 cpuFreqMenuDefault, cpuFreqMin, cpuFreqSafeMax );
 	evalIntConf( &confInt["globalVolume"], 67, 0,100 );
 	evalIntConf( &confInt["backlightTimeout"], 15, 0,120 );
-	evalIntConf( &confInt["backlight"], 100, 5,100 );
 	evalIntConf( &confInt["videoBpp"], 32, 16, 32 );
 
 	if (confStr["tvoutEncoding"] != "PAL") confStr["tvoutEncoding"] = "NTSC";
@@ -1264,7 +1262,8 @@ void GMenu2X::options() {
 	int curMenuClock = confInt["menuClock"];
 	int curGlobalVolume = confInt["globalVolume"];
 	//G
-	int prevbacklight = confInt["backlight"];
+	int oldBacklight = getBackLight();
+	int newBacklight = oldBacklight;
 	bool showRootFolder = fileExists(CARD_ROOT);
 
 	FileLister fl_tr(getHome() + "/translations");
@@ -1287,14 +1286,14 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingInt(this,tr["Global Volume"],tr["Set the default volume for the gp2x soundcard"],&confInt["globalVolume"],0,100));
 	sd.addSetting(new MenuSettingBool(this,tr["Output logs"],tr["Logs the output of the links. Use the Log Viewer to read them."],&confInt["outputLogs"]));
 	//G
-	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set dingoo's Lcd Backlight value (default: 100)"],&confInt["backlight"],5,100));
+	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set dingoo's Lcd Backlight value (default: 100)"],&newBacklight,5,100));
 	sd.addSetting(new MenuSettingInt(this,tr["Screen Timeout"],tr["Set screen's backlight timeout in seconds"],&confInt["backlightTimeout"],0,120));
 //	sd.addSetting(new MenuSettingMultiString(this,tr["Tv-Out encoding"],tr["Encoding of the tv-out signal"],&confStr["tvoutEncoding"],&encodings));
 	sd.addSetting(new MenuSettingBool(this,tr["Show root"],tr["Show root folder in the file selection dialogs"],&showRootFolder));
 
 	if (sd.exec() && sd.edited()) {
 		//G
-		if (prevbacklight != confInt["backlight"]) setBacklight(confInt["backlight"]);
+		if (newBacklight != oldBacklight) setBacklight(newBacklight);
 		if (curMenuClock!=confInt["menuClock"]) setClock(confInt["menuClock"]);
 		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
 
