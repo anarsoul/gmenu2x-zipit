@@ -241,7 +241,7 @@ void GMenu2X::init() {
 	}*/
 #else
 	batteryHandle = fopen("/sys/class/power_supply/battery/capacity", "r");
-	usbHandle = fopen("/sys/class/power_supply/USB/online", "r");
+	usbHandle = fopen("/sys/class/power_supply/usb/online", "r");
 	acHandle = fopen("/sys/class/power_supply/ac/online", "r");
 	backlightHandle = fopen(
 #ifdef PLATFORM_NANONOTE
