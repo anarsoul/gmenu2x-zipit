@@ -231,6 +231,11 @@ void GMenu2X::initCPULimits() {
 }
 
 void GMenu2X::init() {
+	batteryHandle = 0;
+	backlightHandle = 0;
+	usbHandle = 0;
+	acHandle = 0;
+
 #ifdef PLATFORM_GP2X
 /*	gp2x_mem = open("/dev/mem", O_RDWR);
 	gp2x_memregs=(unsigned short *)mmap(0, 0x10000, PROT_READ|PROT_WRITE, MAP_SHARED, gp2x_mem, 0xc0000000);
@@ -353,11 +358,6 @@ GMenu2X::GMenu2X()
 
 	path = "";
 	getExePath();
-
-	batteryHandle = 0;
-	backlightHandle = 0;
-	usbHandle = 0;
-	acHandle = 0;
 
 	init();
 
