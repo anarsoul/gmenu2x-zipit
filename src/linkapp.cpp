@@ -47,7 +47,6 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, InputManager &inputMgr_,
 	setVolume(-1);
 	//G
 	//setGamma(0);
-	setBacklight(-1);
 	selectordir = "";
 	selectorfilter = "";
 	icon = iconPath = "";
@@ -87,8 +86,6 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, InputManager &inputMgr_,
 		//G
 		} else if (name == "gamma") {
 			setGamma( atoi(value.c_str()) );
-		} else if (name == "backlight") {
-			setBacklight( atoi(value.c_str()) );
 		} else if (name == "volume") {
 			setVolume( atoi(value.c_str()) );
 		} else if (name == "selectordir") {
@@ -175,26 +172,6 @@ void LinkApp::setVolume(int vol) {
 	edited = true;
 }
 
-int LinkApp::backlight()
-{
-	return ibacklight;
-}
-
-const string &LinkApp::backlightStr()
-{
-	return sbacklight;
-}
-
-void LinkApp::setBacklight(int val)
-{
-	ibacklight = constrain(val,-1,100);
-	stringstream ss;
-	sbacklight = "";
-	ss << ibacklight;
-	ss >> sbacklight;
-
-	edited = true;
-}
 //G
 int LinkApp::gamma() {
 	return igamma;
@@ -241,7 +218,6 @@ bool LinkApp::save() {
 		if (ivolume>0          ) f << "volume="          << ivolume         << endl;
 		//G
 		if (igamma!=0          ) f << "gamma="           << igamma          << endl;
-		if (ibacklight!=0      ) f << "backlight="       << ibacklight      << endl;
 		if (selectordir!=""    ) f << "selectordir="     << selectordir     << endl;
 		if (selectorbrowser    ) f << "selectorbrowser=true"                << endl;
 		if (selectorfilter!="" ) f << "selectorfilter="  << selectorfilter  << endl;
@@ -497,8 +473,6 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 			gmenu2x->setClock(clock());
 		//if (gamma()!=0 && gamma()!=gmenu2x->confInt["gamma"])
 		//	gmenu2x->setGamma(gamma());
-		if((backlight() != 0) && (backlight() != gmenu2x->confInt["backlight"]))
-			gmenu2x->setBacklight(backlight());
 
 		/* Make the terminal we're connected to (via stdin/stdout) our
       		   contolling terminal again.  Else many console programs are

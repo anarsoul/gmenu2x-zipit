@@ -42,10 +42,8 @@ private:
 	int iclock, ivolume;
 	//G
 	string sgamma;
-	string sbacklight;
 	//G
 	int igamma;
-	int ibacklight;
 	string exec, params, workdir, manual, selectordir, selectorfilter, selectorscreens;
 	bool selectorbrowser, useRamTimings;
 	void drawRun();
@@ -93,11 +91,6 @@ public:
 	int gamma();
 	const string &gammaStr();
 	void setGamma(int gamma);
-
-	int backlight();
-	const string &backlightStr();
-	void setBacklight(int val);
-// /G
 
 	bool save();
 	void run();
