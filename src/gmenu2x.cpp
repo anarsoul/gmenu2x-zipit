@@ -450,7 +450,6 @@ void GMenu2X::quit() {
 	delete s;
 
 	SDL_Quit();
-
 	unsetenv("SDL_FBCON_DONT_CLEAR");
 
 #ifdef PLATFORM_GP2X
@@ -460,9 +459,9 @@ void GMenu2X::quit() {
 			gp2x_memregs[0x2906>>1]=512;
 			gp2x_memregs[0x28E4>>1]=gp2x_memregs[0x290C>>1];
 		}
-		gp2x_deinit();
 	}*/
 #endif
+	deinit();
 }
 
 void GMenu2X::initBG() {
