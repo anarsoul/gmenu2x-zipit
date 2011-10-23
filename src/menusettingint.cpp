@@ -66,24 +66,24 @@ void MenuSettingInt::draw(int y)
 	gmenu2x->s->write( gmenu2x->font, strvalue, 155, y, ASFont::HAlignLeft, ASFont::VAlignTop );
 }
 
-bool MenuSettingInt::manageInput(InputManager::ButtonEvent *event)
+bool MenuSettingInt::handleButtonPress(InputManager::Button button)
 {
-    switch (event->button) {
-        case InputManager::LEFT:
-            dec();
-            break;
-        case InputManager::RIGHT:
-            inc();
-            break;
-        case InputManager::ALTLEFT:
-            setValue(value() - 10 * increment);
-            break;
-        case InputManager::ALTRIGHT:
-            setValue(value() + 10 * increment);
-            break;
-        default:
+	switch (button) {
+		case InputManager::LEFT:
+			dec();
+			break;
+		case InputManager::RIGHT:
+			inc();
+			break;
+		case InputManager::ALTLEFT:
+			setValue(value() - 10 * increment);
+			break;
+		case InputManager::ALTRIGHT:
+			setValue(value() + 10 * increment);
+			break;
+		default:
 			return false;
-    }
+	}
 	return true;
 }
 

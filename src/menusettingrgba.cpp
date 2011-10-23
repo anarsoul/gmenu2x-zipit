@@ -68,9 +68,10 @@ void MenuSettingRGBA::handleTS() {
 	MenuSetting::handleTS();
 }
 
-bool MenuSettingRGBA::manageInput(InputManager::ButtonEvent *event) {
+bool MenuSettingRGBA::handleButtonPress(InputManager::Button button)
+ {
 	if (edit) {
-		switch(event->button) {
+		switch (button) {
 			case InputManager::LEFT:
 				dec();
 				break;
@@ -93,7 +94,7 @@ bool MenuSettingRGBA::manageInput(InputManager::ButtonEvent *event) {
 				return false;
 		}
 	} else {
-		switch(event->button) {
+		switch (button) {
 			case InputManager::LEFT:
 				leftComponent();
 				break;

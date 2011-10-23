@@ -42,9 +42,9 @@ void MenuSettingStringBase::draw(int y)
 			ASFont::HAlignLeft, ASFont::VAlignTop);
 }
 
-bool MenuSettingStringBase::manageInput(InputManager::ButtonEvent *event)
+bool MenuSettingStringBase::handleButtonPress(InputManager::Button button)
 {
-	switch (event->button) {
+	switch (button) {
 		case InputManager::CANCEL:
 			clear();
 			break;

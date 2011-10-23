@@ -51,7 +51,7 @@ public:
 
 	virtual void draw(int y);
 	virtual void handleTS();
-	virtual bool manageInput(InputManager::ButtonEvent *event);
+	virtual bool handleButtonPress(InputManager::Button button);
 	virtual void adjustInput();
 	virtual void drawSelected(int y);
 	virtual bool edited();

@@ -28,7 +28,7 @@
 class MenuSettingMultiString : public MenuSettingStringBase {
 private:
 	virtual void edit() {
-		/* never called because manageInput() is overridden */
+		/* never called because handleButtonPress() is overridden */
 	}
 
 	const std::vector<std::string> *choices;
@@ -45,7 +45,7 @@ public:
 			const std::vector<std::string> *choices);
 	virtual ~MenuSettingMultiString() {};
 
-	virtual bool manageInput(InputManager::ButtonEvent *event);
+	virtual bool handleButtonPress(InputManager::Button button);
 };
 
 #endif

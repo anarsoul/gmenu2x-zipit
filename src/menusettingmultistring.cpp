@@ -49,18 +49,18 @@ MenuSettingMultiString::MenuSettingMultiString(
 	buttonBox.add(btn);
 }
 
-bool MenuSettingMultiString::manageInput(InputManager::ButtonEvent *event)
+bool MenuSettingMultiString::handleButtonPress(InputManager::Button button)
 {
-    switch(event->button) {
-        case InputManager::LEFT:
-            decSel();
-            break;
-        case InputManager::RIGHT:
-            incSel();
-            break;
-        default:
+	switch (button) {
+		case InputManager::LEFT:
+			decSel();
+			break;
+		case InputManager::RIGHT:
+			incSel();
+			break;
+		default:
 			return false;
-    }
+	}
 	return true;
 }
 

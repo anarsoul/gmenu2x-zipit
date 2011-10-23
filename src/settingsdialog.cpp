@@ -105,13 +105,9 @@ bool SettingsDialog::exec() {
 		gmenu2x->s->flip();
 		voices[sel]->handleTS();
 
-		InputManager::ButtonEvent event;
-		do {
-			inputMgr.waitForEvent(&event);
-		} while (event.state != InputManager::PRESSED);
-
-		if (voices[sel]->manageInput(&event) == false) {
-			switch (event.button) {
+		InputManager::Button button = inputMgr.waitForPressedButton();
+		if (!voices[sel]->handleButtonPress(button)) {
+			switch (button) {
 				case InputManager::SETTINGS:
 					close = true;
 					break;
