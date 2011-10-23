@@ -18,6 +18,34 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "gp2x.h"
+
+#include "asfont.h"
+#include "cpu.h"
+#include "debug.h"
+#include "filedialog.h"
+#include "filelister.h"
+#include "gmenu2x.h"
+#include "iconbutton.h"
+#include "inputdialog.h"
+#include "linkaction.h"
+#include "linkapp.h"
+#include "menu.h"
+#include "menusettingbool.h"
+#include "menusettingdir.h"
+#include "menusettingfile.h"
+#include "menusettingimage.h"
+#include "menusettingint.h"
+#include "menusettingmultistring.h"
+#include "menusettingrgba.h"
+#include "menusettingstring.h"
+#include "messagebox.h"
+#include "powersaver.h"
+#include "settingsdialog.h"
+#include "textdialog.h"
+#include "wallpaperdialog.h"
+#include "utilities.h"
+
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -32,7 +60,6 @@
 #include <sys/statvfs.h>
 #include <errno.h>
 
-#include "gp2x.h"
 #include <sys/fcntl.h> //for battery
 
 #ifdef PLATFORM_DINGUX
@@ -40,6 +67,12 @@
 #	include <sys/ioctl.h>
 #	include <linux/vt.h>
 #	include <linux/kd.h>
+#endif
+
+#ifdef PLATFORM_PANDORA
+//#include <pnd_container.h>
+//#include <pnd_conf.h>
+//#include <pnd_discovery.h>
 #endif
 
 //for browsing the filesystem
@@ -51,42 +84,7 @@
 #include <sys/ioctl.h>
 #include <linux/soundcard.h>
 
-#include "linkapp.h"
-#include "linkaction.h"
-#include "menu.h"
-#include "asfont.h"
-#include "surface.h"
-#include "filedialog.h"
-#include "gmenu2x.h"
-#include "filelister.h"
-#include "cpu.h"
-#include "utilities.h"
-#include "powersaver.h"
-
-#include "iconbutton.h"
-#include "messagebox.h"
-#include "inputdialog.h"
-#include "settingsdialog.h"
-#include "wallpaperdialog.h"
-#include "textdialog.h"
-#include "menusettingint.h"
-#include "menusettingbool.h"
-#include "menusettingrgba.h"
-#include "menusettingstring.h"
-#include "menusettingmultistring.h"
-#include "menusettingfile.h"
-#include "menusettingimage.h"
-#include "menusettingdir.h"
-
-#include "debug.h"
-
 #include <sys/mman.h>
-
-#ifdef PLATFORM_PANDORA
-//#include <pnd_container.h>
-//#include <pnd_conf.h>
-//#include <pnd_discovery.h>
-#endif
 
 typedef fastdelegate::FastDelegate0<> MenuAction;
 struct MenuOption {
