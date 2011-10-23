@@ -73,58 +73,41 @@ bool BrowseDialog::exec()
 	return result;
 }
 
-BrowseDialog::Action BrowseDialog::getAction(InputManager::ButtonEvent *event)
+BrowseDialog::Action BrowseDialog::getAction(InputManager::Button button)
 {
-	BrowseDialog::Action action;
-
-    switch(event->button) {
-        case InputManager::MENU:
-            action = BrowseDialog::ACT_CLOSE;
-            break;
-        case InputManager::UP:
-            action = BrowseDialog::ACT_UP;
-            break;
-        case InputManager::DOWN:
-            action = BrowseDialog::ACT_DOWN;
-            break;
-        case InputManager::ALTLEFT:
-            action = BrowseDialog::ACT_SCROLLUP;
-            break;
-        case InputManager::ALTRIGHT:
-            action = BrowseDialog::ACT_SCROLLDOWN;
-            break;
-        case InputManager::LEFT:
-        case InputManager::CANCEL:
-            action = BrowseDialog::ACT_GOUP;
-            break;
-        case InputManager::ACCEPT:
-            action = BrowseDialog::ACT_SELECT;
-            break;
-        case InputManager::SETTINGS:
-            action = BrowseDialog::ACT_CONFIRM;
-            break;
-        default:
-            action = BrowseDialog::ACT_NONE;
-            break;
-    }
-
-	return action;
+	switch (button) {
+		case InputManager::MENU:
+			return BrowseDialog::ACT_CLOSE;
+		case InputManager::UP:
+			return BrowseDialog::ACT_UP;
+		case InputManager::DOWN:
+			return BrowseDialog::ACT_DOWN;
+		case InputManager::ALTLEFT:
+			return BrowseDialog::ACT_SCROLLUP;
+		case InputManager::ALTRIGHT:
+			return BrowseDialog::ACT_SCROLLDOWN;
+		case InputManager::LEFT:
+		case InputManager::CANCEL:
+			return BrowseDialog::ACT_GOUP;
+		case InputManager::ACCEPT:
+			return BrowseDialog::ACT_SELECT;
+		case InputManager::SETTINGS:
+			return BrowseDialog::ACT_CONFIRM;
+		default:
+			return BrowseDialog::ACT_NONE;
+	}
 }
 
 void BrowseDialog::handleInput()
 {
+	InputManager::Button button = gmenu2x->input.waitForPressedButton();
+
 	BrowseDialog::Action action;
-	InputManager::ButtonEvent event;
-
-	do {
-		gmenu2x->input.waitForEvent(&event);
-	} while (event.state != InputManager::PRESSED);
-
 	if (ts_pressed && !gmenu2x->ts.pressed()) {
 		action = BrowseDialog::ACT_SELECT;
 		ts_pressed = false;
 	} else {
-		action = getAction(&event);
+		action = getAction(button);
 	}
 
 	if (gmenu2x->ts.initialized() && gmenu2x->ts.pressed() && !gmenu2x->ts.inRect(touchRect)) ts_pressed = false;

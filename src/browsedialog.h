@@ -76,7 +76,7 @@ private:
 
 	ButtonBox buttonBox;
 
-	Action getAction(InputManager::ButtonEvent *event);
+	Action getAction(InputManager::Button button);
 	void handleInput();
 
 	void paint();
