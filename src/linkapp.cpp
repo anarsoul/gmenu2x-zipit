@@ -458,41 +458,51 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 	if (dontleave) {
 		system(command.c_str());
 	} else {
-		if (gmenu2x->confInt["saveSelection"] && (gmenu2x->confInt["section"]!=gmenu2x->menu->selSectionIndex() || gmenu2x->confInt["link"]!=gmenu2x->menu->selLinkIndex()))
+		if (gmenu2x->confInt["saveSelection"] && (
+				gmenu2x->confInt["section"]!=gmenu2x->menu->selSectionIndex()
+				|| gmenu2x->confInt["link"]!=gmenu2x->menu->selLinkIndex()
+		)) {
 			gmenu2x->writeConfig();
+		}
 
 #ifdef PLATFORM_GP2X
-		if (gmenu2x->fwType == "open2x" && gmenu2x->savedVolumeMode != gmenu2x->volumeMode)
+		if (gmenu2x->fwType == "open2x"
+				&& gmenu2x->savedVolumeMode != gmenu2x->volumeMode) {
 			gmenu2x->writeConfigOpen2x();
+		}
 #endif
 
-		if (selectedFile=="")
+		if (selectedFile == "") {
 			gmenu2x->writeTmp();
-         	gmenu2x->quit();
-		if (clock()!=gmenu2x->confInt["menuClock"])
+		}
+		if (clock() != gmenu2x->confInt["menuClock"]) {
 			gmenu2x->setClock(clock());
+		}
+		gmenu2x->quit();
 		//if (gamma()!=0 && gamma()!=gmenu2x->confInt["gamma"])
 		//	gmenu2x->setGamma(gamma());
 
 		/* Make the terminal we're connected to (via stdin/stdout) our
-      		   contolling terminal again.  Else many console programs are
-      		   not going to work correctly.  Actually this would not be
-      		   necessary, if SDL correctly restored terminal state after
-      		   SDL_Quit(). */
-		int pid = setsid();
+		   controlling terminal again.  Else many console programs are
+		   not going to work correctly.  Actually this would not be
+		   necessary, if SDL correctly restored terminal state after
+		   SDL_Quit(). */
+		pid_t pid = setsid();
+		if (pid == (pid_t)-1) {
+			WARNING("Failed to create new process group\n");
+		}
 		ioctl(1, TIOCSCTTY, STDOUT_FILENO);
 
 		int pgid = tcgetpgrp(STDOUT_FILENO);
 		signal(SIGTTOU, SIG_IGN);
 		tcsetpgrp(STDOUT_FILENO, pgid);
 
-		execlp("/bin/sh","/bin/sh","-c",command.c_str(),NULL);
+		execlp("/bin/sh","/bin/sh", "-c", command.c_str(), NULL);
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
 		//try relaunching gmenu2x
 		chdir(gmenu2x->getExePath().c_str());
 		execlp("./gmenu2x", "./gmenu2x", NULL);
 	}
-
 
 	chdir(gmenu2x->getExePath().c_str());
 }
