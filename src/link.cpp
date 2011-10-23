@@ -23,6 +23,7 @@
 #include "gmenu2x.h"
 #include "menu.h"
 #include "selector.h"
+#include "utilities.h"
 
 #include <fstream>
 #include <sstream>

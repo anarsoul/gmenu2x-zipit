@@ -22,6 +22,7 @@
 
 #include "filelister.h"
 #include "gmenu2x.h"
+#include "utilities.h"
 
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h>

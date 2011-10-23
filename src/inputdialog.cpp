@@ -22,6 +22,8 @@
 
 #include "buttonbox.h"
 #include "gmenu2x.h"
+#include "iconbutton.h"
+#include "utilities.h"
 
 #include <SDL_gfxPrimitives.h>
 

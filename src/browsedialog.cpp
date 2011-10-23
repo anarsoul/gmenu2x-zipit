@@ -3,8 +3,8 @@
 #include "FastDelegate.h"
 #include "filelister.h"
 #include "gmenu2x.h"
-
-#include <string>
+#include "iconbutton.h"
+#include "utilities.h"
 
 using namespace fastdelegate;
 using std::string;

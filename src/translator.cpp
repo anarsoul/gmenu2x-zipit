@@ -22,6 +22,7 @@
 
 #include "debug.h"
 #include "gmenu2x.h"
+#include "utilities.h"
 
 #include <fstream>
 #include <iostream>

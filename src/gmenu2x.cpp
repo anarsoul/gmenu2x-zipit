@@ -60,6 +60,8 @@
 #include "gmenu2x.h"
 #include "filelister.h"
 #include "cpu.h"
+#include "utilities.h"
+#include "powersaver.h"
 
 #include "iconbutton.h"
 #include "messagebox.h"
@@ -86,8 +88,29 @@
 //#include <pnd_discovery.h>
 #endif
 
+typedef fastdelegate::FastDelegate0<> MenuAction;
+struct MenuOption {
+	std::string text;
+	MenuAction action;
+};
+
 using namespace std;
 using namespace fastdelegate;
+
+#ifndef DEFAULT_WALLPAPER_PATH
+#define DEFAULT_WALLPAPER_PATH \
+  GMENU2X_SYSTEM_DIR "/skins/Default/wallpapers/default.png"
+#endif
+
+const int MAX_VOLUME_SCALE_FACTOR = 200;
+// Default values - going to add settings adjustment, saving, loading and such
+const int VOLUME_SCALER_MUTE = 0;
+const int VOLUME_SCALER_PHONES = 65;
+const int VOLUME_SCALER_NORMAL = 100;
+const int VOLUME_MODE_MUTE = 0;
+const int VOLUME_MODE_PHONES = 1;
+const int VOLUME_MODE_NORMAL = 2;
+const int BATTERY_READS = 10;
 
 #ifdef _CARD_ROOT
 const char *CARD_ROOT = _CARD_ROOT;
@@ -1963,6 +1986,11 @@ void GMenu2X::scanPath(string path, vector<string> *files) {
 
 	closedir(dirp);
 }
+
+typedef struct {
+	unsigned short batt;
+	unsigned short remocon;
+} MMSP2ADC;
 
 unsigned short GMenu2X::getBatteryLevel() {
 #ifdef PLATFORM_GP2X

@@ -18,6 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "selector.h"
+
+#include "debug.h"
+#include "filelister.h"
+#include "gmenu2x.h"
+#include "linkapp.h"
+#include "menu.h"
+#include "utilities.h"
+
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h>
 #include <algorithm>
@@ -27,13 +36,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <fstream>
-
-#include "menu.h"
-#include "linkapp.h"
-#include "selector.h"
-#include "filelister.h"
-#include "gmenu2x.h"
-#include "debug.h"
 
 using namespace std;
 using std::tr1::unordered_map;

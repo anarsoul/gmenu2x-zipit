@@ -24,6 +24,8 @@
 #include "buttonbox.h"
 #include "filelister.h"
 #include "gmenu2x.h"
+#include "iconbutton.h"
+#include "utilities.h"
 
 #include <iostream>
 

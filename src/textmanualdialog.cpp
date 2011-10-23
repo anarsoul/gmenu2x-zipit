@@ -21,6 +21,7 @@
 #include "textmanualdialog.h"
 
 #include "gmenu2x.h"
+#include "utilities.h"
 
 #include <algorithm>
 #include <sstream>

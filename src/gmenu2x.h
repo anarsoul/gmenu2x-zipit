@@ -22,41 +22,27 @@
 #define GMENU2X_H
 
 #include "surfacecollection.h"
-#include "iconbutton.h"
 #include "translator.h"
 #include "FastDelegate.h"
-#include "utilities.h"
 #include "touchscreen.h"
 #include "inputmanager.h"
-#include "asfont.h"
 #include "surface.h"
-#include "powersaver.h"
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <tr1/unordered_map>
 
+class ASFont;
+class Button;
+class Menu;
+class Surface;
+
 #ifndef GMENU2X_SYSTEM_DIR
 #define GMENU2X_SYSTEM_DIR "/usr/share/gmenu2x"
 #endif
 
-#ifndef DEFAULT_WALLPAPER_PATH
-#define DEFAULT_WALLPAPER_PATH \
-  GMENU2X_SYSTEM_DIR "/skins/Default/wallpapers/default.png"
-#endif
-
-const int MAX_VOLUME_SCALE_FACTOR = 200;
-// Default values - going to add settings adjustment, saving, loading and such
-const int VOLUME_SCALER_MUTE = 0;
-const int VOLUME_SCALER_PHONES = 65;
-const int VOLUME_SCALER_NORMAL = 100;
-const int VOLUME_MODE_MUTE = 0;
-const int VOLUME_MODE_PHONES = 1;
-const int VOLUME_MODE_NORMAL = 2;
-const int BATTERY_READS = 10;
-
-const int LOOP_DELAY=30000;
+const int LOOP_DELAY = 30000;
 
 extern const char *CARD_ROOT;
 extern const int CARD_ROOT_LEN;
@@ -73,21 +59,8 @@ enum color {
 	NUM_COLORS,
 };
 
-typedef fastdelegate::FastDelegate0<> MenuAction;
 typedef std::tr1::unordered_map<std::string, std::string, std::tr1::hash<std::string> > ConfStrHash;
 typedef std::tr1::unordered_map<std::string, int, std::tr1::hash<std::string> > ConfIntHash;
-
-typedef struct {
-	unsigned short batt;
-	unsigned short remocon;
-} MMSP2ADC;
-
-struct MenuOption {
-	std::string text;
-	MenuAction action;
-};
-
-class Menu;
 
 class GMenu2X {
 private:

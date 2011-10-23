@@ -25,6 +25,7 @@
 #include "menu.h"
 #include "selector.h"
 #include "textmanualdialog.h"
+#include "utilities.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -21,6 +21,7 @@
 #include "textdialog.h"
 
 #include "gmenu2x.h"
+#include "utilities.h"
 
 using namespace std;
 
