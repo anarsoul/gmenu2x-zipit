@@ -21,9 +21,8 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
+#include <SDL.h>
 #include <string>
-
-typedef struct _SDL_Joystick SDL_Joystick;
 
 class InputManager {
 public:
@@ -65,7 +64,9 @@ private:
 	Button waitForButton(ButtonState state);
 
 	ButtonMapEntry buttonMap[BUTTON_TYPE_SIZE];
+#ifndef SDL_JOYSTICK_DISABLED
 	SDL_Joystick *joystick;
+#endif
 };
 
 #endif

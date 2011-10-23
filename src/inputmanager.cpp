@@ -23,8 +23,6 @@
 #include "utilities.h"
 #include "powersaver.h"
 
-#include <SDL.h>
-
 #include <iostream>
 #include <fstream>
 
@@ -37,17 +35,22 @@ void InputManager::init(const string &conffile) {
 }
 
 InputManager::InputManager()
-	: joystick(NULL)
 {
+#ifndef SDL_JOYSTICK_DISABLED
 	if (SDL_NumJoysticks() > 0) {
 		joystick = SDL_JoystickOpen(0);
+	} else {
+		joystick = NULL;
 	}
+#endif
 }
 
 InputManager::~InputManager() {
+#ifndef SDL_JOYSTICK_DISABLED
 	if (joystick) {
 		SDL_JoystickClose(joystick);
 	}
+#endif
 }
 
 bool InputManager::readConfFile(const string &conffile) {
@@ -91,9 +94,19 @@ bool InputManager::readConfFile(const string &conffile) {
 		source = trim(line.substr(0,pos));
 		line = trim(line.substr(pos+1, line.length()));
 
-		if (source == "keyboard") buttonMap[button].source = KEYBOARD;
-		else if (source == "joystick") buttonMap[button].source = JOYSTICK;
-		else return false;
+		if (source == "keyboard") {
+			buttonMap[button].source = KEYBOARD;
+		} else if (source == "joystick") {
+#ifdef SDL_JOYSTICK_DISABLED
+			WARNING("Ignoring joystick button mapping "
+				"because SDL was compiled without joystick support\n");
+			continue;
+#else
+			buttonMap[button].source = JOYSTICK;
+#endif
+		} else {
+			return false;
+		}
 
 		buttonMap[button].code = atoi(line.c_str());
 	}
@@ -130,9 +143,11 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 	//TODO: when an event is processed, program a new event
 	//in some time, and when it occurs, do a key repeat
 
+#ifndef SDL_JOYSTICK_DISABLED
 	if (joystick) {
 		SDL_JoystickUpdate();
 	}
+#endif
 	SDL_Event event;
 	if (wait) {
 		SDL_WaitEvent(&event);
@@ -153,6 +168,7 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 			bevent->state = RELEASED;
 			source = KEYBOARD;
 			break;
+#ifndef SDL_JOYSTICK_DISABLED
 		case SDL_JOYBUTTONDOWN:
 			bevent->state = PRESSED;
 			source = JOYSTICK;
@@ -161,6 +177,7 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 			bevent->state = RELEASED;
 			source = JOYSTICK;
 			break;
+#endif
 		default:
 			return false;
 	}
@@ -173,7 +190,8 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 				break;
 			}
 		}
-	} else {
+#ifndef SDL_JOYSTICK_DISABLED
+	} else if (source == JOYSTICK) {
 		for (int i = 0; i < BUTTON_TYPE_SIZE; i++) {
 			if (buttonMap[i].source == JOYSTICK
 					&& (unsigned int)event.jbutton.button == buttonMap[i].code) {
@@ -181,6 +199,7 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 				break;
 			}
 		}
+#endif
 	}
 	if (wait && PowerSaver::isRunning()) {
 		PowerSaver::getInstance()->resetScreenTimer();
