@@ -135,7 +135,6 @@ bool InputDialog::exec() {
 	Uint32 caretTick = 0, curTick;
 	bool caretOn = true;
 
-	uint action;
 	close = false;
 	ok = true;
 	while (!close) {
@@ -168,7 +167,7 @@ bool InputDialog::exec() {
 		}
 
 		if (ts.initialized()) ts.poll();
-		action = drawVirtualKeyboard();
+		drawVirtualKeyboard();
 		gmenu2x->s->flip();
 
 		switch (inputMgr.waitForPressedButton()) {
@@ -244,9 +243,7 @@ void InputDialog::changeKeys() {
 	}
 }
 
-int InputDialog::drawVirtualKeyboard() {
-	int action = ID_NO_ACTION;
-
+void InputDialog::drawVirtualKeyboard() {
 	//keyboard border
 	gmenu2x->s->rectangle(kbRect, gmenu2x->skinConfColors[COLOR_SELECTION_BG]);
 
@@ -323,11 +320,4 @@ int InputDialog::drawVirtualKeyboard() {
 			(int)(160 + kbLength * KEY_WIDTH / 4),
 			KB_TOP + kb->size() * KEY_HEIGHT + KEY_HEIGHT / 2,
 			ASFont::HAlignCenter, ASFont::VAlignMiddle);
-
-	//if ts released
-	if (ts.initialized() && ts.released() && ts.inRect(kbRect)) {
-		action = ID_ACTION_SELECT;
-	}
-
-	return action;
 }

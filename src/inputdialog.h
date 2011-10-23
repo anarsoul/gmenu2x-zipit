@@ -70,7 +70,7 @@ private:
 	void confirm();
 	void changeKeys();
 
-	int drawVirtualKeyboard();
+	void drawVirtualKeyboard();
 	void setKeyboard(int);
 
 public:
