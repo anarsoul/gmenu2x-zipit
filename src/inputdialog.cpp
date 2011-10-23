@@ -18,13 +18,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <SDL.h>
-#include <SDL_gfxPrimitives.h>
-
 #include "inputdialog.h"
+
+#include "buttonbox.h"
+#include "gmenu2x.h"
+
+#include <SDL_gfxPrimitives.h>
 
 using namespace std;
 using namespace fastdelegate;
+
+#define KEY_WIDTH 20
+#define KEY_HEIGHT 20
+#define KB_TOP 90
 
 InputDialog::InputDialog(GMenu2X *gmenu2x, InputManager &inputMgr_,
 		Touchscreen &ts_, const string &text,
