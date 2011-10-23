@@ -64,8 +64,6 @@ void MessageBox::setButton(int action, const string &btn) {
 }
 
 int MessageBox::exec() {
-	int result = -1;
-
 	Surface bg(gmenu2x->s);
 	//Darken background
 	bg.box(0, 0, gmenu2x->resX, gmenu2x->resY, 0,0,0,200);
@@ -103,8 +101,8 @@ int MessageBox::exec() {
 	bg.blit(gmenu2x->s,0,0);
 	gmenu2x->s->flip();
 
-    InputManager::ButtonEvent event;
-	while (result<0) {
+	int result = -1;
+	while (result < 0) {
 
 #ifdef PLATFORM_GP2X
 		//touchscreen
@@ -119,6 +117,7 @@ int MessageBox::exec() {
 		}
 #endif
 
+		InputManager::ButtonEvent event;
 		if (gmenu2x->input.pollEvent(&event)
 				&& (event.state == InputManager::PRESSED)
 				&& (buttons[event.button] != "")) {
