@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,31 +18,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef MESSAGEBOX_H_
-#define MESSAGEBOX_H_
+#ifndef MESSAGEBOX_H
+#define MESSAGEBOX_H
 
-#define MB_BTN_B 0
-#define MB_BTN_X 1
-#define MB_BTN_START 2
-#define MB_BTN_SELECT 3
+#include "inputmanager.h"
 
+#include <SDL.h>
 #include <string>
-#include "gmenu2x.h"
 
-using std::string;
+class GMenu2X;
 
 class MessageBox {
-private:
-	string text, icon;
-	GMenu2X *gmenu2x;
-	string buttons[BUTTON_TYPE_SIZE];
-	string buttonLabels[BUTTON_TYPE_SIZE];
-	SDL_Rect buttonPositions[BUTTON_TYPE_SIZE];
-
 public:
-	MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon="");
-	void setButton(InputManager::Button button, const string &label);
+	MessageBox(GMenu2X *gmenu2x, const std::string &text,
+			const std::string &icon="");
+	void setButton(InputManager::Button button, const std::string &label);
 	int exec();
+
+private:
+	GMenu2X *gmenu2x;
+	std::string text, icon;
+	std::string buttons[BUTTON_TYPE_SIZE];
+	std::string buttonLabels[BUTTON_TYPE_SIZE];
+	SDL_Rect buttonPositions[BUTTON_TYPE_SIZE];
 };
 
-#endif /*MESSAGEBOX_H_*/
+#endif // MESSAGEBOX_H
