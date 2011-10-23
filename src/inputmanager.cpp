@@ -30,27 +30,23 @@
 
 using namespace std;
 
-static SDL_Joystick *joystick;
-
 void InputManager::init(const string &conffile) {
 	if (!readConfFile(conffile)) {
 		ERROR("InputManager initialization from config file failed.\n");
 	}
 }
 
-InputManager::InputManager() {
-	initJoystick();
-}
-
-InputManager::~InputManager() {
+InputManager::InputManager()
+	: joystick(NULL)
+{
 	if (SDL_NumJoysticks() > 0) {
-		SDL_JoystickClose(joystick);
+		joystick = SDL_JoystickOpen(0);
 	}
 }
 
-void InputManager::initJoystick() {
-	if (SDL_NumJoysticks() > 0) {
-		joystick = SDL_JoystickOpen(0);
+InputManager::~InputManager() {
+	if (joystick) {
+		SDL_JoystickClose(joystick);
 	}
 }
 
@@ -134,7 +130,9 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 	//TODO: when an event is processed, program a new event
 	//in some time, and when it occurs, do a key repeat
 
-	SDL_JoystickUpdate();
+	if (joystick) {
+		SDL_JoystickUpdate();
+	}
 	SDL_Event event;
 	if (wait) {
 		SDL_WaitEvent(&event);

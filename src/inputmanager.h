@@ -23,6 +23,8 @@
 
 #include <string>
 
+typedef struct _SDL_Joystick SDL_Joystick;
+
 class InputManager {
 public:
 	enum Button {
@@ -58,12 +60,12 @@ private:
 		unsigned int code;
 	};
 
-	ButtonMapEntry buttonMap[BUTTON_TYPE_SIZE];
-
 	bool readConfFile(const std::string &conffile);
-	void initJoystick();
 	bool getEvent(ButtonEvent *bevent, bool wait);
 	Button waitForButton(ButtonState state);
+
+	ButtonMapEntry buttonMap[BUTTON_TYPE_SIZE];
+	SDL_Joystick *joystick;
 };
 
 #endif
