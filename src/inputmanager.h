@@ -21,10 +21,7 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
-#include <SDL.h>
-#include <sstream>
-
-using namespace std;
+#include <string>
 
 typedef enum buttontype_e {
 	UP, DOWN, LEFT, RIGHT,
@@ -42,7 +39,7 @@ enum state_e {PRESSED, RELEASED};
 
 typedef struct {
 	source_type_e source;
-	Uint32 code;
+	unsigned int code;
 } input_t;
 
 typedef struct {
@@ -56,7 +53,7 @@ public:
 	InputManager();
 	~InputManager();
 
-	void init(const string &conffile);
+	void init(const std::string &conffile);
 	void waitForEvent(bevent_t *event);
 	buttontype_t waitForPressedButton();
 	buttontype_t waitForReleasedButton();
@@ -65,7 +62,7 @@ public:
 private:
 	input_t ButtonMap[BUTTONTYPE_T_SIZE];
 
-	bool readConfFile(const string &conffile);
+	bool readConfFile(const std::string &conffile);
 	void initJoystick();
 	bool getEvent(bevent_t *bevent, bool wait);
 	buttontype_t waitForButton(enum state_e state);

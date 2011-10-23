@@ -23,8 +23,12 @@
 #include "utilities.h"
 #include "powersaver.h"
 
+#include <SDL.h>
+
 #include <iostream>
 #include <fstream>
+
+using namespace std;
 
 static SDL_Joystick *joystick;
 
