@@ -59,6 +59,7 @@
 #include "filedialog.h"
 #include "gmenu2x.h"
 #include "filelister.h"
+#include "cpu.h"
 
 #include "iconbutton.h"
 #include "messagebox.h"

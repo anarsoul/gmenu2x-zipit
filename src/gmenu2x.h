@@ -61,8 +61,6 @@ const int LOOP_DELAY=30000;
 extern const char *CARD_ROOT;
 extern const int CARD_ROOT_LEN;
 
-extern void jz_cpuspeed(unsigned clockspeed);
-
 // Note: Keep this in sync with colorNames!
 enum color {
 	COLOR_TOP_BAR_BG,
