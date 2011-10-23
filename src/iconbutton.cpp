@@ -1,4 +1,6 @@
 #include "iconbutton.h"
+
+#include "asfont.h"
 #include "gmenu2x.h"
 #include "surface.h"
 
