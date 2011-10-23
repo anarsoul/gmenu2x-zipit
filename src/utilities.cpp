@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,6 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "utilities.h"
+
+#include "debug.h"
+
+#include <SDL.h>
+
 //for browsing the filesystem
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -25,11 +31,6 @@
 #include <fstream>
 #include <iostream>
 #include <strings.h>
-
-#include <SDL.h>
-
-#include "utilities.h"
-#include "debug.h"
 
 using namespace std;
 
@@ -46,17 +47,6 @@ string trim(const string& s) {
   if(b == -1) // No non-spaces
     return "";
   return string(s, b, e - b + 1);
-}
-
-void string_copy(const string &s, char **cs) {
-	*cs = (char*)malloc(s.length());
-	strcpy(*cs, s.c_str());
-}
-
-char * string_copy(const string &s) {
-	char *cs = NULL;
-	string_copy(s, &cs);
-	return cs;
 }
 
 bool fileExists(const string &file) {
@@ -115,14 +105,6 @@ int evalIntConf (int val, int def, int imin, int imax) {
 }
 int evalIntConf (int *val, int def, int imin, int imax) {
 	*val = evalIntConf(*val, def, imin, imax);
-	return *val;
-}
-
-const string &evalStrConf (const string &val, const string &def) {
-	return val.empty() ? def : val;
-}
-const string &evalStrConf (string *val, const string &def) {
-	*val = evalStrConf(*val, def);
 	return *val;
 }
 
