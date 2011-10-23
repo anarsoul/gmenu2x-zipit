@@ -40,14 +40,16 @@ InputManager::InputManager() {
 
 
 InputManager::~InputManager() {
-    if (SDL_NumJoysticks > 0)
+    if (SDL_NumJoysticks() > 0) {
       SDL_JoystickClose(joystick);
+    }
 }
 
 
 void InputManager::initJoystick() {
-    if (SDL_NumJoysticks > 0)
+    if (SDL_NumJoysticks() > 0) {
       joystick = SDL_JoystickOpen(0);
+    }
 }
 
 
@@ -132,7 +134,7 @@ bool InputManager::pollEvent(bevent_t *event) {
 bool InputManager::getEvent(bevent_t *bevent, bool wait) {
     //TODO: when an event is processed, program a new event
     //in some time, and when it occurs, do a key repeat
-    
+
     SDL_JoystickUpdate();
     SDL_Event event;
 
