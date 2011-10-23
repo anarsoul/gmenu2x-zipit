@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,12 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <iostream>
-
 #include "wallpaperdialog.h"
-#include "filelister.h"
-#include "buttonbox.h"
+
 #include "debug.h"
+#include "buttonbox.h"
+#include "filelister.h"
+#include "gmenu2x.h"
+
+#include <iostream>
 
 using namespace std;
 

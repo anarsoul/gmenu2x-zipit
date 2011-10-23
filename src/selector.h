@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,15 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SELECTOR_H_
-#define SELECTOR_H_
+#ifndef SELECTOR_H
+#define SELECTOR_H
 
-#include <string>
-#include "gmenu2x.h"
-#include "utilities.h"
 #include "dialog.h"
 
-#define SELECTOR_ELEMENTS 11
+#include <string>
+#include <tr1/unordered_map>
 
 class LinkApp;
 class FileLister;
@@ -38,21 +36,23 @@ class Selector : protected Dialog {
 private:
 	int selRow;
 	LinkApp *link;
-	string file, dir;
-	unordered_map<string, string> aliases;
+	std::string file, dir;
+	std::tr1::unordered_map<std::string, std::string> aliases;
 
 	void loadAliases();
-	string getAlias(const string &key);
-	void prepare(FileLister *fl, vector<string> *screens, vector<string> *titles);
-	void freeScreenshots(vector<string> *screens);
+	string getAlias(const std::string &key);
+	void prepare(FileLister *fl, std::vector<std::string> *screens,
+			std::vector<std::string> *titles);
+	void freeScreenshots(std::vector<std::string> *screens);
 
 public:
-	Selector(GMenu2X *gmenu2x, LinkApp *link, const string &selectorDir="");
+	Selector(GMenu2X *gmenu2x, LinkApp *link,
+			const std::string &selectorDir = "");
 
-	int exec(int startSelection=0);
+	int exec(int startSelection = 0);
 
-	const string &getFile() { return file; }
-	const string &getDir() { return dir; }
+	const std::string &getFile() { return file; }
+	const std::string &getDir() { return dir; }
 };
 
-#endif /*SELECTOR_H_*/
+#endif // SELECTOR_H

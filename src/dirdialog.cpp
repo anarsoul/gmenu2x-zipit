@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -20,10 +20,12 @@
 
 #include "dirdialog.h"
 
+#include "filelister.h"
+
 using namespace std;
 
-DirDialog::DirDialog(GMenu2X *gmenu2x, const string &text, const string &dir) :
-	BrowseDialog(gmenu2x, "Directory Browser", text)
+DirDialog::DirDialog(GMenu2X *gmenu2x, const string &text, const string &dir)
+	: BrowseDialog(gmenu2x, "Directory Browser", text)
 {
 	fl = new FileLister(dir, true, false);
 }

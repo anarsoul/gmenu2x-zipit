@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,26 +18,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef BROWSEDIALOG_H_
-#define BROWSEDIALOG_H_
+#ifndef BROWSEDIALOG_H
+#define BROWSEDIALOG_H
 
-#include <string>
-#include "filelister.h"
-#include "gmenu2x.h"
 #include "buttonbox.h"
 #include "dialog.h"
+#include "filelister.h"
 #include "inputmanager.h"
 
-class FileLister;
-
-using std::string;
+#include <SDL.h>
+#include <string>
 
 class BrowseDialog : protected Dialog {
 protected:
-	BrowseDialog(GMenu2X *gmenu2x, const string &title, const string &subtitle);
+	BrowseDialog(GMenu2X *gmenu2x, const std::string &title,
+			const std::string &subtitle);
 	virtual ~BrowseDialog();
 
-	void setPath(const string &path) {
+	void setPath(const std::string &path) {
 		fl->setPath(path);
 	}
 
@@ -59,8 +57,8 @@ private:
 
 	bool close, result;
 
-	string title;
-	string subtitle;
+	std::string title;
+	std::string subtitle;
 
 	SDL_Rect clipRect;
 	SDL_Rect touchRect;
@@ -89,14 +87,12 @@ private:
 public:
 	bool exec();
 
-	const std::string &getPath()
-	{
+	const std::string &getPath() {
 		return fl->getPath();
 	}
-	std::string getFile()
-	{
+	std::string getFile() {
 		return (*fl)[selected];
 	}
 };
 
-#endif /*INPUTDIALOG_H_*/
+#endif // INPUTDIALOG_H

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,24 +18,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef IMAGEDIALOG_H_
-#define IMAGEDIALOG_H_
+#ifndef IMAGEDIALOG_H
+#define IMAGEDIALOG_H
+
+#include "filedialog.h"
+#include "surfacecollection.h"
 
 #include <string>
-#include "filedialog.h"
-
-using std::string;
-using std::vector;
 
 class ImageDialog : public FileDialog {
 protected:
 	SurfaceCollection previews;
 public:
-	ImageDialog(GMenu2X *gmenu2x, const string &text, const string &filter="", const string &file="");
+	ImageDialog(GMenu2X *gmenu2x, const std::string &text,
+			const std::string &filter="", const string &file="");
 	virtual ~ImageDialog();
 
 	virtual void beforeFileList();
 	virtual void onChangeDir();
 };
 
-#endif /*IMAGEDIALOG_H_*/
+#endif // IMAGEDIALOG_H

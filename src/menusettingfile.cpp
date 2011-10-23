@@ -17,9 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include "menusettingfile.h"
-#include "iconbutton.h"
+
 #include "filedialog.h"
+#include "gmenu2x.h"
+#include "iconbutton.h"
 
 using std::string;
 using fastdelegate::MakeDelegate;

@@ -1,10 +1,10 @@
-#include <string>
-
 #include "browsedialog.h"
 
 #include "FastDelegate.h"
 #include "filelister.h"
 #include "gmenu2x.h"
+
+#include <string>
 
 using namespace fastdelegate;
 

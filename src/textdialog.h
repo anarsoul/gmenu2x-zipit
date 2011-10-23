@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,27 +18,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef TEXTDIALOG_H_
-#define TEXTDIALOG_H_
+#ifndef TEXTDIALOG_H
+#define TEXTDIALOG_H
 
-#include <string>
-#include "gmenu2x.h"
 #include "dialog.h"
 
-using std::string;
-using std::vector;
+#include <string>
+#include <vector>
 
 class TextDialog : protected Dialog {
 protected:
-	vector<string> *text;
-	string title, description, icon;
+	std::vector<std::string> *text;
+	std::string title, description, icon;
 
 	void preProcess();
-	void drawText(vector<string> *text, uint firstRow, uint rowsPerPage);
+	void drawText(std::vector<std::string> *text, unsigned firstRow,
+			unsigned rowsPerPage);
 
 public:
-	TextDialog(GMenu2X *gmenu2x, const string &title, const string &description, const string &icon, vector<string> *text);
+	TextDialog(GMenu2X *gmenu2x, const std::string &title,
+			const std::string &description, const std::string &icon,
+			std::vector<std::string> *text);
 	void exec();
 };
 
-#endif /*TEXTDIALOG_H_*/
+#endif // TEXTDIALOG_H

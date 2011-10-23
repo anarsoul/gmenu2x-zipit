@@ -20,6 +20,8 @@
 
 #include "textdialog.h"
 
+#include "gmenu2x.h"
+
 using namespace std;
 
 TextDialog::TextDialog(GMenu2X *gmenu2x, const string &title, const string &description, const string &icon, vector<string> *text)
@@ -33,7 +35,7 @@ TextDialog::TextDialog(GMenu2X *gmenu2x, const string &title, const string &desc
 }
 
 void TextDialog::preProcess() {
-	uint i=0;
+	unsigned i = 0;
 	string row;
 
 	while (i<text->size()) {
@@ -45,12 +47,12 @@ void TextDialog::preProcess() {
 			vector<string> words;
 			split(words, row, " ");
 
-			uint numWords = words.size();
+			unsigned numWords = words.size();
 			//find the maximum number of rows that can be printed on screen
 			while (gmenu2x->font->getTextWidth(row)>(int)gmenu2x->resX-15 && numWords>0) {
 				numWords--;
 				row = "";
-				for (uint x=0; x<numWords; x++)
+				for (unsigned x=0; x<numWords; x++)
 					row += words[x] + " ";
 				row = trim(row);
 			}
@@ -62,7 +64,7 @@ void TextDialog::preProcess() {
 
 				//build the remaining text in another row
 				row = "";
-				for (uint x=numWords; x<words.size(); x++)
+				for (unsigned x=numWords; x<words.size(); x++)
 					row += words[x] + " ";
 				row = trim(row);
 
@@ -74,10 +76,11 @@ void TextDialog::preProcess() {
 	}
 }
 
-void TextDialog::drawText(vector<string> *text, uint firstRow, uint rowsPerPage) {
+void TextDialog::drawText(vector<string> *text, unsigned firstRow,
+		unsigned rowsPerPage) {
 	gmenu2x->s->setClipRect(0,41,gmenu2x->resX-10,gmenu2x->resY-60);
 
-	for (uint i=firstRow; i<firstRow+rowsPerPage && i<text->size(); i++) {
+	for (unsigned i=firstRow; i<firstRow+rowsPerPage && i<text->size(); i++) {
 		int rowY;
 		if (text->at(i)=="----") { //draw a line
 			rowY = 42+(int)((i-firstRow+0.5)*gmenu2x->font->getHeight());
@@ -113,8 +116,8 @@ void TextDialog::exec() {
 
 	bg.convertToDisplayFormat();
 
-	uint firstRow = 0;
-	uint rowsPerPage = (gmenu2x->resY - 60) / gmenu2x->font->getHeight();
+	unsigned firstRow = 0;
+	unsigned rowsPerPage = (gmenu2x->resY - 60) / gmenu2x->font->getHeight();
 	while (!close) {
 		bg.blit(gmenu2x->s, 0, 0);
 		drawText(text, firstRow, rowsPerPage);

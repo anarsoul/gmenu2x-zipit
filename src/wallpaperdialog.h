@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,22 +18,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef WALLPAPERDIALOG_H_
-#define WALLPAPERDIALOG_H_
+#ifndef WALLPAPERDIALOG_H
+#define WALLPAPERDIALOG_H
 
-#include <string>
-#include "gmenu2x.h"
 #include "dialog.h"
 
-using std::string;
-using std::vector;
+#include <string>
 
 class WallpaperDialog : protected Dialog {
 public:
 	WallpaperDialog(GMenu2X *gmenu2x);
-	string wallpaper;
+	std::string wallpaper;
 
 	bool exec();
 };
 
-#endif /*WALLPAPERDIALOG_H_*/
+#endif // WALLPAPERDIALOG_H

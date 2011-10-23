@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,29 +18,29 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SETTINGSDIALOG_H_
-#define SETTINGSDIALOG_H_
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
-#include <string>
-#include "gmenu2x.h"
-#include "menusetting.h"
 #include "dialog.h"
 
-using std::string;
-using std::vector;
+#include <string>
+#include <vector>
 
 class InputManager;
+class MenuSetting;
 class Touchscreen;
 
 class SettingsDialog : protected Dialog {
 private:
 	InputManager &inputMgr;
 	Touchscreen &ts;
-	vector<MenuSetting *> voices;
-	string text, icon;
+	std::vector<MenuSetting *> voices;
+	std::string text, icon;
 
 public:
-	SettingsDialog(GMenu2X *gmenu2x, InputManager &inputMgr, Touchscreen &ts, const string &text, const string &icon="skin:sections/settings.png");
+	SettingsDialog(GMenu2X *gmenu2x, InputManager &inputMgr, Touchscreen &ts,
+			const std::string &text,
+			const std::string &icon = "skin:sections/settings.png");
 	~SettingsDialog();
 
 	bool edited();
@@ -48,4 +48,4 @@ public:
 	void addSetting(MenuSetting* set);
 };
 
-#endif /*INPUTDIALOG_H_*/
+#endif // SETTINGSDIALOG_H

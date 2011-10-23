@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,9 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include "menusettingdir.h"
-#include "iconbutton.h"
+
 #include "dirdialog.h"
+#include "gmenu2x.h"
+#include "iconbutton.h"
 
 using std::string;
 using fastdelegate::MakeDelegate;
@@ -31,11 +34,13 @@ MenuSettingDir::MenuSettingDir(
 {
 	IconButton *btn;
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Clear"]);
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png",
+			gmenu2x->tr["Clear"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingDir::clear));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Select a directory"]);
+	btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png",
+			gmenu2x->tr["Select a directory"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingDir::edit));
 	buttonBox.add(btn);
 }
@@ -43,5 +48,5 @@ MenuSettingDir::MenuSettingDir(
 void MenuSettingDir::edit()
 {
 	DirDialog dd(gmenu2x, description, value());
-	if (dd.exec()) setValue( dd.getPath() );
+	if (dd.exec()) setValue(dd.getPath());
 }

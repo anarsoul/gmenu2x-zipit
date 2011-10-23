@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,28 +18,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef TEXTMANUALDIALOG_H_
-#define TEXTMANUALDIALOG_H_
+#ifndef TEXTMANUALDIALOG_H
+#define TEXTMANUALDIALOG_H
+
+#include "textdialog.h"
 
 #include <string>
-#include "textdialog.h"
-#include "gmenu2x.h"
-
-using std::string;
-using std::vector;
+#include <vector>
 
 struct ManualPage {
-	string title;
-	vector<string> text;
+	std::string title;
+	std::vector<std::string> text;
 };
 
 class TextManualDialog : public TextDialog {
 private:
-	vector<ManualPage> pages;
+	std::vector<ManualPage> pages;
 
 public:
-	TextManualDialog(GMenu2X *gmenu2x, const string &title, const string &icon, vector<string> *text);
+	TextManualDialog(GMenu2X *gmenu2x, const std::string &title,
+			const std::string &icon, std::vector<std::string> *text);
 	void exec();
 };
 
-#endif /*TEXTMANUALDIALOG_H_*/
+#endif // TEXTMANUALDIALOG_H

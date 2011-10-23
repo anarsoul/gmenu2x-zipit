@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,19 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DIRDIALOG_H_
-#define DIRDIALOG_H_
-
-#include <string>
-#include "gmenu2x.h"
+#ifndef DIRDIALOG_H
+#define DIRDIALOG_H
 
 #include "browsedialog.h"
 
+#include <string>
 
 class DirDialog : public BrowseDialog {
 public:
-	DirDialog(GMenu2X *gmenu2x, const string &text, const string &dir="");
+	DirDialog(GMenu2X *gmenu2x, const std::string &text,
+			const std::string &dir="");
 	~DirDialog();
 };
 
-#endif /*INPUTDIALOG_H_*/
+#endif // DIRDIALOG_H
