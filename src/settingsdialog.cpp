@@ -49,7 +49,7 @@ bool SettingsDialog::exec() {
 	bg.convertToDisplayFormat();
 
 	bool close = false, ts_pressed = false;
-	uint i, sel = 0, iY, firstElement = 0, action;
+	uint i, sel = 0, iY, firstElement = 0;
 	voices[sel]->adjustInput();
 
 	SDL_Rect clipRect = {0, gmenu2x->skinConfInt["topBarHeight"]+1, gmenu2x->resX-9, gmenu2x->resY-gmenu2x->skinConfInt["topBarHeight"]-25};
@@ -58,7 +58,6 @@ bool SettingsDialog::exec() {
 	uint numRows = (gmenu2x->resY-gmenu2x->skinConfInt["topBarHeight"]-20)/rowHeight;
 
 	while (!close) {
-		action = SD_NO_ACTION;
 		if (ts.initialized()) ts.poll();
 
 		bg.blit(gmenu2x->s,0,0);
