@@ -1541,7 +1541,8 @@ void GMenu2X::contextMenu() {
 	}
 
 	bool close = false;
-	uint i, sel=0, fadeAlpha=0;
+	uint i, fadeAlpha=0;
+	int sel = 0;
 
 	int h = font->getHeight();
 	SDL_Rect box;
@@ -1624,10 +1625,10 @@ void GMenu2X::contextMenu() {
                 close = true;
                 break;
             case InputManager::UP:
-                sel = max(0, sel-1);
+                sel = std::max(0, sel-1);
                 break;
             case InputManager::DOWN:
-                sel = min((int)voices.size()-1, sel+1);
+                sel = std::min((int)voices.size()-1, sel+1);
                 break;
             case InputManager::ACCEPT:
                 voices[sel].action();

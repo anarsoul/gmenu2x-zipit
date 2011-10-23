@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -138,7 +138,7 @@ void TextDialog::exec() {
 				if (firstRow + rowsPerPage*2 -1 < text->size()) {
 					firstRow += rowsPerPage-1;
 				} else {
-					firstRow = max(0, text->size() - rowsPerPage);
+					firstRow = max(0u, text->size() - rowsPerPage);
 				}
 				break;
 			case InputManager::SETTINGS:

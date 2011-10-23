@@ -36,8 +36,6 @@ std::string cmdclean(std::string cmdline);
 bool fileExists(const std::string &file);
 bool rmtree(std::string path);
 
-int max(int a, int b);
-int min(int a, int b);
 int constrain(int x, int imin, int imax);
 
 int evalIntConf(int val, int def, int imin, int imax);

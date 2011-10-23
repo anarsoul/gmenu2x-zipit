@@ -3,6 +3,7 @@
 #include "surface.h"
 #include "utilities.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cstring>
 
@@ -115,7 +116,7 @@ int ASFont::getTextWidth(const char *text) {
 	while (char ch = *text++) {
 		if (ch == '\n') {
 			// New line.
-			maxWidth = max(width, maxWidth);
+			maxWidth = std::max(width, maxWidth);
 			width = 0;
 		} else {
 			std::string::size_type pos;
@@ -133,7 +134,7 @@ int ASFont::getTextWidth(const char *text) {
 			width += charpos[pos * 2 + 2] - charpos[pos * 2 + 1];
 		}
 	}
-	return max(width, maxWidth);
+	return std::max(width, maxWidth);
 }
 
 int ASFont::getTextWidth(const std::string& text) {

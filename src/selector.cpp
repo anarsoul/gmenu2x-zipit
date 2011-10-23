@@ -20,6 +20,7 @@
 
 #include <SDL.h>
 #include <SDL_gfxPrimitives.h>
+#include <algorithm>
 
 //for browsing the filesystem
 #include <sys/stat.h>
@@ -102,8 +103,11 @@ int Selector::exec(int startSelection) {
 		//Screenshot
 		if (selected-fl.dirCount()<screens.size() && screens[selected-fl.dirCount()]!="") {
 			curTick = SDL_GetTicks();
-			if (curTick-selTick>200)
-				gmenu2x->sc[screens[selected-fl.dirCount()]]->blitRight(gmenu2x->s, 311, 42, 160, 160, min((curTick-selTick-200)/3,255));
+			if (curTick - selTick > 200) {
+				gmenu2x->sc[screens[selected-fl.dirCount()]]->blitRight(
+						gmenu2x->s, 311, 42, 160, 160,
+						min((curTick - selTick - 200) / 3, 255u));
+			}
 		}
 
 		//Files & Dirs

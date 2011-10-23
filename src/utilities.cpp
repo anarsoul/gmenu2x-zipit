@@ -23,6 +23,7 @@
 #include "debug.h"
 
 #include <SDL.h>
+#include <algorithm>
 
 //for browsing the filesystem
 #include <sys/stat.h>
@@ -86,14 +87,8 @@ bool rmtree(string path) {
 	return rmdir(path.c_str())==0;
 }
 
-int max (int a, int b) {
-	return a>b ? a : b;
-}
-int min (int a, int b) {
-	return a<b ? a : b;
-}
-int constrain (int x, int imin, int imax) {
-	return min( imax, max(imin,x) );
+int constrain(int x, int imin, int imax) {
+	return min(imax, max(imin, x));
 }
 
 //Configuration parsing utilities
