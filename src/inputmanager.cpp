@@ -74,8 +74,6 @@ void InputManager::readConfFile(const string &conffile) {
 		else if (name == "right")    button = RIGHT;
 		else if (name == "accept")   button = ACCEPT;
 		else if (name == "cancel")   button = CANCEL;
-		else if (name == "clear")    button = CLEAR;
-		else if (name == "manual")   button = MANUAL;
 		else if (name == "altleft")  button = ALTLEFT;
 		else if (name == "altright") button = ALTRIGHT;
 		else if (name == "menu")     button = MENU;

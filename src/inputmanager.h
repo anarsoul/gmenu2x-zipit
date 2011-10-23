@@ -29,13 +29,12 @@ public:
 	enum Button {
 		UP, DOWN, LEFT, RIGHT,
 		ACCEPT, CANCEL,
-		CLEAR, MANUAL,
 		ALTLEFT, ALTRIGHT,
 		MENU, SETTINGS,
 		VOLUP, VOLDOWN,
 		POWER, LOCK
 	};
-	#define BUTTON_TYPE_SIZE 16
+	#define BUTTON_TYPE_SIZE 14
 
 	enum ButtonState { PRESSED, RELEASED };
 	struct ButtonEvent {
