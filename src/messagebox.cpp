@@ -30,13 +30,10 @@ MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon)
 	this->text = text;
 	this->icon = icon;
 
-	buttons.resize(19);
-	buttonLabels.resize(19);
-	buttonPositions.resize(19);
-	for (uint x=0; x<buttons.size(); x++) {
-		buttons[x] = "";
-		buttonLabels[x] = "";
-		buttonPositions[x].h = gmenu2x->font->getHeight();
+	for (uint i = 0; i < BUTTON_TYPE_SIZE; i++) {
+		buttons[i] = "";
+		buttonLabels[i] = "";
+		buttonPositions[i].h = gmenu2x->font->getHeight();
 	}
 
 	//Default enabled button
@@ -57,8 +54,8 @@ MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon)
 	buttonLabels[InputManager::VOLDOWN] = "vol-";
 }
 
-void MessageBox::setButton(int action, const string &btn) {
-	buttons[action] = btn;
+void MessageBox::setButton(InputManager::Button button, const string &label) {
+	buttons[button] = label;
 }
 
 int MessageBox::exec() {
@@ -83,7 +80,7 @@ int MessageBox::exec() {
 	bg.write( gmenu2x->font, text, box.x+(gmenu2x->sc[icon] != NULL ? 47 : 10), box.y+gmenu2x->font->getHeight()+3, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 
 	int btnX = gmenu2x->halfX+box.w/2-6;
-	for (uint i=0; i<buttons.size(); i++) {
+	for (uint i = 0; i < BUTTON_TYPE_SIZE; i++) {
 		if (buttons[i] != "") {
 			buttonPositions[i].y = box.y+box.h-4;
 			buttonPositions[i].w = btnX;
@@ -104,13 +101,12 @@ int MessageBox::exec() {
 
 #ifdef PLATFORM_GP2X
 		//touchscreen
-		if (gmenu2x->f200) {
-			if (gmenu2x->ts.poll()) {
-				for (uint i=0; i<buttons.size(); i++)
-					if (buttons[i]!="" && gmenu2x->ts.inRect(buttonPositions[i])) {
-						result = i;
-						i = buttons.size();
-					}
+		if (gmenu2x->f200 && gmenu2x->ts.poll()) {
+			for (uint i = 0; i < BUTTON_TYPE_SIZE; i++) {
+				if (buttons[i] != "" && gmenu2x->ts.inRect(buttonPositions[i])) {
+					result = i;
+					break;
+				}
 			}
 		}
 #endif

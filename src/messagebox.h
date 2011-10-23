@@ -30,19 +30,18 @@
 #include "gmenu2x.h"
 
 using std::string;
-using std::vector;
 
 class MessageBox {
 private:
 	string text, icon;
 	GMenu2X *gmenu2x;
-	vector<string> buttons;
-	vector<string> buttonLabels;
-	vector<SDL_Rect> buttonPositions;
+	string buttons[BUTTON_TYPE_SIZE];
+	string buttonLabels[BUTTON_TYPE_SIZE];
+	SDL_Rect buttonPositions[BUTTON_TYPE_SIZE];
 
 public:
 	MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon="");
-	void setButton(int action, const string &btn);
+	void setButton(InputManager::Button button, const string &label);
 	int exec();
 };
 
