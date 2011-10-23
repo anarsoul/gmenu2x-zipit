@@ -24,7 +24,7 @@ void IconButton::updateSurfaces()
 }
 
 void IconButton::setPosition(int x, int y) {
-	if (rect.x != x && rect.y != y) {
+	if (rect.x != x || rect.y != y) {
 		Button::setPosition(x,y);
 		recalcSize();
 	}
