@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,6 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "filelister.h"
+
+#include "debug.h"
+#include "utilities.h"
+
 //for browsing the filesystem
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -26,10 +31,6 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
-
-#include "filelister.h"
-#include "utilities.h"
-#include "debug.h"
 
 using namespace std;
 

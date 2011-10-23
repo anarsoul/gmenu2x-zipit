@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -86,6 +86,9 @@
 //#include <pnd_discovery.h>
 #endif
 
+using namespace std;
+using namespace fastdelegate;
+
 #ifdef _CARD_ROOT
 const char *CARD_ROOT = _CARD_ROOT;
 #elif defined(PLATFORM_DINGUX)
@@ -97,9 +100,6 @@ const int CARD_ROOT_LEN = strlen(CARD_ROOT)-1;
 
 static GMenu2X *app;
 static string gmenu2x_home;
-
-using namespace std;
-using namespace fastdelegate;
 
 // Note: Keep this in sync with the enum!
 static const char *colorNames[NUM_COLORS] = {

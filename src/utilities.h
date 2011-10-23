@@ -23,39 +23,35 @@
 
 #include <string>
 #include <vector>
-#include <tr1/unordered_map>
-
-using std::tr1::unordered_map;
-using std::tr1::hash;
-using std::string;
-using std::vector;
 
 class case_less {
 public:
-	bool operator()(const string &left, const string &right) const;
+	bool operator()(const std::string &left, const std::string &right) const;
 };
 
-string trim(const string& s);
-string strreplace (string orig, const string &search, const string &replace);
-string cmdclean (string cmdline);
+std::string trim(const std::string& s);
+std::string strreplace (std::string orig, const std::string &search, const std::string &replace);
+std::string cmdclean (std::string cmdline);
 
-char *string_copy(const string &);
-void string_copy(const string &, char **);
+char *string_copy(const std::string &);
+void string_copy(const std::string &, char **);
 
-bool fileExists(const string &file);
-bool rmtree(string path);
+bool fileExists(const std::string &file);
+bool rmtree(std::string path);
 
-int max (int a, int b);
-int min (int a, int b);
-int constrain (int x, int imin, int imax);
+int max(int a, int b);
+int min(int a, int b);
+int constrain(int x, int imin, int imax);
 
-int evalIntConf (int val, int def, int imin, int imax);
-int evalIntConf (int *val, int def, int imin, int imax);
-const string &evalStrConf (const string &val, const string &def);
-const string &evalStrConf (string *val, const string &def);
+int evalIntConf(int val, int def, int imin, int imax);
+int evalIntConf(int *val, int def, int imin, int imax);
+const std::string &evalStrConf(const std::string &val, const std::string &def);
+const std::string &evalStrConf(std::string *val, const std::string &def);
 
-bool split (vector<string> &vec, const string &str, const string &delim, bool destructive=true);
+bool split(std::vector<std::string> &vec, const std::string &str,
+		const std::string &delim, bool destructive=true);
 
-int intTransition(int from, int to, long int tickStart, long duration=500, long tickNow=-1);
+int intTransition(int from, int to, long int tickStart, long duration=500,
+		long tickNow=-1);
 
-#endif
+#endif // UTILITIES_H

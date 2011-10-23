@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -73,13 +73,9 @@ enum color {
 	NUM_COLORS,
 };
 
-using std::string;
-using std::vector;
-using fastdelegate::FastDelegate0;
-
-typedef FastDelegate0<> MenuAction;
-typedef unordered_map<string, string, hash<string> > ConfStrHash;
-typedef unordered_map<string, int, hash<string> > ConfIntHash;
+typedef fastdelegate::FastDelegate0<> MenuAction;
+typedef std::tr1::unordered_map<std::string, std::string, std::tr1::hash<std::string> > ConfStrHash;
+typedef std::tr1::unordered_map<std::string, int, std::tr1::hash<std::string> > ConfIntHash;
 
 typedef struct {
 	unsigned short batt;
@@ -87,7 +83,7 @@ typedef struct {
 } MMSP2ADC;
 
 struct MenuOption {
-	string text;
+	std::string text;
 	MenuAction action;
 };
 
@@ -95,12 +91,12 @@ class Menu;
 
 class GMenu2X {
 private:
-	string path; //!< Contains the working directory of GMenu2X
+	std::string path; //!< Contains the working directory of GMenu2X
 	/*!
 	Retrieves the free disk space on the sd
 	@return String containing a human readable representation of the free disk space
 	*/
-	string getDiskFree(const char *path);
+	std::string getDiskFree(const char *path);
 	unsigned short cpuX; //!< Offset for displaying cpu clock information
 	unsigned short volumeX; //!< Offset for displaying volume level
 	unsigned short manualX; //!< Offset for displaying the manual indicator in the taskbar
@@ -116,7 +112,7 @@ private:
 	*/
 	unsigned short getBatteryLevel();
 	FILE* batteryHandle, *backlightHandle, *usbHandle, *acHandle;
-	void browsePath(const string &path, vector<string>* directories, vector<string>* files);
+	void browsePath(const std::string &path, std::vector<std::string>* directories, std::vector<std::string>* files);
 	/*!
 	Starts the scanning of the nand and sd filesystems, searching for dge and gpu files and creating the links in 2 dedicated sections.
 	*/
@@ -125,7 +121,7 @@ private:
 	Performs the actual scan in the given path and populates the files vector with the results. The creation of the links is not performed here.
 	@see scanner
 	*/
-	void scanPath(string path, vector<string> *files);
+	void scanPath(std::string path, std::vector<std::string> *files);
 
 	/*!
 	Displays a selector and launches the specified executable file
@@ -137,10 +133,10 @@ private:
 		samba,
 		web;
 
-	string ip, defaultgw, lastSelectorDir;
+	std::string ip, defaultgw, lastSelectorDir;
 	int lastSelectorElement;
 	void readConfig();
-	void readConfig(string path);
+	void readConfig(std::string path);
 	void readTmp();
 
 	void initServices();
@@ -174,7 +170,7 @@ public:
 
 	/* Returns the home directory of gmenu2x, usually
 	 * ~/.gmenu2x */
-	static const string getHome(void);
+	static const std::string getHome(void);
 
 	/*
 	 * Variables needed for elements disposition
@@ -188,7 +184,7 @@ public:
 	@see path
 	@return String containing the parent directory
 	*/
-	const string &getExePath();
+	const std::string &getExePath();
 
 	InputManager input;
 	Touchscreen ts;
@@ -200,17 +196,17 @@ public:
 
 	//Configuration settings
 	bool useSelectionPng;
-	void setSkin(const string &skin, bool setWallpaper = true);
+	void setSkin(const std::string &skin, bool setWallpaper = true);
 
 #ifdef PLATFORM_GP2X
 	//firmware type and version
-	string fwType, fwVersion;
+	std::string fwType, fwVersion;
 
 	bool isF200() { return ts.initialized(); }
 
 	// Open2x settings ---------------------------------------------------------
 	bool o2x_usb_net_on_boot, o2x_ftp_on_boot, o2x_telnet_on_boot, o2x_gp2xjoy_on_boot, o2x_usb_host_on_boot, o2x_usb_hid_on_boot, o2x_usb_storage_on_boot;
-	string o2x_usb_net_ip;
+	std::string o2x_usb_net_ip;
 	int volumeMode, savedVolumeMode;		//	just use the const int scale values at top of source
 #endif
 
@@ -262,7 +258,7 @@ public:
 	void writeConfigOpen2x();
 #endif
 	void writeSkinConfig();
-	void writeTmp(int selelem=-1, const string &selectordir="");
+	void writeTmp(int selelem=-1, const std::string &selectordir="");
 
 	void ledOn();
 	void ledOff();
@@ -276,14 +272,14 @@ public:
 
 	void initBG();
 	int drawButton(Button *btn, int x=5, int y=-10);
-	int drawButton(Surface *s, const string &btn, const string &text, int x=5, int y=-10);
-	int drawButtonRight(Surface *s, const string &btn, const string &text, int x=5, int y=-10);
+	int drawButton(Surface *s, const std::string &btn, const std::string &text, int x=5, int y=-10);
+	int drawButtonRight(Surface *s, const std::string &btn, const std::string &text, int x=5, int y=-10);
 	void drawScrollBar(uint pagesize, uint totalsize, uint pagepos, uint top, uint height);
 
 	void drawTopBar(Surface *s=NULL);
 	void drawBottomBar(Surface *s=NULL);
 
-	Menu* menu;
+	Menu *menu;
 };
 
-#endif
+#endif // GMENU2X_H

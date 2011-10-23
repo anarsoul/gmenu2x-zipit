@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,10 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #ifndef TRANSLATOR_H
 #define TRANSLATOR_H
 
-#include "utilities.h"
+#include <string>
+#include <tr1/unordered_map>
 
 /**
 Hash Map of translation strings.
@@ -29,18 +31,19 @@ Hash Map of translation strings.
 */
 class Translator {
 private:
-	string _lang;
-	unordered_map<string, string> translations;
+	std::string _lang;
+	std::tr1::unordered_map<std::string, std::string> translations;
 
 public:
-	Translator(const string &lang="");
+	Translator(const std::string &lang="");
 	~Translator();
 
-	string lang();
-	void setLang(const string &lang);
-	bool exists(const string &term);
-	string translate(const string &term,const char *replacestr=NULL,...);
-	string operator[](const string &term);
+	std::string lang();
+	void setLang(const std::string &lang);
+	bool exists(const std::string &term);
+	std::string translate(const std::string &term,
+			const char *replacestr = NULL, ...);
+	std::string operator[](const std::string &term);
 };
 
-#endif
+#endif // TRANSLATOR_H

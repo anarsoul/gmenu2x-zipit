@@ -29,9 +29,6 @@
 class LinkApp;
 class FileLister;
 
-using std::string;
-using std::vector;
-
 class Selector : protected Dialog {
 private:
 	int selRow;
@@ -40,7 +37,7 @@ private:
 	std::tr1::unordered_map<std::string, std::string> aliases;
 
 	void loadAliases();
-	string getAlias(const std::string &key);
+	std::string getAlias(const std::string &key);
 	void prepare(FileLister *fl, std::vector<std::string> *screens,
 			std::vector<std::string> *titles);
 	void freeScreenshots(std::vector<std::string> *screens);

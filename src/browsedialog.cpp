@@ -7,6 +7,7 @@
 #include <string>
 
 using namespace fastdelegate;
+using std::string;
 
 BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
 		const string &subtitle)

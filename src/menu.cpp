@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -74,7 +74,7 @@ void Menu::readSections(std::string parentDir)
 		if (statret != -1) {
 			if (find(sections.begin(), sections.end(), (string)dptr->d_name) == sections.end()) {
 				sections.push_back((string)dptr->d_name);
-				linklist ll;
+				vector<Link*> ll;
 				links.push_back(ll);
 			}
 		}
@@ -114,12 +114,12 @@ void Menu::loadIcons() {
    SECTION MANAGEMENT
   ====================================*/
 void Menu::freeLinks() {
-	for (vector<linklist>::iterator section = links.begin(); section<links.end(); section++)
-		for (linklist::iterator link = section->begin(); link<section->end(); link++)
+	for (vector< vector<Link*> >::iterator section = links.begin(); section<links.end(); section++)
+		for (vector<Link*>::iterator link = section->begin(); link<section->end(); link++)
 			delete *link;
 }
 
-linklist *Menu::sectionLinks(int i) {
+vector<Link*> *Menu::sectionLinks(int i) {
 	if (i<0 || i>(int)links.size())
 		i = selSectionIndex();
 
@@ -305,7 +305,7 @@ bool Menu::addSection(const string &sectionName) {
 	sectiondir = sectiondir + "/" + sectionName;
 	if (mkdir(sectiondir.c_str(), 0755) == 0) {
 		sections.push_back(sectionName);
-		linklist ll;
+		vector<Link*> ll;
 		links.push_back(ll);
 		return true;
 	}
@@ -324,9 +324,9 @@ void Menu::deleteSelectedLink()
 	sectionLinks()->erase( sectionLinks()->begin() + selLinkIndex() );
 	setLinkIndex(selLinkIndex());
 
-	for (vector<linklist>::iterator section = links.begin();
+	for (vector< vector<Link*> >::iterator section = links.begin();
 				!icon_used && section<links.end(); section++)
-		for (linklist::iterator link = section->begin();
+		for (vector<Link*>::iterator link = section->begin();
 					!icon_used && link<section->end(); link++)
 			icon_used = !iconpath.compare((*link)->getIconPath());
 

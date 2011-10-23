@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,14 +19,16 @@
  ***************************************************************************/
 
 #include "surface.h"
-#include "imageio.h"
-#include "utilities.h"
+
 #include "debug.h"
+#include "imageio.h"
 #include "surfacecollection.h"
+#include "utilities.h"
 
 #include <SDL_gfxPrimitives.h>
 
 #include <iostream>
+
 using namespace std;
 
 RGBAColor strtorgba(const string &strColor) {

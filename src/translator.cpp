@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,16 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "translator.h"
+
+#include "debug.h"
+#include "gmenu2x.h"
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stdarg.h>
 
-#include "translator.h"
-#include "debug.h"
-#include "gmenu2x.h"
-
 using namespace std;
+using std::tr1::unordered_map;
 
 Translator::Translator(const string &lang) {
 	_lang = "";

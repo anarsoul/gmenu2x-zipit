@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,43 +18,40 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef FILELISTER_H_
-#define FILELISTER_H_
+#ifndef FILELISTER_H
+#define FILELISTER_H
 
 #include <string>
 #include <vector>
 
-using std::string;
-using std::vector;
-
 class FileLister {
 private:
-	string path, filter;
+	std::string path, filter;
 	bool showDirectories, showFiles;
 
-	vector<string> directories, files, excludes;
+	std::vector<std::string> directories, files, excludes;
 
 public:
-	FileLister(const string &startPath = "/boot/local", bool showDirectories = true, bool showFiles = true);
+	FileLister(const std::string &startPath = "/boot/local", bool showDirectories = true, bool showFiles = true);
 	void browse(bool clean = true);
 
 	unsigned int size();
 	unsigned int dirCount();
 	unsigned int fileCount();
-	string operator[](unsigned int);
-	string at(unsigned int);
+	std::string operator[](unsigned int);
+	std::string at(unsigned int);
 	bool isFile(unsigned int);
 	bool isDirectory(unsigned int);
 
-	const string &getPath();
-	void setPath(const string &path, bool doBrowse=true);
-	const string &getFilter();
-	void setFilter(const string &filter);
+	const std::string &getPath();
+	void setPath(const std::string &path, bool doBrowse=true);
+	const std::string &getFilter();
+	void setFilter(const std::string &filter);
 
-	const vector<string> &getDirectories() { return directories; }
-	const vector<string> &getFiles() { return files; }
-	void insertFile(const string &file);
-	void addExclude(const string &exclude);
+	const std::vector<std::string> &getDirectories() { return directories; }
+	const std::vector<std::string> &getFiles() { return files; }
+	void insertFile(const std::string &file);
+	void addExclude(const std::string &exclude);
 };
 
-#endif /*FILELISTER_H_*/
+#endif // FILELISTER_H
