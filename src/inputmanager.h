@@ -53,13 +53,13 @@ public:
 	bool pollEvent(ButtonEvent *event);
 
 private:
-	enum ButtonSource { KEYBOARD, JOYSTICK };
+	enum ButtonSource { UNMAPPED, KEYBOARD, JOYSTICK };
 	struct ButtonMapEntry {
 		ButtonSource source;
 		unsigned int code;
 	};
 
-	bool readConfFile(const std::string &conffile);
+	void readConfFile(const std::string &conffile);
 	bool getEvent(ButtonEvent *bevent, bool wait);
 	Button waitForButton(ButtonState state);
 

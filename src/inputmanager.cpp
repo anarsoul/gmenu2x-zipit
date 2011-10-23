@@ -29,9 +29,10 @@
 using namespace std;
 
 void InputManager::init(const string &conffile) {
-	if (!readConfFile(conffile)) {
-		ERROR("InputManager initialization from config file failed.\n");
+	for (int i = 0; i < BUTTON_TYPE_SIZE; i++) {
+		buttonMap[i].source = UNMAPPED;
 	}
+	readConfFile(conffile);
 }
 
 InputManager::InputManager()
@@ -53,25 +54,20 @@ InputManager::~InputManager() {
 #endif
 }
 
-bool InputManager::readConfFile(const string &conffile) {
-	if (!fileExists(conffile)) {
-		return false;
-	}
-
+void InputManager::readConfFile(const string &conffile) {
 	ifstream inf(conffile.c_str(), ios_base::in);
-	if (!(inf.is_open())) {
-		return false;
+	if (inf.fail()) {
+		ERROR("InputManager: failed to open config file\n");
+		return;
 	}
 
-	string line, name, source;
-	string::size_type pos;
-	Button button;
-
-	while(getline(inf, line, '\n')) {
-		pos = line.find("=");
-		name = trim(line.substr(0,pos));
+	string line;
+	while (getline(inf, line, '\n')) {
+		string::size_type pos = line.find("=");
+		string name = trim(line.substr(0,pos));
 		line = trim(line.substr(pos+1,line.length()));
 
+		Button button;
 		if (name == "up")            button = UP;
 		else if (name == "down")     button = DOWN;
 		else if (name == "left")     button = LEFT;
@@ -88,31 +84,33 @@ bool InputManager::readConfFile(const string &conffile) {
 		else if (name == "voldown")  button = VOLDOWN;
 		else if (name == "power")    button = POWER;
 		else if (name == "lock")     button = LOCK;
-		else return false;
-
-		pos = line.find(",");
-		source = trim(line.substr(0,pos));
-		line = trim(line.substr(pos+1, line.length()));
-
-		if (source == "keyboard") {
-			buttonMap[button].source = KEYBOARD;
-		} else if (source == "joystick") {
-#ifdef SDL_JOYSTICK_DISABLED
-			WARNING("Ignoring joystick button mapping "
-				"because SDL was compiled without joystick support\n");
+		else {
+			WARNING("InputManager: Ignoring unknown button name \"%s\"\n",
+					name.c_str());
 			continue;
-#else
-			buttonMap[button].source = JOYSTICK;
-#endif
-		} else {
-			return false;
 		}
 
+		pos = line.find(",");
+		string sourceStr = trim(line.substr(0,pos));
+		line = trim(line.substr(pos+1, line.length()));
+
+		ButtonSource source;
+		if (sourceStr == "keyboard") {
+			source = KEYBOARD;
+#ifndef SDL_JOYSTICK_DISABLED
+		} else if (sourceStr == "joystick") {
+			source = JOYSTICK;
+#endif
+		} else {
+			WARNING("InputManager: Ignoring unknown button source \"%s\"\n",
+					sourceStr.c_str());
+			continue;
+		}
+		buttonMap[button].source = source;
 		buttonMap[button].code = atoi(line.c_str());
 	}
 
 	inf.close();
-	return true;
 }
 
 InputManager::Button InputManager::waitForPressedButton() {
