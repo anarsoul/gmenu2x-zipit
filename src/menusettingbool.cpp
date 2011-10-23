@@ -66,12 +66,16 @@ void MenuSettingBool::draw(int y)
 
 bool MenuSettingBool::handleButtonPress(InputManager::Button button)
 {
-	if (button == InputManager::ACCEPT) {
-		toggle();
-		return true;
-	} else {
-		return false;
+	switch (button) {
+		case InputManager::ACCEPT:
+		case InputManager::LEFT:
+		case InputManager::RIGHT:
+			toggle();
+			break;
+		default:
+			return false;
 	}
+	return true;
 }
 
 void MenuSettingBool::toggle()
