@@ -108,27 +108,27 @@ bool WallpaperDialog::exec()
 		gmenu2x->s->flip();
 
         switch(gmenu2x->input.waitForPressedButton()) {
-            case CANCEL:
+            case InputManager::CANCEL:
                 close = true;
                 result = false;
                 break;
-            case UP:
+            case InputManager::UP:
                 if (selected == 0) selected = wallpapers.size()-1;
                 else selected -= 1;
                 break;
-            case ALTLEFT:
+            case InputManager::ALTLEFT:
                 if ((int)(selected-9) < 0) selected = 0;
                 else selected -= 9;
                 break;
-            case DOWN:
+            case InputManager::DOWN:
                 if (selected+1 >= wallpapers.size()) selected = 0;
                 else selected += 1;
                 break;
-            case ALTRIGHT:
+            case InputManager::ALTRIGHT:
                 if (selected+9 >= wallpapers.size()) selected = wallpapers.size()-1;
                 else selected += 9;
                 break;
-            case ACCEPT:
+            case InputManager::ACCEPT:
                 close = true;
                 if (wallpapers.size() > 0)
 					wallpaper = gmenu2x->sc.getSkinFilePath("wallpapers/" + wallpapers[selected]);

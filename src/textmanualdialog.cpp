@@ -89,7 +89,7 @@ void TextManualDialog::exec() {
 	string spagecount;
 	ss >> spagecount;
 	string pageStatus;
-    
+
 	while (!close) {
 		bg.blit(gmenu2x->s,0,0);
 		writeSubTitle(pages[page].title);
@@ -103,60 +103,39 @@ void TextManualDialog::exec() {
 
 		gmenu2x->s->flip();
 
-        switch(gmenu2x->input.waitForPressedButton()) {
-            case UP:
-                if (firstRow > 0) firstRow--;
-                break;
-            case DOWN:
-                if (firstRow + rowsPerPage < pages[page].text.size()) firstRow++;
-                break;
-            case LEFT:
-                if (page > 0) {
-                    page--;
-                    firstRow = 0;
-                }
-                break;
-            case RIGHT:
-                if (page < pages.size() -1) {
-                    page++;
-                    firstRow = 0;
-                }
-                break;
-            case ALTLEFT:
-                if (firstRow >= rowsPerPage-1) firstRow -= rowsPerPage-1;
-                else firstRow = 0;
-                break;
-            case ALTRIGHT:
-                if (firstRow + rowsPerPage*2 -1 < pages[page].text.size()) firstRow += rowsPerPage-1;
-                else firstRow = max(0, pages[page].text.size() - rowsPerPage);
-                break;
-            case CANCEL:
-            case SETTINGS:
-                close = true;
-                break;
-            default:
-                break;
-        }
-        
-        /*
-		gmenu2x->input.update();
-		if ( gmenu2x->input[ACTION_UP   ] && firstRow>0 ) firstRow--;
-		if ( gmenu2x->input[ACTION_DOWN ] && firstRow+rowsPerPage<pages[page].text.size() ) firstRow++;
-		if ( gmenu2x->input[ACTION_LEFT ] && page>0 ) { page--; firstRow=0; }
-		if ( gmenu2x->input[ACTION_RIGHT] && page<pages.size()-1 ) { page++; firstRow=0; }
-		if ( gmenu2x->input[ACTION_L   ] ) {
-			if (firstRow>=rowsPerPage-1)
-				firstRow-= rowsPerPage-1;
-			else
-				firstRow = 0;
+		switch(gmenu2x->input.waitForPressedButton()) {
+			case InputManager::UP:
+				if (firstRow > 0) firstRow--;
+				break;
+			case InputManager::DOWN:
+				if (firstRow + rowsPerPage < pages[page].text.size()) firstRow++;
+				break;
+			case InputManager::LEFT:
+				if (page > 0) {
+					page--;
+					firstRow = 0;
+				}
+				break;
+			case InputManager::RIGHT:
+				if (page < pages.size() -1) {
+					page++;
+					firstRow = 0;
+				}
+				break;
+			case InputManager::ALTLEFT:
+				if (firstRow >= rowsPerPage-1) firstRow -= rowsPerPage-1;
+				else firstRow = 0;
+				break;
+			case InputManager::ALTRIGHT:
+				if (firstRow + rowsPerPage*2 -1 < pages[page].text.size()) firstRow += rowsPerPage-1;
+				else firstRow = max(0, pages[page].text.size() - rowsPerPage);
+				break;
+			case InputManager::CANCEL:
+			case InputManager::SETTINGS:
+				close = true;
+				break;
+			default:
+				break;
 		}
-		if ( gmenu2x->input[ACTION_R   ] ) {
-			if (firstRow+rowsPerPage*2-1<pages[page].text.size())
-				firstRow+= rowsPerPage-1;
-			else
-				firstRow = max(0,pages[page].text.size()-rowsPerPage);
-		}
-		if ( gmenu2x->input[ACTION_START] || gmenu2x->input[ACTION_X] ) close = true;
-        */
 	}
 }

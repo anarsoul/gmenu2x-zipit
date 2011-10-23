@@ -40,23 +40,23 @@ MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon)
 	}
 
 	//Default enabled button
-	buttons[ACCEPT] = "OK";
+	buttons[InputManager::ACCEPT] = "OK";
 
 	//Default labels
-	buttonLabels[UP] = "up";
-	buttonLabels[DOWN] = "down";
-	buttonLabels[LEFT] = "left";
-	buttonLabels[RIGHT] = "right";
-	buttonLabels[CANCEL] = "cancel";
-	buttonLabels[ACCEPT] = "accept";
-	buttonLabels[CLEAR] = "x";
-	buttonLabels[MANUAL] = "y";
-	buttonLabels[ALTLEFT] = "l";
-	buttonLabels[ALTRIGHT] = "r";
-	buttonLabels[SETTINGS] = "start";
-	buttonLabels[MENU] = "select";
-	buttonLabels[VOLUP] = "vol+";
-	buttonLabels[VOLDOWN] = "vol-";
+	buttonLabels[InputManager::UP] = "up";
+	buttonLabels[InputManager::DOWN] = "down";
+	buttonLabels[InputManager::LEFT] = "left";
+	buttonLabels[InputManager::RIGHT] = "right";
+	buttonLabels[InputManager::CANCEL] = "cancel";
+	buttonLabels[InputManager::ACCEPT] = "accept";
+	buttonLabels[InputManager::CLEAR] = "x";
+	buttonLabels[InputManager::MANUAL] = "y";
+	buttonLabels[InputManager::ALTLEFT] = "l";
+	buttonLabels[InputManager::ALTRIGHT] = "r";
+	buttonLabels[InputManager::SETTINGS] = "start";
+	buttonLabels[InputManager::MENU] = "select";
+	buttonLabels[InputManager::VOLUP] = "vol+";
+	buttonLabels[InputManager::VOLDOWN] = "vol-";
 }
 
 void MessageBox::setButton(int action, const string &btn) {
@@ -103,7 +103,7 @@ int MessageBox::exec() {
 	bg.blit(gmenu2x->s,0,0);
 	gmenu2x->s->flip();
 
-    bevent_t event;
+    InputManager::ButtonEvent event;
 	while (result<0) {
 
 #ifdef PLATFORM_GP2X
@@ -119,14 +119,11 @@ int MessageBox::exec() {
 		}
 #endif
 
-/*
-		gmenu2x->input.update();
-		for (uint i=0; i<buttons.size(); i++)
-			if (buttons[i]!="" && gmenu2x->input[i]) result = i;
-
-        */
-
-        if (gmenu2x->input.pollEvent(&event) && (event.state == PRESSED) && (buttons[event.button] != "")) result = event.button;
+		if (gmenu2x->input.pollEvent(&event)
+				&& (event.state == InputManager::PRESSED)
+				&& (buttons[event.button] != "")) {
+			result = event.button;
+		}
 
 		usleep(LOOP_DELAY);
 	}

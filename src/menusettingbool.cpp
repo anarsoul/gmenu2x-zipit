@@ -64,9 +64,10 @@ void MenuSettingBool::draw(int y)
 	gmenu2x->s->write( gmenu2x->font, strvalue, 155, y, ASFont::HAlignLeft, ASFont::VAlignTop );
 }
 
-bool MenuSettingBool::manageInput(bevent_t *event)
+bool MenuSettingBool::manageInput(InputManager::ButtonEvent *event)
 {
-    if (event->button == ACCEPT && event->state == PRESSED) {
+	if (event->button == InputManager::ACCEPT
+			&& event->state == InputManager::PRESSED) {
 		toggle();
 		return true;
 	}

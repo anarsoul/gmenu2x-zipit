@@ -42,19 +42,18 @@ void MenuSettingStringBase::draw(int y)
 			ASFont::HAlignLeft, ASFont::VAlignTop);
 }
 
-bool MenuSettingStringBase::manageInput(bevent_t *event)
+bool MenuSettingStringBase::manageInput(InputManager::ButtonEvent *event)
 {
-    switch (event->button) {
-        case CANCEL:
-            clear();
-            break;
-        case ACCEPT:
-            edit();
-            break;
-        default:
+	switch (event->button) {
+		case InputManager::CANCEL:
+			clear();
+			break;
+		case InputManager::ACCEPT:
+			edit();
+			break;
+		default:
 			return false;
-            break;
-    }
+	}
 	return true;
 }
 

@@ -73,34 +73,34 @@ bool BrowseDialog::exec()
 	return result;
 }
 
-BrowseDialog::Action BrowseDialog::getAction(bevent_t *event)
+BrowseDialog::Action BrowseDialog::getAction(InputManager::ButtonEvent *event)
 {
 	BrowseDialog::Action action;
 
     switch(event->button) {
-        case MENU:
+        case InputManager::MENU:
             action = BrowseDialog::ACT_CLOSE;
             break;
-        case UP:
+        case InputManager::UP:
             action = BrowseDialog::ACT_UP;
             break;
-        case DOWN:
+        case InputManager::DOWN:
             action = BrowseDialog::ACT_DOWN;
             break;
-        case ALTLEFT:
+        case InputManager::ALTLEFT:
             action = BrowseDialog::ACT_SCROLLUP;
             break;
-        case ALTRIGHT:
+        case InputManager::ALTRIGHT:
             action = BrowseDialog::ACT_SCROLLDOWN;
             break;
-        case LEFT:
-        case CANCEL:
+        case InputManager::LEFT:
+        case InputManager::CANCEL:
             action = BrowseDialog::ACT_GOUP;
             break;
-        case ACCEPT:
+        case InputManager::ACCEPT:
             action = BrowseDialog::ACT_SELECT;
             break;
-        case SETTINGS:
+        case InputManager::SETTINGS:
             action = BrowseDialog::ACT_CONFIRM;
             break;
         default:
@@ -114,16 +114,11 @@ BrowseDialog::Action BrowseDialog::getAction(bevent_t *event)
 void BrowseDialog::handleInput()
 {
 	BrowseDialog::Action action;
-    bevent_t event;
+	InputManager::ButtonEvent event;
 
-    do {
-        gmenu2x->input.waitForEvent(&event);
-    } while (event.state != PRESSED);
-
-    /*
-	while(!gmenu2x->input.update())
-      usleep(LOOP_DELAY);
-      */
+	do {
+		gmenu2x->input.waitForEvent(&event);
+	} while (event.state != InputManager::PRESSED);
 
 	if (ts_pressed && !gmenu2x->ts.pressed()) {
 		action = BrowseDialog::ACT_SELECT;
@@ -192,7 +187,7 @@ void BrowseDialog::directoryUp()
 
 	if (p == path.size() - 1)
 		p = path.rfind("/", p - 1);
-	
+
 	if (p == string::npos || path.compare(0, 1, "/") != 0 || path.length() < 2) {
 		quit();
 	} else {

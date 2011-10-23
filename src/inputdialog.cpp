@@ -161,33 +161,33 @@ bool InputDialog::exec() {
 		gmenu2x->s->flip();
 
         switch (inputMgr.waitForPressedButton()) {
-            case SETTINGS:
+            case InputManager::SETTINGS:
 				ok = false;
 				close = true;
                 break;
-            case UP:
+            case InputManager::UP:
 				selRow--;
                 break;
-            case DOWN:
+            case InputManager::DOWN:
 				selRow++;
 				if (selRow==(int)kb->size()) selCol = selCol<8 ? 0 : 1;
                 break;
-            case LEFT:
+            case InputManager::LEFT:
 				selCol--;
                 break;
-            case RIGHT:
+            case InputManager::RIGHT:
 				selCol++;
                 break;
-            case ACCEPT:
+            case InputManager::ACCEPT:
                 confirm();
                 break;
-            case CANCEL:
+            case InputManager::CANCEL:
                 changeKeys();
                 break;
-            case ALTLEFT:
+            case InputManager::ALTLEFT:
                 backspace();
                 break;
-            case ALTRIGHT:
+            case InputManager::ALTRIGHT:
                 space();
                 break;
             default:

@@ -113,52 +113,37 @@ void TextDialog::exec() {
 
 	bg.convertToDisplayFormat();
 
-	uint firstRow = 0, rowsPerPage = (gmenu2x->resY-60)/gmenu2x->font->getHeight();
+	uint firstRow = 0;
+	uint rowsPerPage = (gmenu2x->resY - 60) / gmenu2x->font->getHeight();
 	while (!close) {
-		bg.blit(gmenu2x->s,0,0);
+		bg.blit(gmenu2x->s, 0, 0);
 		drawText(text, firstRow, rowsPerPage);
 		gmenu2x->s->flip();
 
-        switch(gmenu2x->input.waitForPressedButton()) {
-            case UP:
-                if (firstRow > 0) firstRow--;
-                break;
-            case DOWN:
-                if (firstRow + rowsPerPage < text->size()) firstRow++;
-                break;
-            case ALTLEFT:
-                if (firstRow >= rowsPerPage-1) firstRow -= rowsPerPage-1;
-                else firstRow = 0;
-                break;
-            case ALTRIGHT:
-                if (firstRow + rowsPerPage*2 -1 < text->size()) firstRow += rowsPerPage-1;
-                else firstRow = max(0, text->size() - rowsPerPage);
-                break;
-            case SETTINGS:
-            case CANCEL:
-                close = true;
-                break;
-            default:
-                break;
-        }
-
-        /*
-		gmenu2x->input.update();
-		if ( gmenu2x->input[ACTION_UP  ] && firstRow>0 ) firstRow--;
-		if ( gmenu2x->input[ACTION_DOWN] && firstRow+rowsPerPage<text->size() ) firstRow++;
-		if ( gmenu2x->input[ACTION_L   ] ) {
-			if (firstRow>=rowsPerPage-1)
-				firstRow-= rowsPerPage-1;
-			else
-				firstRow = 0;
+		switch(gmenu2x->input.waitForPressedButton()) {
+			case InputManager::UP:
+				if (firstRow > 0) firstRow--;
+				break;
+			case InputManager::DOWN:
+				if (firstRow + rowsPerPage < text->size()) firstRow++;
+				break;
+			case InputManager::ALTLEFT:
+				if (firstRow >= rowsPerPage-1) firstRow -= rowsPerPage-1;
+				else firstRow = 0;
+				break;
+			case InputManager::ALTRIGHT:
+				if (firstRow + rowsPerPage*2 -1 < text->size()) {
+					firstRow += rowsPerPage-1;
+				} else {
+					firstRow = max(0, text->size() - rowsPerPage);
+				}
+				break;
+			case InputManager::SETTINGS:
+			case InputManager::CANCEL:
+				close = true;
+				break;
+			default:
+				break;
 		}
-		if ( gmenu2x->input[ACTION_R   ] ) {
-			if (firstRow+rowsPerPage*2-1<text->size())
-				firstRow+= rowsPerPage-1;
-			else
-				firstRow = max(0,text->size()-rowsPerPage);
-		}
-		if ( gmenu2x->input[ACTION_START] || gmenu2x->input[ACTION_X] ) close = true;
-        */
 	}
 }

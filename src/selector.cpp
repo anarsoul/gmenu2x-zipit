@@ -119,32 +119,32 @@ int Selector::exec(int startSelection) {
 		gmenu2x->s->flip();
 
         switch (gmenu2x->input.waitForPressedButton()) {
-            case SETTINGS:
+            case InputManager::SETTINGS:
                 close = true;
                 result = false;
                 break;
-            case UP:
+            case InputManager::UP:
                 if (selected == 0) selected = fl.size() -1;
                 else selected -= 1;
                 selTick = SDL_GetTicks();
                 break;
-            case ALTLEFT:
+            case InputManager::ALTLEFT:
                 if ((int)(selected-SELECTOR_ELEMENTS+1)<0) selected = 0;
                 else selected -= SELECTOR_ELEMENTS-1;
                 selTick = SDL_GetTicks();
                 break;
-            case DOWN:
+            case InputManager::DOWN:
                 if (selected+1>=fl.size()) selected = 0;
                 else selected += 1;
                 selTick = SDL_GetTicks();
                 break;
-            case ALTRIGHT:
+            case InputManager::ALTRIGHT:
                 if (selected+SELECTOR_ELEMENTS-1>=fl.size()) selected = fl.size()-1;
                 else selected += SELECTOR_ELEMENTS-1;
                 selTick = SDL_GetTicks();
                 break;
-            case CANCEL:
-            case LEFT:
+            case InputManager::CANCEL:
+            case InputManager::LEFT:
                 if (link->getSelectorBrowser()) {
                     string::size_type p = dir.rfind("/", dir.size()-2);
                     if (p==string::npos || dir.compare(0, 1, "/") != 0 || dir.length() < 2) {
@@ -159,7 +159,7 @@ int Selector::exec(int startSelection) {
                     }
                 }
                 break;
-            case ACCEPT:
+            case InputManager::ACCEPT:
                 if (fl.isFile(selected)) {
                     file = fl[selected];
                     close = true;

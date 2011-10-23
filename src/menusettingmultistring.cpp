@@ -49,13 +49,13 @@ MenuSettingMultiString::MenuSettingMultiString(
 	buttonBox.add(btn);
 }
 
-bool MenuSettingMultiString::manageInput(bevent_t *event)
+bool MenuSettingMultiString::manageInput(InputManager::ButtonEvent *event)
 {
     switch(event->button) {
-        case LEFT:
+        case InputManager::LEFT:
             decSel();
             break;
-        case RIGHT:
+        case InputManager::RIGHT:
             incSel();
             break;
         default:

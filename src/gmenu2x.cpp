@@ -649,9 +649,9 @@ void GMenu2X::viewLog() {
 			td.exec();
 
 			MessageBox mb(this, tr["Do you want to delete the log file?"], "icons/ebook.png");
-			mb.setButton(ACCEPT, tr["Yes"]);
-			mb.setButton(CANCEL, tr["No"]);
-			if (mb.exec() == ACCEPT) {
+			mb.setButton(InputManager::ACCEPT, tr["Yes"]);
+			mb.setButton(InputManager::CANCEL, tr["No"]);
+			if (mb.exec() == InputManager::ACCEPT) {
 				ledOn();
 				unlink(logfile.c_str());
 				sync();
@@ -1089,7 +1089,7 @@ void GMenu2X::main() {
 			if (fwType=="open2x") s->write( font, tr["X: Toggle speaker mode"], 20, 185 );
 #endif
 			s->flip();
-			while (input.waitForPressedButton() != CANCEL) {}
+			while (input.waitForPressedButton() != InputManager::CANCEL) {}
 			helpDisplayed=false;
 			continue;
 		}
@@ -1138,35 +1138,35 @@ void GMenu2X::main() {
 		}
 
         switch (input.waitForPressedButton()) {
-            case ACCEPT:
+            case InputManager::ACCEPT:
                 if (menu->selLink() != NULL) menu->selLink()->run();
                 break;
-            case CANCEL:
+            case InputManager::CANCEL:
                 helpDisplayed=true;
                 break;
-            case SETTINGS:
+            case InputManager::SETTINGS:
                 options();
                 break;
-            case MENU:
+            case InputManager::MENU:
                 contextMenu();
                 break;
-            case UP:
+            case InputManager::UP:
                 menu->linkUp();
                 break;
-            case DOWN:
+            case InputManager::DOWN:
                 menu->linkDown();
                 break;
-            case LEFT:
+            case InputManager::LEFT:
                 menu->linkLeft();
                 break;
-            case RIGHT:
+            case InputManager::RIGHT:
                 menu->linkRight();
                 break;
-            case ALTLEFT:
+            case InputManager::ALTLEFT:
 				menu->decSectionIndex();
 				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
                 break;
-            case ALTRIGHT:
+            case InputManager::ALTRIGHT:
 				menu->incSectionIndex();
 				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
                 break;
@@ -1563,7 +1563,7 @@ void GMenu2X::contextMenu() {
 	bg.box(box.x, box.y, box.w, box.h, skinConfColors["messageBoxBg"]);
 	bg.rectangle( box.x+2, box.y+2, box.w-4, box.h-4, skinConfColors["messageBoxBorder"] );*/
 
-    bevent_t event;
+    InputManager::ButtonEvent event;
 	while (!close) {
 		tickNow = SDL_GetTicks();
 
@@ -1613,22 +1613,22 @@ void GMenu2X::contextMenu() {
 
 
         if (fadeAlpha < 200) {
-            if (!input.pollEvent(&event) || event.state != PRESSED) continue;
+            if (!input.pollEvent(&event) || event.state != InputManager::PRESSED) continue;
         } else {
             event.button = input.waitForPressedButton();
         }
 
         switch(event.button) {
-            case MENU:
+            case InputManager::MENU:
                 close = true;
                 break;
-            case UP:
+            case InputManager::UP:
                 sel = max(0, sel-1);
                 break;
-            case DOWN:
+            case InputManager::DOWN:
                 sel = min((int)voices.size()-1, sel+1);
                 break;
-            case ACCEPT:
+            case InputManager::ACCEPT:
                 voices[sel].action();
                 close = true;
                 break;
@@ -1753,9 +1753,9 @@ void GMenu2X::editLink() {
 void GMenu2X::deleteLink() {
 	if (menu->selLinkApp()!=NULL) {
 		MessageBox mb(this, tr.translate("Deleting $1",menu->selLink()->getTitle().c_str(),NULL)+"\n"+tr["Are you sure?"], menu->selLink()->getIconPath());
-		mb.setButton(ACCEPT, tr["Yes"]);
-		mb.setButton(CANCEL, tr["No"]);
-		if (mb.exec() == ACCEPT) {
+		mb.setButton(InputManager::ACCEPT, tr["Yes"]);
+		mb.setButton(InputManager::CANCEL, tr["No"]);
+		if (mb.exec() == InputManager::ACCEPT) {
 			ledOn();
 			menu->deleteSelectedLink();
 			sync();
@@ -1818,9 +1818,9 @@ void GMenu2X::renameSection() {
 
 void GMenu2X::deleteSection() {
 	MessageBox mb(this,tr["You will lose all the links in this section."]+"\n"+tr["Are you sure?"]);
-	mb.setButton(ACCEPT, tr["Yes"]);
-	mb.setButton(CANCEL, tr["No"]);
-	if (mb.exec() == ACCEPT) {
+	mb.setButton(InputManager::ACCEPT, tr["Yes"]);
+	mb.setButton(InputManager::CANCEL, tr["No"]);
+	if (mb.exec() == InputManager::ACCEPT) {
 		ledOn();
 		if (rmtree(getHome() + "/sections/" + menu->selSection())) {
 			menu->deleteSelectedSection();
@@ -1922,22 +1922,12 @@ void GMenu2X::scanner() {
 	ledOff();
 #endif
 
-    buttontype_t button;
+    InputManager::Button button;
     do {
         button = input.waitForPressedButton();
-    } while ((button != SETTINGS)
-                && (button != ACCEPT)
-                && (button != CANCEL));
-
-    /*
-    bevent_t event;
-    do {
-        input.getEvent(&event, true);
-    } while ((event.state != PRESSED) ||
-                (  (event.button != SETTINGS)
-                && (event.button != ACCEPT)
-                && (event.button != CLEAR)));
-                */
+    } while ((button != InputManager::SETTINGS)
+                && (button != InputManager::ACCEPT)
+                && (button != InputManager::CANCEL));
 }
 
 void GMenu2X::scanPath(string path, vector<string> *files) {

@@ -66,7 +66,7 @@ bool InputManager::readConfFile(const string &conffile) {
 
 	string line, name, source;
 	string::size_type pos;
-	buttontype_t button;
+	Button button;
 
 	while(getline(inf, line, '\n')) {
 		pos = line.find("=");
@@ -95,42 +95,42 @@ bool InputManager::readConfFile(const string &conffile) {
 		source = trim(line.substr(0,pos));
 		line = trim(line.substr(pos+1, line.length()));
 
-		if (source == "keyboard") ButtonMap[button].source = KEYBOARD;
-		else if (source == "joystick") ButtonMap[button].source = JOYSTICK;
+		if (source == "keyboard") buttonMap[button].source = KEYBOARD;
+		else if (source == "joystick") buttonMap[button].source = JOYSTICK;
 		else return false;
 
-		ButtonMap[button].code = atoi(line.c_str());
+		buttonMap[button].code = atoi(line.c_str());
 	}
 
 	inf.close();
 	return true;
 }
 
-buttontype_t InputManager::waitForPressedButton() {
+InputManager::Button InputManager::waitForPressedButton() {
 	return waitForButton(PRESSED);
 }
 
-buttontype_t InputManager::waitForReleasedButton() {
+InputManager::Button InputManager::waitForReleasedButton() {
 	return waitForButton(RELEASED);
 }
 
-buttontype_t InputManager::waitForButton(enum state_e state) {
-	bevent_t event;
+InputManager::Button InputManager::waitForButton(ButtonState state) {
+	ButtonEvent event;
 	do {
 		waitForEvent(&event);
 	} while (event.state != state);
 	return event.button;
 }
 
-void InputManager::waitForEvent(bevent_t *event) {
+void InputManager::waitForEvent(ButtonEvent *event) {
 	getEvent(event, true);
 }
 
-bool InputManager::pollEvent(bevent_t *event) {
+bool InputManager::pollEvent(ButtonEvent *event) {
 	return getEvent(event, false);
 }
 
-bool InputManager::getEvent(bevent_t *bevent, bool wait) {
+bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 	//TODO: when an event is processed, program a new event
 	//in some time, and when it occurs, do a key repeat
 
@@ -145,7 +145,7 @@ bool InputManager::getEvent(bevent_t *bevent, bool wait) {
 		}
 	}
 
-	enum source_type_e source;
+	ButtonSource source;
 	switch(event.type) {
 		case SDL_KEYDOWN:
 			bevent->state = PRESSED;
@@ -168,18 +168,18 @@ bool InputManager::getEvent(bevent_t *bevent, bool wait) {
 	}
 
 	if (source == KEYBOARD) {
-		for (int i=0; i<BUTTONTYPE_T_SIZE; i++) {
-			if (ButtonMap[i].source == KEYBOARD
-					&& (unsigned int)event.key.keysym.sym == ButtonMap[i].code) {
-				bevent->button = (buttontype_t)i;
+		for (int i = 0; i < BUTTON_TYPE_SIZE; i++) {
+			if (buttonMap[i].source == KEYBOARD
+					&& (unsigned int)event.key.keysym.sym == buttonMap[i].code) {
+				bevent->button = static_cast<Button>(i);
 				break;
 			}
 		}
 	} else {
-		for (int i=0; i<BUTTONTYPE_T_SIZE; i++) {
-			if (ButtonMap[i].source == JOYSTICK
-					&& (unsigned int)event.jbutton.button == ButtonMap[i].code) {
-				bevent->button = (buttontype_t)i;
+		for (int i = 0; i < BUTTON_TYPE_SIZE; i++) {
+			if (buttonMap[i].source == JOYSTICK
+					&& (unsigned int)event.jbutton.button == buttonMap[i].code) {
+				bevent->button = static_cast<Button>(i);
 				break;
 			}
 		}

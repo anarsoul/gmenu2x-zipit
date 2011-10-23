@@ -45,7 +45,7 @@ public:
 	virtual ~MenuSettingBool() {}
 
 	virtual void draw(int y);
-	virtual bool manageInput(bevent_t *event);
+	virtual bool manageInput(InputManager::ButtonEvent *event);
 	virtual bool edited();
 
 	void setValue(int value);

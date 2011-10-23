@@ -23,49 +23,47 @@
 
 #include <string>
 
-typedef enum buttontype_e {
-	UP, DOWN, LEFT, RIGHT,
-	ACCEPT, CANCEL,
-	CLEAR, MANUAL,
-	ALTLEFT, ALTRIGHT,
-	MENU, SETTINGS,
-	VOLUP, VOLDOWN,
-	POWER, LOCK
-} buttontype_t;
-#define BUTTONTYPE_T_SIZE 16
-
-enum source_type_e {KEYBOARD, JOYSTICK};
-enum state_e {PRESSED, RELEASED};
-
-typedef struct {
-	source_type_e source;
-	unsigned int code;
-} input_t;
-
-typedef struct {
-	buttontype_t button;
-	state_e state;
-} bevent_t;
-
-
 class InputManager {
 public:
+	enum Button {
+		UP, DOWN, LEFT, RIGHT,
+		ACCEPT, CANCEL,
+		CLEAR, MANUAL,
+		ALTLEFT, ALTRIGHT,
+		MENU, SETTINGS,
+		VOLUP, VOLDOWN,
+		POWER, LOCK
+	};
+	#define BUTTON_TYPE_SIZE 16
+
+	enum ButtonState { PRESSED, RELEASED };
+	struct ButtonEvent {
+		Button button;
+		ButtonState state;
+	};
+
 	InputManager();
 	~InputManager();
 
 	void init(const std::string &conffile);
-	void waitForEvent(bevent_t *event);
-	buttontype_t waitForPressedButton();
-	buttontype_t waitForReleasedButton();
-	bool pollEvent(bevent_t *event);
+	void waitForEvent(ButtonEvent *event);
+	Button waitForPressedButton();
+	Button waitForReleasedButton();
+	bool pollEvent(ButtonEvent *event);
 
 private:
-	input_t ButtonMap[BUTTONTYPE_T_SIZE];
+	enum ButtonSource { KEYBOARD, JOYSTICK };
+	struct ButtonMapEntry {
+		ButtonSource source;
+		unsigned int code;
+	};
+
+	ButtonMapEntry buttonMap[BUTTON_TYPE_SIZE];
 
 	bool readConfFile(const std::string &conffile);
 	void initJoystick();
-	bool getEvent(bevent_t *bevent, bool wait);
-	buttontype_t waitForButton(enum state_e state);
+	bool getEvent(ButtonEvent *bevent, bool wait);
+	Button waitForButton(ButtonState state);
 };
 
 #endif

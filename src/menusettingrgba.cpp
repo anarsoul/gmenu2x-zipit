@@ -68,39 +68,39 @@ void MenuSettingRGBA::handleTS() {
 	MenuSetting::handleTS();
 }
 
-bool MenuSettingRGBA::manageInput(bevent_t *event) {
+bool MenuSettingRGBA::manageInput(InputManager::ButtonEvent *event) {
 	if (edit) {
-	switch(event->button) {
-		case LEFT:
-			dec();
-			break;
-		case RIGHT:
-			inc();
-			break;
-		case ALTLEFT:
-			update_value(-10);
-			break;
-		case ALTRIGHT:
-			update_value(10);
-			break;
-		case ACCEPT:
-		case UP:
-		case DOWN:
-			edit = false;
-			updateButtonBox();
-			break;
-		default:
-			return false;
-	}
+		switch(event->button) {
+			case InputManager::LEFT:
+				dec();
+				break;
+			case InputManager::RIGHT:
+				inc();
+				break;
+			case InputManager::ALTLEFT:
+				update_value(-10);
+				break;
+			case InputManager::ALTRIGHT:
+				update_value(10);
+				break;
+			case InputManager::ACCEPT:
+			case InputManager::UP:
+			case InputManager::DOWN:
+				edit = false;
+				updateButtonBox();
+				break;
+			default:
+				return false;
+		}
 	} else {
 		switch(event->button) {
-			case LEFT:
+			case InputManager::LEFT:
 				leftComponent();
 				break;
-			case RIGHT:
+			case InputManager::RIGHT:
 				rightComponent();
 				break;
-			case ACCEPT:
+			case InputManager::ACCEPT:
 				edit = true;
 				updateButtonBox();
 				break;

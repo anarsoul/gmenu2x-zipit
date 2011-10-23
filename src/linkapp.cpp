@@ -318,17 +318,17 @@ void LinkApp::showManual() {
 			}
 
             switch(inputMgr.waitForPressedButton()) {
-                case SETTINGS:
-                case CANCEL:
+				case InputManager::SETTINGS:
+                case InputManager::CANCEL:
                     close = true;
                     break;
-                case LEFT:
+                case InputManager::LEFT:
                     if (page > 0) {
                         page--;
                         repaint = true;
                     }
                     break;
-                case RIGHT:
+                case InputManager::RIGHT:
                     if (page < pagecount-1) {
                         page++;
                         repaint=true;

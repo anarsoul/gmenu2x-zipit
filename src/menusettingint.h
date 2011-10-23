@@ -41,7 +41,7 @@ public:
 			int increment = 1);
 	virtual ~MenuSettingInt() {}
 
-	virtual bool manageInput(bevent_t *event);
+	virtual bool manageInput(InputManager::ButtonEvent *event);
 	virtual void adjustInput();
 	virtual void draw(int);
 	virtual bool edited();
