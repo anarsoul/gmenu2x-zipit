@@ -1308,7 +1308,7 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingInt(this,tr["Global Volume"],tr["Set the default volume for the gp2x soundcard"],&confInt["globalVolume"],0,100));
 	sd.addSetting(new MenuSettingBool(this,tr["Output logs"],tr["Logs the output of the links. Use the Log Viewer to read them."],&confInt["outputLogs"]));
 	//G
-	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set dingoo's Lcd Backlight value (default: 100)"],&newBacklight,5,100));
+	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set Lcd Backlight value (default: 100)"],&newBacklight,5,100));
 	sd.addSetting(new MenuSettingInt(this,tr["Screen Timeout"],tr["Set screen's backlight timeout in seconds"],&confInt["backlightTimeout"],0,120));
 //	sd.addSetting(new MenuSettingMultiString(this,tr["Tv-Out encoding"],tr["Encoding of the tv-out signal"],&confStr["tvoutEncoding"],&encodings));
 	sd.addSetting(new MenuSettingBool(this,tr["Show root"],tr["Show root folder in the file selection dialogs"],&showRootFolder));
