@@ -272,7 +272,7 @@ void GMenu2X::init() {
 	acHandle = fopen("/sys/class/power_supply/ac/online", "r");
 	backlightHandle = fopen(
 #ifdef PLATFORM_NANONOTE
-		"/sys/class/backlight/gpm940b0-bl/brightness",
+		"/sys/class/lcd/ili8960-lcd/contrast",
 #else
 		"/sys/class/backlight/pwm-backlight/brightness",
 #endif
