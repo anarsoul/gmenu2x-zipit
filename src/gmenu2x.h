@@ -71,7 +71,6 @@ private:
 	*/
 	std::string getDiskFree(const char *path);
 	unsigned short cpuX; //!< Offset for displaying cpu clock information
-	unsigned short volumeX; //!< Offset for displaying volume level
 	unsigned short manualX; //!< Offset for displaying the manual indicator in the taskbar
 	unsigned cpuFreqMin; //!< Minimum CPU frequency
 	unsigned cpuFreqMax; //!< Maximum theoretical CPU frequency

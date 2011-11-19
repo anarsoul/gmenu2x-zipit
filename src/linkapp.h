@@ -36,8 +36,8 @@ Parses links files.
 class LinkApp : public Link {
 private:
 	InputManager &inputMgr;
-	std::string sclock, svolume;
-	int iclock, ivolume;
+	std::string sclock;
+	int iclock;
 	//G
 	std::string sgamma;
 	//G
@@ -80,10 +80,6 @@ public:
 	int clock();
 	const std::string &clockStr(int maxClock);
 	void setClock(int mhz);
-
-	int volume();
-	const std::string &volumeStr();
-	void setVolume(int vol);
 
 //G
 	int gamma();

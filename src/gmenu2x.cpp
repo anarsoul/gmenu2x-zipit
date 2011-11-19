@@ -446,7 +446,6 @@ GMenu2X::GMenu2X()
 
 	setInputSpeed();
 	initServices();
-	setVolume(confInt["globalVolume"]);
 	applyDefaultTimings();
 	setClock(confInt["menuClock"]);
 	//recover last session
@@ -512,14 +511,8 @@ void GMenu2X::initBG() {
 	bgmain->write(font, df, 22, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 	delete sd;
 
-	Surface *volume = Surface::loadImage("imgs/volume.png", confStr["skin"]);
-	volumeX = 27+font->getTextWidth(df);
-	if (volume) volume->blit(bgmain, volumeX, bottomBarIconY);
-	volumeX += 19;
-	delete volume;
-
 	Surface *cpu = Surface::loadImage("imgs/cpu.png", confStr["skin"]);
-	cpuX = volumeX+font->getTextWidth("100")+5;
+	cpuX = font->getTextWidth(df)+32;
 	if (cpu) cpu->blit(bgmain, cpuX, bottomBarIconY);
 	cpuX += 19;
 	manualX = cpuX+font->getTextWidth("300MHz")+5;
@@ -724,7 +717,6 @@ void GMenu2X::readConfig(string conffile) {
 				 cpuFreqSafeMax, cpuFreqMin, cpuFreqMax );
 	evalIntConf( &confInt["menuClock"],
 				 cpuFreqMenuDefault, cpuFreqMin, cpuFreqSafeMax );
-	evalIntConf( &confInt["globalVolume"], 67, 0,100 );
 	evalIntConf( &confInt["backlightTimeout"], 15, 0,120 );
 	evalIntConf( &confInt["videoBpp"], 32, 16, 32 );
 
@@ -1061,7 +1053,6 @@ void GMenu2X::main() {
 			s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, ASFont::HAlignCenter, ASFont::VAlignBottom );
 			if (menu->selLinkApp()!=NULL) {
 				s->write ( font, menu->selLinkApp()->clockStr(confInt["maxClock"]), cpuX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
-				s->write ( font, menu->selLinkApp()->volumeStr(), volumeX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
 				//Manual indicator
 				if (!menu->selLinkApp()->getManual().empty())
 					sc.skinRes("imgs/manual.png")->blit(s,manualX,bottomBarIconY);
@@ -1282,7 +1273,6 @@ void GMenu2X::explorer() {
 
 void GMenu2X::options() {
 	int curMenuClock = confInt["menuClock"];
-	int curGlobalVolume = confInt["globalVolume"];
 	//G
 	int oldBacklight = getBackLight();
 	int newBacklight = oldBacklight;
@@ -1305,7 +1295,6 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingBool(this,tr["Save last selection"],tr["Save the last selected link and section on exit"],&confInt["saveSelection"]));
 	sd.addSetting(new MenuSettingInt(this,tr["Clock for GMenu2X"],tr["Set the cpu working frequency when running GMenu2X"],&confInt["menuClock"],cpuFreqMin,cpuFreqSafeMax,cpuFreqMultiple));
 	sd.addSetting(new MenuSettingInt(this,tr["Maximum overclock"],tr["Set the maximum overclock for launching links"],&confInt["maxClock"],cpuFreqMin,cpuFreqMax,cpuFreqMultiple));
-	sd.addSetting(new MenuSettingInt(this,tr["Global Volume"],tr["Set the default volume for the gp2x soundcard"],&confInt["globalVolume"],0,100));
 	sd.addSetting(new MenuSettingBool(this,tr["Output logs"],tr["Logs the output of the links. Use the Log Viewer to read them."],&confInt["outputLogs"]));
 	//G
 	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set Lcd Backlight value (default: 100)"],&newBacklight,5,100));
@@ -1317,7 +1306,6 @@ void GMenu2X::options() {
 		//G
 		if (newBacklight != oldBacklight) setBacklight(newBacklight);
 		if (curMenuClock!=confInt["menuClock"]) setClock(confInt["menuClock"]);
-		if (curGlobalVolume!=confInt["globalVolume"]) setVolume(confInt["globalVolume"]);
 
 		if (confInt["backlightTimeout"] == 0) {
 			if (PowerSaver::isRunning())
@@ -1362,7 +1350,6 @@ void GMenu2X::settingsOpen2x() {
 			case VOLUME_MODE_PHONES: setVolumeScaler(volumeScalerPhones);   break;
 			case VOLUME_MODE_NORMAL: setVolumeScaler(volumeScalerNormal); break;
 		}
-		setVolume(confInt["globalVolume"]);
 	}
 }
 #endif
@@ -1702,7 +1689,6 @@ void GMenu2X::editLink() {
 	string linkSelScreens = menu->selLinkApp()->getSelectorScreens();
 	string linkSelAliases = menu->selLinkApp()->getAliasFile();
 	int linkClock = menu->selLinkApp()->clock();
-	int linkVolume = menu->selLinkApp()->volume();
 	//G
 	//int linkGamma = menu->selLinkApp()->gamma();
 
@@ -1717,7 +1703,6 @@ void GMenu2X::editLink() {
 	sd.addSetting(new MenuSettingFile(this,tr["Manual"],tr["Select a graphic/textual manual or a readme"],&linkManual,".man.png,.txt"));
 	sd.addSetting(new MenuSettingInt(this,tr["Clock (default: 336)"],tr["Cpu clock frequency to set when launching this link"],&linkClock,cpuFreqMin,confInt["maxClock"],cpuFreqMultiple));
 //	sd.addSetting(new MenuSettingBool(this,tr["Tweak RAM Timings"],tr["This usually speeds up the application at the cost of stability"],&linkUseRamTimings));
-	sd.addSetting(new MenuSettingInt(this,tr["Volume (default: -1)"],tr["Volume to set for this link"],&linkVolume,-1,100));
 	sd.addSetting(new MenuSettingString(this,tr["Parameters"],tr["Parameters to pass to the application"],&linkParams, diagTitle,diagIcon));
 	sd.addSetting(new MenuSettingDir(this,tr["Selector Directory"],tr["Directory to scan for the selector"],&linkSelDir));
 	sd.addSetting(new MenuSettingBool(this,tr["Selector Browser"],tr["Allow the selector to change directory"],&linkSelBrowser));
@@ -1743,7 +1728,6 @@ void GMenu2X::editLink() {
 		menu->selLinkApp()->setSelectorScreens(linkSelScreens);
 		menu->selLinkApp()->setAliasFile(linkSelAliases);
 		menu->selLinkApp()->setClock(linkClock);
-		menu->selLinkApp()->setVolume(linkVolume);
 
 		INFO("New Section: '%s'\n", newSection.c_str());
 
@@ -2111,37 +2095,6 @@ void GMenu2X::setGamma(int /*gamma*/) {
 		MEM_REG[0x295E>>1]= g;
 	}*/
 #endif
-}
-
-int GMenu2X::getVolume() {
-	unsigned long mixer;
-    	int basevolume = -1;
-	mixer = open("/dev/mixer", O_RDONLY);
-	if(mixer)
-	{
-		if (ioctl(mixer, SOUND_MIXER_READ_VOLUME, &basevolume) == -1) {
-			ERROR("Failed opening mixer for read - VOLUME\n");
-		}
-		close(mixer);
-		if(basevolume != -1)
-			return  (basevolume>>8) & basevolume ;
-	}
-	return basevolume;
-}
-
-void GMenu2X::setVolume(int vol) {
-	unsigned long mixer;
-	int newvolume = vol;
-	int oss_volume = newvolume | (newvolume << 8); // set volume for both channels
-	mixer = open("/dev/mixer", O_WRONLY);
-	if(mixer)
-	{
-		if (ioctl(mixer, SOUND_MIXER_WRITE_VOLUME, &oss_volume) == -1) {
-			ERROR("Failed opening mixer for write - VOLUME\n");
-		}
-		close(mixer);
-	}
-
 }
 
 void GMenu2X::setVolumeScaler(int scale) {

@@ -48,7 +48,6 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, InputManager &inputMgr_,
 	wrapper = false;
 	dontleave = false;
 	setClock(336);
-	setVolume(-1);
 	//G
 	//setGamma(0);
 	selectordir = "";
@@ -90,8 +89,6 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, InputManager &inputMgr_,
 		//G
 		} else if (name == "gamma") {
 			setGamma( atoi(value.c_str()) );
-		} else if (name == "volume") {
-			setVolume( atoi(value.c_str()) );
 		} else if (name == "selectordir") {
 			setSelectorDir( value );
 		} else if (name == "selectorbrowser") {
@@ -155,27 +152,6 @@ void LinkApp::setClock(int mhz) {
 	edited = true;
 }
 
-int LinkApp::volume() {
-	return ivolume;
-}
-
-const string &LinkApp::volumeStr() {
-	return svolume;
-}
-
-void LinkApp::setVolume(int vol) {
-	ivolume = constrain(vol,-1,100);
-	stringstream ss;
-	svolume = "";
-	if (ivolume<0)
-		ss << gmenu2x->confInt["globalVolume"];
-	else
-		ss << ivolume;
-	ss >> svolume;
-
-	edited = true;
-}
-
 //G
 int LinkApp::gamma() {
 	return igamma;
@@ -219,7 +195,6 @@ bool LinkApp::save() {
 		if (manual!=""         ) f << "manual="          << manual          << endl;
 		if (iclock!=0          ) f << "clock="           << iclock          << endl;
 		if (useRamTimings      ) f << "useramtimings=true"                  << endl;
-		if (ivolume>0          ) f << "volume="          << ivolume         << endl;
 		//G
 		if (igamma!=0          ) f << "gamma="           << igamma          << endl;
 		if (selectordir!=""    ) f << "selectordir="     << selectordir     << endl;
@@ -436,8 +411,6 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 
 	if (useRamTimings)
 		gmenu2x->applyRamTimings();
-	if (volume()>=0)
-		gmenu2x->setVolume(volume());
 
 	INFO("Executing '%s' (%s %s)\n", title.c_str(), exec.c_str(), params.c_str());
 
