@@ -181,12 +181,12 @@ public:
 	bool o2x_usb_net_on_boot, o2x_ftp_on_boot, o2x_telnet_on_boot, o2x_gp2xjoy_on_boot, o2x_usb_host_on_boot, o2x_usb_hid_on_boot, o2x_usb_storage_on_boot;
 	std::string o2x_usb_net_ip;
 	int volumeMode, savedVolumeMode;		//	just use the const int scale values at top of source
-#endif
 
 	//  Volume scaling values to store from config files
 	int volumeScalerPhones;
 	int volumeScalerNormal;
 	//--------------------------------------------------------------------------
+#endif
 
 	SurfaceCollection sc;
 	Translator tr;
