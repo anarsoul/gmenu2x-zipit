@@ -30,9 +30,9 @@ using std::vector;
 using fastdelegate::MakeDelegate;
 
 MenuSettingMultiString::MenuSettingMultiString(
-		GMenu2X *gmenu2x, const string &name,
-		const string &description, string *value,
-		const vector<string> *choices_)
+		GMenu2X *gmenu2x, Touchscreen &ts,
+		const string &name, const string &description,
+		string *value, const vector<string> *choices_)
 	: MenuSettingStringBase(gmenu2x, name, description, value)
 	, choices(choices_)
 {
@@ -40,11 +40,11 @@ MenuSettingMultiString::MenuSettingMultiString(
 
 	IconButton *btn;
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/left.png");
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/left.png");
 	btn->setAction(MakeDelegate(this, &MenuSettingMultiString::decSel));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Change value"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/right.png", gmenu2x->tr["Change value"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingMultiString::incSel));
 	buttonBox.add(btn);
 }

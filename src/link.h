@@ -50,7 +50,7 @@ protected:
 	void updateSurfaces();
 
 public:
-	Link(GMenu2X *gmenu2x);
+	Link(GMenu2X *gmenu2x, Touchscreen &ts);
 	virtual ~Link() {};
 
 	virtual void paint();

@@ -27,6 +27,7 @@
 
 class GMenu2X;
 class InputManager;
+class Touchscreen;
 
 /**
 Parses links files.
@@ -53,7 +54,8 @@ private:
 	bool dontleave;
 
 public:
-	LinkApp(GMenu2X *gmenu2x, InputManager &inputMgr, const char* linkfile);
+	LinkApp(GMenu2X *gmenu2x, Touchscreen &ts, InputManager &inputMgr,
+			const char* linkfile);
 	virtual const std::string &searchIcon();
 
 	const std::string &getExec();

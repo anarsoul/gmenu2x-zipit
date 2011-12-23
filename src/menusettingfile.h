@@ -22,17 +22,20 @@
 
 #include "menusettingstringbase.h"
 
+class Touchscreen;
+
 class MenuSettingFile : public MenuSettingStringBase {
 protected:
 	virtual void edit();
 
+	Touchscreen &ts;
 	std::string filter;
 
 public:
 	MenuSettingFile(
-			GMenu2X *gmenu2x, const std::string &name,
-			const std::string &description, std::string *value,
-			const std::string &filter = "");
+			GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &name, const std::string &description,
+			std::string *value, const std::string &filter = "");
 	virtual ~MenuSettingFile() {}
 };
 

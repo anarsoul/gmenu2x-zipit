@@ -31,8 +31,9 @@
 
 using namespace std;
 
-WallpaperDialog::WallpaperDialog(GMenu2X *gmenu2x)
+WallpaperDialog::WallpaperDialog(GMenu2X *gmenu2x, Touchscreen &ts_)
 	: Dialog(gmenu2x)
+	, ts(ts_)
 {
 }
 
@@ -76,8 +77,8 @@ bool WallpaperDialog::exec()
 	uint i, selected = 0, firstElement = 0, iY;
 
 	ButtonBox buttonbox(gmenu2x);
-	buttonbox.add(new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Select wallpaper"]));
-	buttonbox.add(new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Exit"]));
+	buttonbox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/accept.png", gmenu2x->tr["Select wallpaper"]));
+	buttonbox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Exit"]));
 
 	while (!close) {
 		if (selected>firstElement+9) firstElement=selected-9;

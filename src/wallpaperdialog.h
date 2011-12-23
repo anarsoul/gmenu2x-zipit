@@ -25,9 +25,14 @@
 
 #include <string>
 
+class Touchscreen;
+
 class WallpaperDialog : protected Dialog {
+private:
+	Touchscreen &ts;
+
 public:
-	WallpaperDialog(GMenu2X *gmenu2x);
+	WallpaperDialog(GMenu2X *gmenu2x, Touchscreen &ts);
 	std::string wallpaper;
 
 	bool exec();

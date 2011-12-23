@@ -30,9 +30,10 @@ using std::string;
 using fastdelegate::MakeDelegate;
 
 MenuSettingBool::MenuSettingBool(
-		GMenu2X *gmenu2x, const string &name,
-		const string &description, int *value)
+		GMenu2X *gmenu2x, Touchscreen &ts,
+		const string &name, const string &description, int *value)
 	: MenuSetting(gmenu2x, name, description)
+	, ts(ts)
 {
 	_ivalue = value;
 	_value = NULL;
@@ -42,9 +43,10 @@ MenuSettingBool::MenuSettingBool(
 }
 
 MenuSettingBool::MenuSettingBool(
-		GMenu2X *gmenu2x, const string &name,
-		const string &description, bool *value)
+		GMenu2X *gmenu2x, Touchscreen &ts,
+		const string &name, const string &description, bool *value)
 	: MenuSetting(gmenu2x, name, description)
+	, ts(ts)
 {
 	_value = value;
 	_ivalue = NULL;
@@ -55,7 +57,8 @@ MenuSettingBool::MenuSettingBool(
 
 void MenuSettingBool::initButton()
 {
-	IconButton *btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png",
+	IconButton *btn = new IconButton(gmenu2x, ts,
+									 "skin:imgs/buttons/accept.png",
 									 gmenu2x->tr["Switch"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingBool::toggle));
 	buttonBox.add(btn);

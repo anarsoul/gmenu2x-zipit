@@ -29,10 +29,13 @@
 #include <SDL.h>
 #include <string>
 
+class Touchscreen;
+
 class BrowseDialog : protected Dialog {
 protected:
-	BrowseDialog(GMenu2X *gmenu2x, const std::string &title,
-			const std::string &subtitle);
+	BrowseDialog(
+			GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &title, const std::string &subtitle);
 	virtual ~BrowseDialog();
 
 	void setPath(const std::string &path) {
@@ -55,6 +58,7 @@ private:
 		ACT_CONFIRM,
 	};
 
+	Touchscreen &ts;
 	bool close, result;
 
 	std::string title;

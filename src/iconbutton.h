@@ -10,8 +10,8 @@ class Surface;
 
 class IconButton : public Button {
 public:
-	IconButton(GMenu2X *gmenu2x, const std::string &icon,
-			const std::string &label="");
+	IconButton(GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &icon, const std::string &label = "");
 	virtual ~IconButton() {};
 
 	virtual void paint();

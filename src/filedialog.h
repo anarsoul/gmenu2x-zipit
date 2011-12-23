@@ -23,11 +23,10 @@
 
 #include "browsedialog.h"
 
-#include <string>
-
 class FileDialog : public BrowseDialog {
 public:
-	FileDialog(GMenu2X *gmenu2x, const std::string &text,
+	FileDialog(
+			GMenu2X *gmenu2x, Touchscreen &ts, const std::string &text,
 			const std::string &filter="", const std::string &file="",
 			const std::string &title = "File Dialog");
 	virtual ~FileDialog();

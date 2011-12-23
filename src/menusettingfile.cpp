@@ -28,25 +28,27 @@ using std::string;
 using fastdelegate::MakeDelegate;
 
 MenuSettingFile::MenuSettingFile(
-		GMenu2X *gmenu2x, const string &name,
-		const string &description, string *value, const string &filter_)
+		GMenu2X *gmenu2x, Touchscreen &ts_,
+		const string &name, const string &description,
+		string *value, const string &filter_)
 	: MenuSettingStringBase(gmenu2x, name, description, value)
+	, ts(ts_)
 	, filter(filter_)
 {
 	IconButton *btn;
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Clear"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Clear"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingFile::clear));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Select a file"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/accept.png", gmenu2x->tr["Select a file"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingFile::edit));
 	buttonBox.add(btn);
 }
 
 void MenuSettingFile::edit()
 {
-	FileDialog fd(gmenu2x, description, filter, value());
+	FileDialog fd(gmenu2x, ts, description, filter, value());
 	if (fd.exec()) {
 		setValue(fd.getPath() + "/" + fd.getFile());
 	}

@@ -24,12 +24,14 @@
 #include "inputmanager.h"
 
 class GMenu2X;
+class Touchscreen;
 
 class MenuSettingBool : public MenuSetting {
 private:
 	void initButton();
 	void toggle();
 
+	Touchscreen &ts;
 	bool originalValue;
 	bool *_value;
 	int *_ivalue;
@@ -37,11 +39,13 @@ private:
 
 public:
 	MenuSettingBool(
-			GMenu2X *gmenu2x, const std::string &name,
-			const std::string &description, bool *value);
+			GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &name, const std::string &description,
+			bool *value);
 	MenuSettingBool(
-			GMenu2X *gmenu2x, const std::string &name,
-			const std::string &description, int *value);
+			GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &name, const std::string &description,
+			int *value);
 	virtual ~MenuSettingBool() {}
 
 	virtual void draw(int y);

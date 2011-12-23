@@ -26,13 +26,16 @@
 
 using std::string;
 
-MenuSettingImage::MenuSettingImage(GMenu2X *gmenu2x, const string &name, const string &description, string *value, const string &filter)
-	: MenuSettingFile(gmenu2x, name, description, value, filter)
+MenuSettingImage::MenuSettingImage(
+		GMenu2X *gmenu2x, Touchscreen &ts,
+		const string &name, const string &description,
+		string *value, const string &filter)
+	: MenuSettingFile(gmenu2x, ts, name, description, value, filter)
 {
 }
 
 void MenuSettingImage::edit() {
-	ImageDialog id(gmenu2x, description, filter, value());
+	ImageDialog id(gmenu2x, ts, description, filter, value());
 	if (id.exec()) setValue(id.getPath() + "/" + id.getFile());
 }
 

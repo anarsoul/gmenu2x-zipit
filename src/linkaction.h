@@ -37,7 +37,7 @@ class LinkAction : public Link {
 private:
 	LinkRunAction action;
 public:
-	LinkAction(GMenu2X *gmenu2x, LinkRunAction act);
+	LinkAction(GMenu2X *gmenu2x, Touchscreen &ts, LinkRunAction act);
 	virtual ~LinkAction() {};
 	virtual void run();
 };

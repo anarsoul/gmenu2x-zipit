@@ -31,8 +31,8 @@
 using namespace std;
 using namespace fastdelegate;
 
-Link::Link(GMenu2X *gmenu2x_)
-	: Button(gmenu2x_->ts, true)
+Link::Link(GMenu2X *gmenu2x_, Touchscreen &ts)
+	: Button(ts, true)
 	, gmenu2x(gmenu2x_)
 {
 	action = MakeDelegate(this, &Link::run);

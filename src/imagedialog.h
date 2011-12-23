@@ -30,8 +30,9 @@ class ImageDialog : public FileDialog {
 protected:
 	SurfaceCollection previews;
 public:
-	ImageDialog(GMenu2X *gmenu2x, const std::string &text,
-			const std::string &filter="", const std::string &file="");
+	ImageDialog(
+			GMenu2X *gmenu2x, Touchscreen &ts, const std::string &text,
+			const std::string &filter = "", const std::string &file = "");
 	virtual ~ImageDialog();
 
 	virtual void beforeFileList();

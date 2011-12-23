@@ -26,9 +26,11 @@
 #include "inputmanager.h"
 
 class GMenu2X;
+class Touchscreen;
 
 class MenuSettingRGBA : public MenuSetting {
 private:
+	Touchscreen &ts;
 	unsigned short selPart;
 	int y;
 	std::string strR, strG, strB, strA;
@@ -46,8 +48,9 @@ private:
 
 public:
 	MenuSettingRGBA(
-			GMenu2X *gmenu2x, const std::string &name,
-			const std::string &description, RGBAColor *value);
+			GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &name, const std::string &description,
+			RGBAColor *value);
 	virtual ~MenuSettingRGBA() {};
 
 	virtual void draw(int y);

@@ -9,9 +9,11 @@
 using namespace fastdelegate;
 using std::string;
 
-BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
-		const string &subtitle)
+BrowseDialog::BrowseDialog(
+		GMenu2X *gmenu2x, Touchscreen &ts_,
+		const string &title, const string &subtitle)
 	: Dialog(gmenu2x)
+	, ts(ts_)
 	, title(title)
 	, subtitle(subtitle)
 	, ts_pressed(false)
@@ -19,20 +21,20 @@ BrowseDialog::BrowseDialog(GMenu2X *gmenu2x, const string &title,
 {
 	IconButton *btn;
 
-	buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png"));
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Up one folder"]);
+	buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/left.png"));
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Up one folder"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::directoryUp));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Enter folder"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/accept.png", gmenu2x->tr["Enter folder"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::directoryEnter));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/start.png", gmenu2x->tr["Confirm"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/start.png", gmenu2x->tr["Confirm"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::confirm));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/select.png", gmenu2x->tr["Exit"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/select.png", gmenu2x->tr["Exit"]);
 	btn->setAction(MakeDelegate(this, &BrowseDialog::quit));
 	buttonBox.add(btn);
 
@@ -64,7 +66,7 @@ bool BrowseDialog::exec()
 	selected = 0;
 	close = false;
 	while (!close) {
-		if (gmenu2x->ts.available()) gmenu2x->ts.poll();
+		if (ts.available()) ts.poll();
 
 		paint();
 
@@ -104,14 +106,14 @@ void BrowseDialog::handleInput()
 	InputManager::Button button = gmenu2x->input.waitForPressedButton();
 
 	BrowseDialog::Action action;
-	if (ts_pressed && !gmenu2x->ts.pressed()) {
+	if (ts_pressed && !ts.pressed()) {
 		action = BrowseDialog::ACT_SELECT;
 		ts_pressed = false;
 	} else {
 		action = getAction(button);
 	}
 
-	if (gmenu2x->ts.available() && gmenu2x->ts.pressed() && !gmenu2x->ts.inRect(touchRect)) ts_pressed = false;
+	if (ts.available() && ts.pressed() && !ts.inRect(touchRect)) ts_pressed = false;
 
 	if (action == BrowseDialog::ACT_SELECT && (*fl)[selected] == "..")
 		action = BrowseDialog::ACT_GOUP;
@@ -250,7 +252,7 @@ void BrowseDialog::paint()
 		icon->blit(gmenu2x->s, 5, offsetY);
 		gmenu2x->s->write(gmenu2x->font, (*fl)[i], 24, offsetY + 8, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 
-		if (gmenu2x->ts.available() && gmenu2x->ts.pressed() && gmenu2x->ts.inRect(touchRect.x, offsetY + 3, touchRect.w, rowHeight)) {
+		if (ts.available() && ts.pressed() && ts.inRect(touchRect.x, offsetY + 3, touchRect.w, rowHeight)) {
 			ts_pressed = true;
 			selected = i;
 		}

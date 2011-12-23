@@ -27,9 +27,9 @@ protected:
 	virtual void edit();
 
 public:
-	MenuSettingImage(GMenu2X *gmenu2x, const std::string &name,
-					 const std::string &description, std::string *value,
-					 const std::string &filter = "");
+	MenuSettingImage(GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &name, const std::string &description,
+			std::string *value, const std::string &filter = "");
 	virtual ~MenuSettingImage() {}
 
 	virtual void setValue(const std::string &value);

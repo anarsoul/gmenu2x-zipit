@@ -29,10 +29,8 @@ typedef fastdelegate::FastDelegate0<> ButtonAction;
 class Touchscreen;
 
 class Button {
-private:
-	Touchscreen &ts;
-
 protected:
+	Touchscreen &ts;
 	ButtonAction action;
 	SDL_Rect rect;
 	bool doubleClick;

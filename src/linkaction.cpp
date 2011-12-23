@@ -20,8 +20,8 @@
 
 #include "linkaction.h"
 
-LinkAction::LinkAction(GMenu2X *gmenu2x, LinkRunAction act)
-	: Link(gmenu2x) {
+LinkAction::LinkAction(GMenu2X *gmenu2x, Touchscreen &ts, LinkRunAction act)
+	: Link(gmenu2x, ts) {
 	this->action = act;
 }
 

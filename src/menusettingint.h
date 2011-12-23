@@ -23,6 +23,8 @@
 #include "menusetting.h"
 #include "inputmanager.h"
 
+class Touchscreen;
+
 class MenuSettingInt : public MenuSetting {
 private:
 	int originalValue;
@@ -36,9 +38,9 @@ private:
 
 public:
 	MenuSettingInt(
-			GMenu2X *gmenu2x, const std::string &name,
-			const std::string &description, int *value, int min, int max,
-			int increment = 1);
+			GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &name, const std::string &description,
+			int *value, int min, int max, int increment = 1);
 	virtual ~MenuSettingInt() {}
 
 	virtual bool handleButtonPress(InputManager::Button button);

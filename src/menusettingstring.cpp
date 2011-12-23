@@ -28,20 +28,21 @@ using std::string;
 using fastdelegate::MakeDelegate;
 
 MenuSettingString::MenuSettingString(
-		GMenu2X *gmenu2x, const string &name,
-		const string &description, string *value,
+		GMenu2X *gmenu2x, Touchscreen &ts_,
+		const string &name, const string &description, string *value,
 		const string &diagTitle_, const string &diagIcon_)
 	: MenuSettingStringBase(gmenu2x, name, description, value)
+	, ts(ts_)
 	, diagTitle(diagTitle_)
 	, diagIcon(diagIcon_)
 {
 	IconButton *btn;
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Clear"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/cancel.png", gmenu2x->tr["Clear"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingString::clear));
 	buttonBox.add(btn);
 
-	btn = new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Edit"]);
+	btn = new IconButton(gmenu2x, ts, "skin:imgs/buttons/accept.png", gmenu2x->tr["Edit"]);
 	btn->setAction(MakeDelegate(this, &MenuSettingString::edit));
 	buttonBox.add(btn);
 }
@@ -49,7 +50,7 @@ MenuSettingString::MenuSettingString(
 void MenuSettingString::edit()
 {
 	InputDialog id(
-			gmenu2x, gmenu2x->input, gmenu2x->ts,
+			gmenu2x, gmenu2x->input, ts,
 			description, value(), diagTitle, diagIcon);
 	if (id.exec()) setValue(id.getInput());
 }

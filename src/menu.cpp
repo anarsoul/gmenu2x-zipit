@@ -35,8 +35,10 @@
 
 using namespace std;
 
-Menu::Menu(GMenu2X *gmenu2x) {
-	this->gmenu2x = gmenu2x;
+Menu::Menu(GMenu2X *gmenu2x, Touchscreen &ts)
+	: gmenu2x(gmenu2x)
+	, ts(ts)
+{
 	iFirstDispSection = 0;
 
 	readSections(GMENU2X_SYSTEM_DIR "/sections");
@@ -171,7 +173,7 @@ void Menu::setSectionIndex(int i) {
 bool Menu::addActionLink(uint section, const string &title, LinkRunAction action, const string &description, const string &icon) {
 	if (section>=sections.size()) return false;
 
-	LinkAction *linkact = new LinkAction(gmenu2x,action);
+	LinkAction *linkact = new LinkAction(gmenu2x, ts, action);
 	linkact->setSize(gmenu2x->skinConfInt["linkWidth"],gmenu2x->skinConfInt["linkHeight"]);
 	linkact->setTitle(title);
 	linkact->setDescription(description);
@@ -283,7 +285,7 @@ bool Menu::addLink(string path, string file, string section) {
 
 			INFO("Section: '%s(%i)'\n", sections[isection].c_str(), isection);
 
-			LinkApp* link = new LinkApp(gmenu2x, gmenu2x->input, linkpath.c_str());
+			LinkApp* link = new LinkApp(gmenu2x, ts, gmenu2x->input, linkpath.c_str());
 			link->setSize(gmenu2x->skinConfInt["linkWidth"],gmenu2x->skinConfInt["linkHeight"]);
 			links[isection].push_back( link );
 		}
@@ -465,10 +467,10 @@ void Menu::readLinks() {
 
 		sort(linkfiles.begin(), linkfiles.end(),case_less());
 		for (uint x=0; x<linkfiles.size(); x++) {
-			LinkApp *link = new LinkApp(gmenu2x, gmenu2x->input, linkfiles[x].c_str());
-			link->setSize(gmenu2x->skinConfInt["linkWidth"],gmenu2x->skinConfInt["linkHeight"]);
+			LinkApp *link = new LinkApp(gmenu2x, ts, gmenu2x->input, linkfiles[x].c_str());
+			link->setSize(gmenu2x->skinConfInt["linkWidth"], gmenu2x->skinConfInt["linkHeight"]);
 			if (link->targetExists())
-				links[i].push_back( link );
+				links[i].push_back(link);
 			else
 				delete link;
 		}

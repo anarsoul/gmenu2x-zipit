@@ -558,7 +558,7 @@ void GMenu2X::initFont() {
 
 void GMenu2X::initMenu() {
 	//Menu structure handler
-	menu = new Menu(this);
+	menu = new Menu(this, ts);
 	for (uint i=0; i<menu->getSections().size(); i++) {
 		//Add virtual links in the applications section
 		if (menu->getSections()[i]=="applications") {
@@ -983,7 +983,7 @@ void GMenu2X::main() {
 	string fps = "";
 #endif
 
-	IconButton btnContextMenu(this,"skin:imgs/menu.png");
+	IconButton btnContextMenu(this, ts, "skin:imgs/menu.png");
 	btnContextMenu.setPosition(resX-38, bottomBarIconY);
 	btnContextMenu.setAction(MakeDelegate(this, &GMenu2X::contextMenu));
 
@@ -1243,7 +1243,7 @@ void GMenu2X::main() {
 }
 
 void GMenu2X::explorer() {
-	FileDialog fd(this,tr["Select an application"],".gpu,.dge,.sh,");
+	FileDialog fd(this, ts, tr["Select an application"], ".gpu,.dge,.sh,");
 	if (fd.exec()) {
 		if (confInt["saveSelection"] && (confInt["section"]!=menu->selSectionIndex() || confInt["link"]!=menu->selLinkIndex()))
 			writeConfig();
@@ -1287,21 +1287,21 @@ void GMenu2X::options() {
 	encodings.push_back("PAL");
 
 	SettingsDialog sd(this, input, ts, tr["Settings"]);
-	sd.addSetting(new MenuSettingMultiString(this,tr["Language"],tr["Set the language used by GMenu2X"],&lang,&fl_tr.getFiles()));
-	sd.addSetting(new MenuSettingBool(this,tr["Save last selection"],tr["Save the last selected link and section on exit"],&confInt["saveSelection"]));
-	sd.addSetting(new MenuSettingInt(this,tr["Clock for GMenu2X"],tr["Set the cpu working frequency when running GMenu2X"],&confInt["menuClock"],cpuFreqMin,cpuFreqSafeMax,cpuFreqMultiple));
-	sd.addSetting(new MenuSettingInt(this,tr["Maximum overclock"],tr["Set the maximum overclock for launching links"],&confInt["maxClock"],cpuFreqMin,cpuFreqMax,cpuFreqMultiple));
-	sd.addSetting(new MenuSettingBool(this,tr["Output logs"],tr["Logs the output of the links. Use the Log Viewer to read them."],&confInt["outputLogs"]));
+	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Language"], tr["Set the language used by GMenu2X"], &lang, &fl_tr.getFiles()));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["Save last selection"], tr["Save the last selected link and section on exit"], &confInt["saveSelection"]));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Clock for GMenu2X"], tr["Set the cpu working frequency when running GMenu2X"], &confInt["menuClock"], cpuFreqMin, cpuFreqSafeMax, cpuFreqMultiple));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Maximum overclock"], tr["Set the maximum overclock for launching links"], &confInt["maxClock"], cpuFreqMin, cpuFreqMax, cpuFreqMultiple));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["Output logs"], tr["Logs the output of the links. Use the Log Viewer to read them."], &confInt["outputLogs"]));
 	//G
-	sd.addSetting(new MenuSettingInt(this,tr["Lcd Backlight"],tr["Set Lcd Backlight value (default: 100)"],&newBacklight,5,100));
-	sd.addSetting(new MenuSettingInt(this,tr["Screen Timeout"],tr["Set screen's backlight timeout in seconds"],&confInt["backlightTimeout"],0,120));
-//	sd.addSetting(new MenuSettingMultiString(this,tr["Tv-Out encoding"],tr["Encoding of the tv-out signal"],&confStr["tvoutEncoding"],&encodings));
-	sd.addSetting(new MenuSettingBool(this,tr["Show root"],tr["Show root folder in the file selection dialogs"],&showRootFolder));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Lcd Backlight"], tr["Set Lcd Backlight value (default: 100)"], &newBacklight, 5, 100));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Screen Timeout"], tr["Set screen's backlight timeout in seconds"], &confInt["backlightTimeout"], 0, 120));
+//	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Tv-Out encoding"], tr["Encoding of the tv-out signal"], &confStr["tvoutEncoding"], &encodings));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["Show root"], tr["Show root folder in the file selection dialogs"], &showRootFolder));
 
 	if (sd.exec() && sd.edited()) {
 		//G
 		if (newBacklight != oldBacklight) setBacklight(newBacklight);
-		if (curMenuClock!=confInt["menuClock"]) setClock(confInt["menuClock"]);
+		if (curMenuClock != confInt["menuClock"]) setClock(confInt["menuClock"]);
 
 		if (confInt["backlightTimeout"] == 0) {
 			if (PowerSaver::isRunning())
@@ -1327,17 +1327,17 @@ void GMenu2X::options() {
 #ifdef PLATFORM_GP2X
 void GMenu2X::settingsOpen2x() {
 	SettingsDialog sd(this, input, ts, tr["Open2x Settings"]);
-	sd.addSetting(new MenuSettingBool(this,tr["USB net on boot"],tr["Allow USB networking to be started at boot time"],&o2x_usb_net_on_boot));
-	sd.addSetting(new MenuSettingString(this,tr["USB net IP"],tr["IP address to be used for USB networking"],&o2x_usb_net_ip));
-	sd.addSetting(new MenuSettingBool(this,tr["Telnet on boot"],tr["Allow telnet to be started at boot time"],&o2x_telnet_on_boot));
-	sd.addSetting(new MenuSettingBool(this,tr["FTP on boot"],tr["Allow FTP to be started at boot time"],&o2x_ftp_on_boot));
-	sd.addSetting(new MenuSettingBool(this,tr["GP2XJOY on boot"],tr["Create a js0 device for GP2X controls"],&o2x_gp2xjoy_on_boot));
-	sd.addSetting(new MenuSettingBool(this,tr["USB host on boot"],tr["Allow USB host to be started at boot time"],&o2x_usb_host_on_boot));
-	sd.addSetting(new MenuSettingBool(this,tr["USB HID on boot"],tr["Allow USB HID to be started at boot time"],&o2x_usb_hid_on_boot));
-	sd.addSetting(new MenuSettingBool(this,tr["USB storage on boot"],tr["Allow USB storage to be started at boot time"],&o2x_usb_storage_on_boot));
-	//sd.addSetting(new MenuSettingInt(this,tr["Speaker Mode on boot"],tr["Set Speaker mode. 0 = Mute, 1 = Phones, 2 = Speaker"],&volumeMode,0,2));
-	sd.addSetting(new MenuSettingInt(this,tr["Speaker Scaler"],tr["Set the Speaker Mode scaling 0-150\% (default is 100\%)"],&volumeScalerNormal,0,150));
-	sd.addSetting(new MenuSettingInt(this,tr["Headphones Scaler"],tr["Set the Headphones Mode scaling 0-100\% (default is 65\%)"],&volumeScalerPhones,0,100));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["USB net on boot"], tr["Allow USB networking to be started at boot time"], &o2x_usb_net_on_boot));
+	sd.addSetting(new MenuSettingString(this, ts, tr["USB net IP"], tr["IP address to be used for USB networking"], &o2x_usb_net_ip));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["Telnet on boot"], tr["Allow telnet to be started at boot time"], &o2x_telnet_on_boot));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["FTP on boot"], tr["Allow FTP to be started at boot time"], &o2x_ftp_on_boot));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["GP2XJOY on boot"], tr["Create a js0 device for GP2X controls"], &o2x_gp2xjoy_on_boot));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["USB host on boot"], tr["Allow USB host to be started at boot time"], &o2x_usb_host_on_boot));
+	sd.addSetting(new MenuSettingBool(this,ts, tr["USB HID on boot"], tr["Allow USB HID to be started at boot time"], &o2x_usb_hid_on_boot));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["USB storage on boot"], tr["Allow USB storage to be started at boot time"], &o2x_usb_storage_on_boot));
+	//sd.addSetting(new MenuSettingInt(this, ts, tr["Speaker Mode on boot"], tr["Set Speaker mode. 0 = Mute, 1 = Phones, 2 = Speaker"], &volumeMode, 0, 2));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Speaker Scaler"], tr["Set the Speaker Mode scaling 0-150\% (default is 100\%)"], &volumeScalerNormal, 0, 150));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Headphones Scaler"], tr["Set the Headphones Mode scaling 0-100\% (default is 65\%)"], &volumeScalerPhones, 0, 100));
 
 	if (sd.exec() && sd.edited()) {
 		writeConfigOpen2x();
@@ -1360,13 +1360,13 @@ void GMenu2X::skinMenu() {
 	string curSkin = confStr["skin"];
 
 	SettingsDialog sd(this, input, ts, tr["Skin"]);
-	sd.addSetting(new MenuSettingMultiString(this,tr["Skin"],tr["Set the skin used by GMenu2X"],&confStr["skin"],&fl_sk.getDirectories()));
-	sd.addSetting(new MenuSettingRGBA(this,tr["Top Bar Color"],tr["Color of the top bar"],&skinConfColors[COLOR_TOP_BAR_BG]));
-	sd.addSetting(new MenuSettingRGBA(this,tr["Bottom Bar Color"],tr["Color of the bottom bar"],&skinConfColors[COLOR_BOTTOM_BAR_BG]));
-	sd.addSetting(new MenuSettingRGBA(this,tr["Selection Color"],tr["Color of the selection and other interface details"],&skinConfColors[COLOR_SELECTION_BG]));
-	sd.addSetting(new MenuSettingRGBA(this,tr["Message Box Color"],tr["Background color of the message box"],&skinConfColors[COLOR_MESSAGE_BOX_BG]));
-	sd.addSetting(new MenuSettingRGBA(this,tr["Message Box Border Color"],tr["Border color of the message box"],&skinConfColors[COLOR_MESSAGE_BOX_BORDER]));
-	sd.addSetting(new MenuSettingRGBA(this,tr["Message Box Selection Color"],tr["Color of the selection of the message box"],&skinConfColors[COLOR_MESSAGE_BOX_SELECTION]));
+	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Skin"], tr["Set the skin used by GMenu2X"], &confStr["skin"], &fl_sk.getDirectories()));
+	sd.addSetting(new MenuSettingRGBA(this, ts, tr["Top Bar Color"], tr["Color of the top bar"], &skinConfColors[COLOR_TOP_BAR_BG]));
+	sd.addSetting(new MenuSettingRGBA(this, ts, tr["Bottom Bar Color"], tr["Color of the bottom bar"], &skinConfColors[COLOR_BOTTOM_BAR_BG]));
+	sd.addSetting(new MenuSettingRGBA(this, ts, tr["Selection Color"], tr["Color of the selection and other interface details"], &skinConfColors[COLOR_SELECTION_BG]));
+	sd.addSetting(new MenuSettingRGBA(this, ts, tr["Message Box Color"], tr["Background color of the message box"], &skinConfColors[COLOR_MESSAGE_BOX_BG]));
+	sd.addSetting(new MenuSettingRGBA(this, ts, tr["Message Box Border Color"], tr["Border color of the message box"], &skinConfColors[COLOR_MESSAGE_BOX_BORDER]));
+	sd.addSetting(new MenuSettingRGBA(this, ts, tr["Message Box Selection Color"], tr["Color of the selection of the message box"], &skinConfColors[COLOR_MESSAGE_BOX_SELECTION]));
 
 	if (sd.exec() && sd.edited()) {
 		if (curSkin != confStr["skin"]) {
@@ -1645,7 +1645,7 @@ void GMenu2X::contextMenu() {
 }
 
 void GMenu2X::changeWallpaper() {
-	WallpaperDialog wp(this);
+	WallpaperDialog wp(this, ts);
 	if (wp.exec() && confStr["wallpaper"] != wp.wallpaper) {
 		confStr["wallpaper"] = wp.wallpaper;
 		initBG();
@@ -1654,7 +1654,7 @@ void GMenu2X::changeWallpaper() {
 }
 
 void GMenu2X::addLink() {
-	FileDialog fd(this,tr["Select an application"]);
+	FileDialog fd(this, ts, tr["Select an application"]);
 	if (fd.exec()) {
 		ledOn();
 		menu->addLink(fd.getPath(), fd.getFile());
@@ -1692,22 +1692,22 @@ void GMenu2X::editLink() {
 	string diagIcon = menu->selLinkApp()->getIconPath();
 
 	SettingsDialog sd(this, input, ts, diagTitle, diagIcon);
-	sd.addSetting(new MenuSettingString(this,tr["Title"],tr["Link title"],&linkTitle, diagTitle,diagIcon));
-	sd.addSetting(new MenuSettingString(this,tr["Description"],tr["Link description"],&linkDescription, diagTitle,diagIcon));
-	sd.addSetting(new MenuSettingMultiString(this,tr["Section"],tr["The section this link belongs to"],&newSection,&menu->getSections()));
-	sd.addSetting(new MenuSettingImage(this,tr["Icon"],tr.translate("Select an icon for the link: $1",linkTitle.c_str(),NULL),&linkIcon,".png,.bmp,.jpg,.jpeg"));
-	sd.addSetting(new MenuSettingFile(this,tr["Manual"],tr["Select a graphic/textual manual or a readme"],&linkManual,".man.png,.txt"));
-	sd.addSetting(new MenuSettingInt(this,tr["Clock (default: 336)"],tr["Cpu clock frequency to set when launching this link"],&linkClock,cpuFreqMin,confInt["maxClock"],cpuFreqMultiple));
-//	sd.addSetting(new MenuSettingBool(this,tr["Tweak RAM Timings"],tr["This usually speeds up the application at the cost of stability"],&linkUseRamTimings));
-	sd.addSetting(new MenuSettingString(this,tr["Parameters"],tr["Parameters to pass to the application"],&linkParams, diagTitle,diagIcon));
-	sd.addSetting(new MenuSettingDir(this,tr["Selector Directory"],tr["Directory to scan for the selector"],&linkSelDir));
-	sd.addSetting(new MenuSettingBool(this,tr["Selector Browser"],tr["Allow the selector to change directory"],&linkSelBrowser));
-	sd.addSetting(new MenuSettingString(this,tr["Selector Filter"],tr["Selector filter (Separate values with a comma)"],&linkSelFilter, diagTitle,diagIcon));
-	sd.addSetting(new MenuSettingDir(this,tr["Selector Screenshots"],tr["Directory of the screenshots for the selector"],&linkSelScreens));
-	sd.addSetting(new MenuSettingFile(this,tr["Selector Aliases"],tr["File containing a list of aliases for the selector"],&linkSelAliases));
+	sd.addSetting(new MenuSettingString(this, ts, tr["Title"], tr["Link title"], &linkTitle, diagTitle, diagIcon));
+	sd.addSetting(new MenuSettingString(this, ts, tr["Description"], tr["Link description"], &linkDescription, diagTitle, diagIcon));
+	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Section"], tr["The section this link belongs to"], &newSection, &menu->getSections()));
+	sd.addSetting(new MenuSettingImage(this, ts, tr["Icon"], tr.translate("Select an icon for the link: $1", linkTitle.c_str(), NULL), &linkIcon, ".png,.bmp,.jpg,.jpeg"));
+	sd.addSetting(new MenuSettingFile(this, ts, tr["Manual"], tr["Select a graphic/textual manual or a readme"], &linkManual, ".man.png,.txt"));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Clock (default: 336)"], tr["Cpu clock frequency to set when launching this link"], &linkClock, cpuFreqMin, confInt["maxClock"], cpuFreqMultiple));
+//	sd.addSetting(new MenuSettingBool(this, ts, tr["Tweak RAM Timings"], tr["This usually speeds up the application at the cost of stability"], &linkUseRamTimings));
+	sd.addSetting(new MenuSettingString(this, ts, tr["Parameters"], tr["Parameters to pass to the application"], &linkParams, diagTitle, diagIcon));
+	sd.addSetting(new MenuSettingDir(this, ts, tr["Selector Directory"], tr["Directory to scan for the selector"], &linkSelDir));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["Selector Browser"], tr["Allow the selector to change directory"], &linkSelBrowser));
+	sd.addSetting(new MenuSettingString(this, ts, tr["Selector Filter"], tr["Selector filter (Separate values with a comma)"], &linkSelFilter, diagTitle, diagIcon));
+	sd.addSetting(new MenuSettingDir(this, ts, tr["Selector Screenshots"], tr["Directory of the screenshots for the selector"], &linkSelScreens));
+	sd.addSetting(new MenuSettingFile(this, ts, tr["Selector Aliases"], tr["File containing a list of aliases for the selector"], &linkSelAliases));
 	//G
-	sd.addSetting(new MenuSettingBool(this,tr["Wrapper"],tr["Explicitly relaunch GMenu2X after execution"],&menu->selLinkApp()->needsWrapperRef()));
-	sd.addSetting(new MenuSettingBool(this,tr["Don't Leave"],tr["Don't quit GMenu2X when launching this link"],&menu->selLinkApp()->runsInBackgroundRef()));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["Wrapper"], tr["Explicitly relaunch GMenu2X after execution"], &menu->selLinkApp()->needsWrapperRef()));
+	sd.addSetting(new MenuSettingBool(this, ts, tr["Don't Leave"], tr["Don't quit GMenu2X when launching this link"], &menu->selLinkApp()->runsInBackgroundRef()));
 
 	if (sd.exec() && sd.edited()) {
 		ledOn();

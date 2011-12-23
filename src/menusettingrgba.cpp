@@ -31,9 +31,10 @@ using std::stringstream;
 using fastdelegate::MakeDelegate;
 
 MenuSettingRGBA::MenuSettingRGBA(
-		GMenu2X *gmenu2x, const string &name,
-		const string &description, RGBAColor *value)
-	: MenuSetting(gmenu2x,name,description)
+		GMenu2X *gmenu2x, Touchscreen &ts_,
+		const string &name, const string &description, RGBAColor *value)
+	: MenuSetting(gmenu2x, name, description)
+	, ts(ts_)
 {
 	edit = false;
 
@@ -60,9 +61,9 @@ void MenuSettingRGBA::draw(int y) {
 }
 
 void MenuSettingRGBA::handleTS() {
-	if (gmenu2x->ts.pressed()) {
+	if (ts.pressed()) {
 		for (int i=0; i<4; i++) {
-			if (i!=selPart && gmenu2x->ts.inRect(166+i*36,y,36,14)) {
+			if (i!=selPart && ts.inRect(166+i*36,y,36,14)) {
 				selPart = i;
 				i = 4;
 			}
@@ -226,14 +227,14 @@ void MenuSettingRGBA::updateButtonBox()
 {
 	buttonBox.clear();
 	if (edit) {
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/l.png"));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png", gmenu2x->tr["Decrease"]));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/r.png"));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Increase"]));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/l.png"));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/left.png", gmenu2x->tr["Decrease"]));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/r.png"));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/right.png", gmenu2x->tr["Increase"]));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]));
 	} else {
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/left.png"));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/right.png", gmenu2x->tr["Change color component"]));
-		buttonBox.add(new IconButton(gmenu2x, "skin:imgs/buttons/accept.png", gmenu2x->tr["Edit"]));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/left.png"));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/right.png", gmenu2x->tr["Change color component"]));
+		buttonBox.add(new IconButton(gmenu2x, ts, "skin:imgs/buttons/accept.png", gmenu2x->tr["Edit"]));
 	}
 }

@@ -37,6 +37,7 @@ Handles the menu structure
 class Menu {
 private:
 	GMenu2X *gmenu2x;
+	Touchscreen &ts;
 	int iSection, iLink;
 	uint iFirstDispSection, iFirstDispRow;
 	std::vector<std::string> sections;
@@ -52,7 +53,7 @@ private:
 	void readLinksOfSection(std::string path, std::vector<std::string> &linkfiles);
 
 public:
-	Menu(GMenu2X *gmenu2x);
+	Menu(GMenu2X *gmenu2x, Touchscreen &ts);
 	~Menu();
 
 	std::vector<Link*> *sectionLinks(int i = -1);

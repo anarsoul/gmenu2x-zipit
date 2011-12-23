@@ -38,9 +38,9 @@
 
 using namespace std;
 
-LinkApp::LinkApp(GMenu2X *gmenu2x_, InputManager &inputMgr_,
+LinkApp::LinkApp(GMenu2X *gmenu2x_, Touchscreen &ts, InputManager &inputMgr_,
 				 const char* linkfile)
-	: Link(gmenu2x_)
+	: Link(gmenu2x_, ts)
 	, inputMgr(inputMgr_)
 {
 	manual = "";

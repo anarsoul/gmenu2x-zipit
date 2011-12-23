@@ -64,7 +64,9 @@ typedef std::tr1::unordered_map<std::string, int, std::tr1::hash<std::string> > 
 
 class GMenu2X {
 private:
+	Touchscreen ts;
 	std::string path; //!< Contains the working directory of GMenu2X
+
 	/*!
 	Retrieves the free disk space on the sd
 	@return String containing a human readable representation of the free disk space
@@ -159,7 +161,6 @@ public:
 	const std::string &getExePath();
 
 	InputManager input;
-	Touchscreen ts;
 
 	//Configuration hashes
 	ConfStrHash confStr, skinConfStr;

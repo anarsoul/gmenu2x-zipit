@@ -94,22 +94,22 @@ InputDialog::InputDialog(GMenu2X *gmenu2x, InputManager &inputMgr_,
 	setKeyboard(0);
 
 	buttonbox = new ButtonBox(gmenu2x);
-	IconButton *btnBackspace = new IconButton(gmenu2x,
+	IconButton *btnBackspace = new IconButton(gmenu2x, ts,
 			"skin:imgs/buttons/l.png", gmenu2x->tr["Backspace"]);
 	btnBackspace->setAction(MakeDelegate(this, &InputDialog::backspace));
 	buttonbox->add(btnBackspace);
 
-	IconButton *btnSpace = new IconButton(gmenu2x,
+	IconButton *btnSpace = new IconButton(gmenu2x, ts,
 			"skin:imgs/buttons/r.png", gmenu2x->tr["Space"]);
 	btnSpace->setAction(MakeDelegate(this, &InputDialog::space));
 	buttonbox->add(btnSpace);
 
-	IconButton *btnConfirm = new IconButton(gmenu2x,
+	IconButton *btnConfirm = new IconButton(gmenu2x, ts,
 			"skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]);
 	btnConfirm->setAction(MakeDelegate(this, &InputDialog::confirm));
 	buttonbox->add(btnConfirm);
 
-	IconButton *btnChangeKeys = new IconButton(gmenu2x,
+	IconButton *btnChangeKeys = new IconButton(gmenu2x, ts,
 			"skin:imgs/buttons/cancel.png", gmenu2x->tr["Change keys"]);
 	btnChangeKeys->setAction(MakeDelegate(this, &InputDialog::changeKeys));
 	buttonbox->add(btnChangeKeys);

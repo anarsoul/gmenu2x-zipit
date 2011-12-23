@@ -7,9 +7,10 @@
 using namespace std;
 using namespace fastdelegate;
 
-IconButton::IconButton(GMenu2X *gmenu2x_, const string &icon,
-					   const string &label)
-	: Button(gmenu2x_->ts)
+IconButton::IconButton(
+		GMenu2X *gmenu2x_, Touchscreen &ts_,
+		const string &icon, const string &label)
+	: Button(ts_)
 	, gmenu2x(gmenu2x_)
 {
 	this->icon = icon;

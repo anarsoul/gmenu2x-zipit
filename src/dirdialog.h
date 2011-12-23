@@ -23,12 +23,11 @@
 
 #include "browsedialog.h"
 
-#include <string>
-
 class DirDialog : public BrowseDialog {
 public:
-	DirDialog(GMenu2X *gmenu2x, const std::string &text,
-			const std::string &dir="");
+	DirDialog(
+			GMenu2X *gmenu2x, Touchscreen &ts,
+			const std::string &text, const std::string &dir = "");
 	~DirDialog();
 };
 
