@@ -49,6 +49,10 @@ private:
 	bool wrapper;
 	bool dontleave;
 
+	void launch(
+			const std::string &selectedFile = "",
+			const std::string &selectedDir = "");
+
 public:
 	LinkApp(GMenu2X *gmenu2x, Touchscreen &ts, InputManager &inputMgr,
 			const char* linkfile);
@@ -81,8 +85,6 @@ public:
 	bool save();
 	void showManual();
 	void selector(int startSelection=0, const std::string &selectorDir="");
-	void launch(const std::string &selectedFile="",
-			const std::string &selectedDir="");
 	bool targetExists();
 
 	const std::string &getFile() { return file; }
