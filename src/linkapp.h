@@ -53,6 +53,7 @@ public:
 	LinkApp(GMenu2X *gmenu2x, Touchscreen &ts, InputManager &inputMgr,
 			const char* linkfile);
 	virtual const std::string &searchIcon();
+	virtual void run();
 
 	const std::string &getExec();
 	void setExec(const std::string &exec);
@@ -78,7 +79,6 @@ public:
 	void setClock(int mhz);
 
 	bool save();
-	void run();
 	void showManual();
 	void selector(int startSelection=0, const std::string &selectorDir="");
 	void launch(const std::string &selectedFile="",

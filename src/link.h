@@ -69,7 +69,7 @@ public:
 	const std::string &getIconPath();
 	void setIconPath(const std::string &icon);
 
-	virtual void run();
+	virtual void run() = 0;
 };
 
 #endif
