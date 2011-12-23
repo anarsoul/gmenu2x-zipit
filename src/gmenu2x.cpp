@@ -1269,7 +1269,6 @@ void GMenu2X::explorer() {
 
 void GMenu2X::options() {
 	int curMenuClock = confInt["menuClock"];
-	//G
 	int oldBacklight = getBackLight();
 	int newBacklight = oldBacklight;
 	bool showRootFolder = fileExists(CARD_ROOT);
@@ -1292,14 +1291,12 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Clock for GMenu2X"], tr["Set the cpu working frequency when running GMenu2X"], &confInt["menuClock"], cpuFreqMin, cpuFreqSafeMax, cpuFreqMultiple));
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Maximum overclock"], tr["Set the maximum overclock for launching links"], &confInt["maxClock"], cpuFreqMin, cpuFreqMax, cpuFreqMultiple));
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Output logs"], tr["Logs the output of the links. Use the Log Viewer to read them."], &confInt["outputLogs"]));
-	//G
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Lcd Backlight"], tr["Set Lcd Backlight value (default: 100)"], &newBacklight, 5, 100));
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Screen Timeout"], tr["Set screen's backlight timeout in seconds"], &confInt["backlightTimeout"], 0, 120));
 //	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Tv-Out encoding"], tr["Encoding of the tv-out signal"], &confStr["tvoutEncoding"], &encodings));
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Show root"], tr["Show root folder in the file selection dialogs"], &showRootFolder));
 
 	if (sd.exec() && sd.edited()) {
-		//G
 		if (newBacklight != oldBacklight) setBacklight(newBacklight);
 		if (curMenuClock != confInt["menuClock"]) setClock(confInt["menuClock"]);
 
@@ -1685,8 +1682,6 @@ void GMenu2X::editLink() {
 	string linkSelScreens = menu->selLinkApp()->getSelectorScreens();
 	string linkSelAliases = menu->selLinkApp()->getAliasFile();
 	int linkClock = menu->selLinkApp()->clock();
-	//G
-	//int linkGamma = menu->selLinkApp()->gamma();
 
 	string diagTitle = tr.translate("Edit link: $1",linkTitle.c_str(),NULL);
 	string diagIcon = menu->selLinkApp()->getIconPath();
@@ -1705,7 +1700,6 @@ void GMenu2X::editLink() {
 	sd.addSetting(new MenuSettingString(this, ts, tr["Selector Filter"], tr["Selector filter (Separate values with a comma)"], &linkSelFilter, diagTitle, diagIcon));
 	sd.addSetting(new MenuSettingDir(this, ts, tr["Selector Screenshots"], tr["Directory of the screenshots for the selector"], &linkSelScreens));
 	sd.addSetting(new MenuSettingFile(this, ts, tr["Selector Aliases"], tr["File containing a list of aliases for the selector"], &linkSelAliases));
-	//G
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Wrapper"], tr["Explicitly relaunch GMenu2X after execution"], &menu->selLinkApp()->needsWrapperRef()));
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Don't Leave"], tr["Don't quit GMenu2X when launching this link"], &menu->selLinkApp()->runsInBackgroundRef()));
 

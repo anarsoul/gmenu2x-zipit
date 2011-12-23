@@ -39,10 +39,6 @@ private:
 	InputManager &inputMgr;
 	std::string sclock;
 	int iclock;
-	//G
-	std::string sgamma;
-	//G
-	int igamma;
 	std::string exec, params, workdir, manual, selectordir, selectorfilter, selectorscreens;
 	bool selectorbrowser, useRamTimings;
 	void drawRun();
@@ -80,11 +76,6 @@ public:
 	int clock();
 	const std::string &clockStr(int maxClock);
 	void setClock(int mhz);
-
-//G
-	int gamma();
-	const std::string &gammaStr();
-	void setGamma(int gamma);
 
 	bool save();
 	void run();

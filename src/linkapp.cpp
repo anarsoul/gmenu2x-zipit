@@ -48,8 +48,6 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, Touchscreen &ts, InputManager &inputMgr_,
 	wrapper = false;
 	dontleave = false;
 	setClock(336);
-	//G
-	//setGamma(0);
 	selectordir = "";
 	selectorfilter = "";
 	icon = iconPath = "";
@@ -84,9 +82,6 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, Touchscreen &ts, InputManager &inputMgr_,
 			if (value=="true") dontleave = true;
 		} else if (name == "clock") {
 			setClock( atoi(value.c_str()) );
-		//G
-		} else if (name == "gamma") {
-			setGamma( atoi(value.c_str()) );
 		} else if (name == "selectordir") {
 			setSelectorDir( value );
 		} else if (name == "selectorbrowser") {
@@ -150,26 +145,6 @@ void LinkApp::setClock(int mhz) {
 	edited = true;
 }
 
-//G
-int LinkApp::gamma() {
-	return igamma;
-}
-
-const string &LinkApp::gammaStr() {
-	return sgamma;
-}
-
-void LinkApp::setGamma(int gamma) {
-	igamma = constrain(gamma,0,100);
-	stringstream ss;
-	sgamma = "";
-	ss << igamma;
-	ss >> sgamma;
-
-	edited = true;
-}
-// /G
-
 bool LinkApp::targetExists()
 {
 	return fileExists(exec);
@@ -188,8 +163,6 @@ bool LinkApp::save() {
 		if (manual!=""         ) f << "manual="          << manual          << endl;
 		if (iclock!=0          ) f << "clock="           << iclock          << endl;
 		if (useRamTimings      ) f << "useramtimings=true"                  << endl;
-		//G
-		if (igamma!=0          ) f << "gamma="           << igamma          << endl;
 		if (selectordir!=""    ) f << "selectordir="     << selectordir     << endl;
 		if (selectorbrowser    ) f << "selectorbrowser=true"                << endl;
 		if (selectorfilter!="" ) f << "selectorfilter="  << selectorfilter  << endl;
@@ -444,8 +417,6 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 			gmenu2x->setClock(clock());
 		}
 		gmenu2x->quit();
-		//if (gamma()!=0 && gamma()!=gmenu2x->confInt["gamma"])
-		//	gmenu2x->setGamma(gamma());
 
 		/* Make the terminal we're connected to (via stdin/stdout) our
 		   controlling terminal again.  Else many console programs are
