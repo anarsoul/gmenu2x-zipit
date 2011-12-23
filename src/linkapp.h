@@ -62,8 +62,6 @@ public:
 	void setExec(const std::string &exec);
 	const std::string &getParams();
 	void setParams(const std::string &params);
-	const std::string &getWorkdir();
-	void setWorkdir(const std::string &workdir);
 	const std::string &getManual();
 	void setManual(const std::string &manual);
 	const std::string &getSelectorDir();

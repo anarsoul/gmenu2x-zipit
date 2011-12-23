@@ -76,8 +76,6 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, Touchscreen &ts, InputManager &inputMgr_,
 			exec = value;
 		} else if (name == "params") {
 			params = value;
-		} else if (name == "workdir") {
-			workdir = value;
 		} else if (name == "manual") {
 			manual = value;
 		} else if (name == "wrapper") {
@@ -174,11 +172,7 @@ void LinkApp::setGamma(int gamma) {
 
 bool LinkApp::targetExists()
 {
-	string target = exec;
-	if (!exec.empty() && exec[0]!='/' && !workdir.empty())
-		target = workdir + "/" + exec;
-
-	return fileExists(target);
+	return fileExists(exec);
 }
 
 bool LinkApp::save() {
@@ -191,7 +185,6 @@ bool LinkApp::save() {
 		if (icon!=""           ) f << "icon="            << icon            << endl;
 		if (exec!=""           ) f << "exec="            << exec            << endl;
 		if (params!=""         ) f << "params="          << params          << endl;
-		if (workdir!=""        ) f << "workdir="         << workdir         << endl;
 		if (manual!=""         ) f << "manual="          << manual          << endl;
 		if (iclock!=0          ) f << "clock="           << iclock          << endl;
 		if (useRamTimings      ) f << "useramtimings=true"                  << endl;
@@ -371,14 +364,9 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 	save();
 
 	//Set correct working directory
-	string wd = workdir;
-	if (wd=="") {
-		string::size_type pos = exec.rfind("/");
-		if (pos!=string::npos)
-			wd = exec.substr(0,pos);
-	}
-	if (!wd.empty()) {
-		if (wd[0]!='/') wd = gmenu2x->getExePath() + wd;
+	string::size_type pos = exec.rfind("/");
+	if (pos != string::npos) {
+		string wd = exec.substr(0, pos + 1);
 		chdir(wd.c_str());
 	}
 
@@ -499,15 +487,6 @@ const string &LinkApp::getParams() {
 
 void LinkApp::setParams(const string &params) {
 	this->params = params;
-	edited = true;
-}
-
-const string &LinkApp::getWorkdir() {
-	return workdir;
-}
-
-void LinkApp::setWorkdir(const string &workdir) {
-	this->workdir = workdir;
 	edited = true;
 }
 
