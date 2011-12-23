@@ -61,7 +61,7 @@ bool SettingsDialog::exec() {
 	uint numRows = (gmenu2x->resY-gmenu2x->skinConfInt["topBarHeight"]-20)/rowHeight;
 
 	while (!close) {
-		if (ts.initialized()) ts.poll();
+		if (ts.available()) ts.poll();
 
 		bg.blit(gmenu2x->s,0,0);
 
@@ -88,11 +88,11 @@ bool SettingsDialog::exec() {
 
 		gmenu2x->s->setClipRect(clipRect);
 		if (ts_pressed && !ts.pressed()) ts_pressed = false;
-		if (ts.initialized() && ts.pressed() && !ts.inRect(touchRect)) ts_pressed = false;
+		if (ts.available() && ts.pressed() && !ts.inRect(touchRect)) ts_pressed = false;
 		for (i=firstElement; i<voices.size() && i<firstElement+numRows; i++) {
 			iY = i-firstElement;
 			voices[i]->draw(iY*rowHeight+gmenu2x->skinConfInt["topBarHeight"]+2);
-			if (ts.initialized() && ts.pressed() && ts.inRect(touchRect.x, touchRect.y+(iY*rowHeight), touchRect.w, rowHeight)) {
+			if (ts.available() && ts.pressed() && ts.inRect(touchRect.x, touchRect.y+(iY*rowHeight), touchRect.w, rowHeight)) {
 				ts_pressed = true;
 				sel = i;
 			}

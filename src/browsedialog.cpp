@@ -64,7 +64,7 @@ bool BrowseDialog::exec()
 	selected = 0;
 	close = false;
 	while (!close) {
-		if (gmenu2x->ts.initialized()) gmenu2x->ts.poll();
+		if (gmenu2x->ts.available()) gmenu2x->ts.poll();
 
 		paint();
 
@@ -111,7 +111,7 @@ void BrowseDialog::handleInput()
 		action = getAction(button);
 	}
 
-	if (gmenu2x->ts.initialized() && gmenu2x->ts.pressed() && !gmenu2x->ts.inRect(touchRect)) ts_pressed = false;
+	if (gmenu2x->ts.available() && gmenu2x->ts.pressed() && !gmenu2x->ts.inRect(touchRect)) ts_pressed = false;
 
 	if (action == BrowseDialog::ACT_SELECT && (*fl)[selected] == "..")
 		action = BrowseDialog::ACT_GOUP;
@@ -250,7 +250,7 @@ void BrowseDialog::paint()
 		icon->blit(gmenu2x->s, 5, offsetY);
 		gmenu2x->s->write(gmenu2x->font, (*fl)[i], 24, offsetY + 8, ASFont::HAlignLeft, ASFont::VAlignMiddle);
 
-		if (gmenu2x->ts.initialized() && gmenu2x->ts.pressed() && gmenu2x->ts.inRect(touchRect.x, offsetY + 3, touchRect.w, rowHeight)) {
+		if (gmenu2x->ts.available() && gmenu2x->ts.pressed() && gmenu2x->ts.inRect(touchRect.x, offsetY + 3, touchRect.w, rowHeight)) {
 			ts_pressed = true;
 			selected = i;
 		}

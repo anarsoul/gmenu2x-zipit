@@ -18,15 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <unistd.h>
-#include <iostream>
-
 #include "touchscreen.h"
 
-using namespace std;
+#include <fcntl.h>
+#include <unistd.h>
+
 
 Touchscreen::Touchscreen() {
-	ts_fd = 0;
 	calibrated = false;
 	wasPressed = false;
 	_handled = false;
@@ -37,29 +35,23 @@ Touchscreen::Touchscreen() {
 	event.x = 0;
 	event.y = 0;
 	event.pressure = 0;
+#ifdef PLATFORM_GP2X
+	ts_fd = open("/dev/touchscreen/wm97xx", O_RDONLY|O_NOCTTY);
+#else
+	ts_fd = 0;
+#endif
 }
 
 Touchscreen::~Touchscreen() {
-	deinit();
-}
-
-bool Touchscreen::init() {
-#ifdef PLATFORM_GP2X
-	ts_fd = open("/dev/touchscreen/wm97xx", O_RDONLY|O_NOCTTY);
-#endif
-	return initialized();
-}
-
-void Touchscreen::deinit()
-{
-	if (ts_fd) close(ts_fd);
-	ts_fd = 0;
+	if (ts_fd > 0) {
+		close(ts_fd);
+	}
 }
 
 void Touchscreen::calibrate() {
-	if (event.pressure==0) {
-		calibX = ((event.x-200)*320/3750)/4;
-		calibY = (((event.y-200)*240/3750))/4;
+	if (event.pressure == 0) {
+		calibX = ((event.x - 200) * 320 / 3750) / 4;
+		calibY = (((event.y - 200) * 240 / 3750)) / 4;
 		calibrated = true;
 	}
 }
@@ -70,9 +62,9 @@ bool Touchscreen::poll() {
 	read(ts_fd, &event, sizeof(TS_EVENT));
 	if (!calibrated) calibrate();
 
-	if (event.pressure>0) {
-		x = ((event.x-200)*320/3750)-calibX;
-		y = (240 - ((event.y-200)*240/3750))-calibY;
+	if (event.pressure > 0) {
+		x = ((event.x - 200) * 320 / 3750) - calibX;
+		y = (240 - ((event.y - 200) * 240 / 3750)) - calibY;
 	}
 #else
 	SDL_PumpEvents();
@@ -105,7 +97,7 @@ void Touchscreen::setHandled() {
 }
 
 bool Touchscreen::pressed() {
-	return !_handled && event.pressure>0;
+	return !_handled && event.pressure > 0;
 }
 
 bool Touchscreen::released() {
@@ -113,19 +105,22 @@ bool Touchscreen::released() {
 }
 
 bool Touchscreen::inRect(SDL_Rect r) {
-	return !_handled && (y>=r.y) && (y<=r.y+r.h) && (x>=r.x) && (x<=r.x+r.w);
+	return !_handled &&
+		(y >= r.y) && (y <= r.y + r.h) && (x >= r.x) && (x <= r.x + r.w);
 }
 
 bool Touchscreen::inRect(int x, int y, int w, int h) {
-	SDL_Rect rect = {x,y,w,h};
+	SDL_Rect rect = { x, y, w, h };
 	return inRect(rect);
 }
 
 bool Touchscreen::startedInRect(SDL_Rect r) {
-	return !_handled && (startY>=r.y) && (startY<=r.y+r.h) && (startX>=r.x) && (startX<=r.x+r.w);
+	return !_handled &&
+		(startY >= r.y) && (startY <= r.y + r.h) &&
+		(startX >= r.x) && (startX <= r.x + r.w);
 }
 
 bool Touchscreen::startedInRect(int x, int y, int w, int h) {
-	SDL_Rect rect = {x,y,w,h};
+	SDL_Rect rect = { x, y, w, h };
 	return startedInRect(rect);
 }

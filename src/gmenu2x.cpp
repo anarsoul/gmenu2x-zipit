@@ -262,10 +262,7 @@ void GMenu2X::init() {
 /*	gp2x_mem = open("/dev/mem", O_RDWR);
 	gp2x_memregs=(unsigned short *)mmap(0, 0x10000, PROT_READ|PROT_WRITE, MAP_SHARED, gp2x_mem, 0xc0000000);
 	MEM_REG=&gp2x_memregs[0];
-	if (f200) {
-		//if wm97xx fails to open, set f200 to false to prevent any further access to the touchscreen
-		f200 = ts.init();
-	}*/
+	*/
 #else
 	batteryHandle = fopen("/sys/class/power_supply/battery/capacity", "r");
 	usbHandle = fopen("/sys/class/power_supply/usb/online", "r");
@@ -287,8 +284,7 @@ void GMenu2X::deinit() {
 		gp2x_memregs[0x290C>>1]=640;
 		close(gp2x_mem);
 	}
-
-	if (f200) ts.deinit();*/
+*/
 #else
 	if (batteryHandle) fclose(batteryHandle);
 	if (backlightHandle) fclose(backlightHandle);
@@ -1059,7 +1055,7 @@ void GMenu2X::main() {
 			}
 		}
 
-		if (ts.initialized()) {
+		if (ts.available()) {
 			btnContextMenu.paint();
 		}
 		//check battery status every 60 seconds
@@ -1123,7 +1119,7 @@ void GMenu2X::main() {
 		s->flip();
 
 		//touchscreen
-		if (ts.initialized()) {
+		if (ts.available()) {
 			ts.poll();
 			btnContextMenu.handleTS();
 			re.x = 0; re.y = 0; re.h = skinConfInt["topBarHeight"]; re.w = resX;
@@ -1593,7 +1589,7 @@ void GMenu2X::contextMenu() {
 		s->flip();
 
 		//touchscreen
-		if (ts.initialized()) {
+		if (ts.available()) {
 			ts.poll();
 			if (ts.released()) {
 				if (!ts.inRect(box))

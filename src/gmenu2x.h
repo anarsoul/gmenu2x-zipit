@@ -174,7 +174,7 @@ public:
 	//firmware type and version
 	std::string fwType, fwVersion;
 
-	bool isF200() { return ts.initialized(); }
+	bool isF200() { return ts.available(); }
 
 	// Open2x settings ---------------------------------------------------------
 	bool o2x_usb_net_on_boot, o2x_ftp_on_boot, o2x_telnet_on_boot, o2x_gp2xjoy_on_boot, o2x_usb_host_on_boot, o2x_usb_hid_on_boot, o2x_usb_storage_on_boot;

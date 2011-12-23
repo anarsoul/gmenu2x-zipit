@@ -23,7 +23,6 @@
 
 #include <SDL.h>
 
-#include <fcntl.h>
 #include <stdint.h>
 
 typedef struct {
@@ -35,26 +34,13 @@ typedef struct {
 } TS_EVENT;
 
 class Touchscreen {
-private:
-	int ts_fd;
-	bool calibrated, _handled;
-	TS_EVENT event;
-	int calibX, calibY;
-	int x, y, startX, startY;
-	bool wasPressed;
-
-	void calibrate(/*TS_EVENT event*/);
-
 public:
 	Touchscreen();
 	~Touchscreen();
 
-	bool init();
-	void deinit();
-
-	bool initialized() {
+	bool available() {
 #ifdef PLATFORM_GP2X
-		return ts_fd>0;
+		return ts_fd > 0;
 #endif
 		return false;
 	}
@@ -73,6 +59,16 @@ public:
 
 	int getX() { return x; }
 	int getY() { return y; }
+
+private:
+	int ts_fd;
+	bool calibrated, _handled;
+	TS_EVENT event;
+	int calibX, calibY;
+	int x, y, startX, startY;
+	bool wasPressed;
+
+	void calibrate(/*TS_EVENT event*/);
 };
 
 #endif
