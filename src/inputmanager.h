@@ -46,7 +46,7 @@ public:
 	~InputManager();
 
 	void init(const std::string &conffile);
-	void waitForEvent(ButtonEvent *event);
+	bool waitForEvent(ButtonEvent *event);
 	Button waitForPressedButton();
 	Button waitForReleasedButton();
 	bool pollEvent(ButtonEvent *event);

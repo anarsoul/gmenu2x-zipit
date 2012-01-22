@@ -121,14 +121,12 @@ InputManager::Button InputManager::waitForReleasedButton() {
 
 InputManager::Button InputManager::waitForButton(ButtonState state) {
 	ButtonEvent event;
-	do {
-		waitForEvent(&event);
-	} while (event.state != state);
+	while (!waitForEvent(&event) || event.state != state);
 	return event.button;
 }
 
-void InputManager::waitForEvent(ButtonEvent *event) {
-	getEvent(event, true);
+bool InputManager::waitForEvent(ButtonEvent *event) {
+	return getEvent(event, true);
 }
 
 bool InputManager::pollEvent(ButtonEvent *event) {
@@ -138,6 +136,8 @@ bool InputManager::pollEvent(ButtonEvent *event) {
 bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 	//TODO: when an event is processed, program a new event
 	//in some time, and when it occurs, do a key repeat
+
+	int i;
 
 #ifndef SDL_JOYSTICK_DISABLED
 	if (joystick) {
@@ -179,7 +179,7 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 	}
 
 	if (source == KEYBOARD) {
-		for (int i = 0; i < BUTTON_TYPE_SIZE; i++) {
+		for (i = 0; i < BUTTON_TYPE_SIZE; i++) {
 			if (buttonMap[i].source == KEYBOARD
 					&& (unsigned int)event.key.keysym.sym == buttonMap[i].code) {
 				bevent->button = static_cast<Button>(i);
@@ -188,7 +188,7 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 		}
 #ifndef SDL_JOYSTICK_DISABLED
 	} else if (source == JOYSTICK) {
-		for (int i = 0; i < BUTTON_TYPE_SIZE; i++) {
+		for (i = 0; i < BUTTON_TYPE_SIZE; i++) {
 			if (buttonMap[i].source == JOYSTICK
 					&& (unsigned int)event.jbutton.button == buttonMap[i].code) {
 				bevent->button = static_cast<Button>(i);
@@ -197,6 +197,10 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 		}
 #endif
 	}
+
+	if (i == BUTTON_TYPE_SIZE)
+		return false;
+
 	if (wait && PowerSaver::isRunning()) {
 		PowerSaver::getInstance()->resetScreenTimer();
 	}
