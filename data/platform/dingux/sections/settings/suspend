@@ -1,0 +1,5 @@
+title=suspend
+description=Suspend the dingoo
+icon=/usr/share/gmenu2x/skins/Default/icons/suspend.png
+exec=/usr/sbin/suspend
+dontleave=true
