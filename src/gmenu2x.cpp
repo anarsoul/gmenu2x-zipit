@@ -427,12 +427,12 @@ GMenu2X::GMenu2X()
 
 	/* If a user-specified input.conf file exists, we load it;
 	 * otherwise, we load the default one. */
-	const char *input_file = (getHome() + "/input.conf").c_str();
-	if (fileExists(input_file)) {
-		DEBUG("Loading user-specific input.conf file: %s.\n", input_file);
+	string input_file = getHome() + "/input.conf";
+	if (fileExists(input_file.c_str())) {
+		DEBUG("Loading user-specific input.conf file: %s.\n", input_file.c_str());
 	} else {
 		input_file = GMENU2X_SYSTEM_DIR "/input.conf";
-		DEBUG("Loading system input.conf file: %s.\n", input_file);
+		DEBUG("Loading system input.conf file: %s.\n", input_file.c_str());
 	}
 
 	input.init(input_file);
