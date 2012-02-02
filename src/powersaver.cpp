@@ -9,7 +9,16 @@
 
 PowerSaver *PowerSaver::instance = NULL;
 
-Uint32 screenTimerCallback(Uint32, void *) {
+Uint32 screenTimerCallback(Uint32 timeout, void *d) {
+	unsigned int * old_ticks = (unsigned int *) d;
+	unsigned int new_ticks = SDL_GetTicks();
+
+	if (new_ticks > *old_ticks + timeout + 1000) {
+		DEBUG("Suspend occured, restarting timer\n");
+		*old_ticks = new_ticks;
+		return timeout;
+	}
+
 	DEBUG("Disable Backlight Event\n");
 	PowerSaver::getInstance()->disableScreen();
 	return 0;
@@ -62,7 +71,8 @@ void PowerSaver::addScreenTimer() {
 		return;
 	}
 
-	screenTimer = SDL_AddTimer(screenTimeout * 1000, screenTimerCallback, NULL);
+	timeout_startms = SDL_GetTicks();
+	screenTimer = SDL_AddTimer(screenTimeout * 1000, screenTimerCallback, &timeout_startms);
 	if (screenTimer == NULL) {
 		ERROR("Could not initialize SDLTimer: %s\n", SDL_GetError());
 	}

@@ -23,6 +23,7 @@ private:
 	static PowerSaver *instance;
 	bool screenState;
 	unsigned int screenTimeout;
+	unsigned int timeout_startms;
 	SDL_TimerID screenTimer;
 };
 
