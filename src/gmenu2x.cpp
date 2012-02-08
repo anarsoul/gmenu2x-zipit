@@ -255,7 +255,7 @@ void GMenu2X::initCPULimits() {
 void GMenu2X::init() {
 	batteryHandle = 0;
 	backlightHandle = 0;
-	usbHandle = 0;
+	keyboardBacklightHandle = 0;
 	acHandle = 0;
 
 #ifdef PLATFORM_GP2X
@@ -264,9 +264,8 @@ void GMenu2X::init() {
 	MEM_REG=&gp2x_memregs[0];
 	*/
 #else
-	batteryHandle = fopen("/sys/class/power_supply/battery/capacity", "r");
-	usbHandle = fopen("/sys/class/power_supply/usb/online", "r");
-	acHandle = fopen("/sys/class/power_supply/ac/online", "r");
+	batteryHandle = fopen("/sys/class/power_supply/Z2/voltage_now", "r");
+	acHandle = fopen("/sys/class/power_supply/Z2/status", "r");
 	backlightHandle = fopen(
 #ifdef PLATFORM_NANONOTE
 		"/sys/class/lcd/ili8960-lcd/contrast",
@@ -274,6 +273,7 @@ void GMenu2X::init() {
 		"/sys/class/backlight/pwm-backlight.0/brightness",
 #endif
 		"w+");
+	keyboardBacklightHandle = fopen("/sys/class/backlight/pwm-backlight.1/brightness", "w+");
 #endif
 }
 
@@ -288,7 +288,7 @@ void GMenu2X::deinit() {
 #else
 	if (batteryHandle) fclose(batteryHandle);
 	if (backlightHandle) fclose(backlightHandle);
-	if (usbHandle) fclose(usbHandle);
+	if (keyboardBacklightHandle) fclose(keyboardBacklightHandle);
 	if (acHandle) fclose(acHandle);
 #endif
 }
@@ -444,6 +444,8 @@ GMenu2X::GMenu2X()
 	initServices();
 	applyDefaultTimings();
 	setClock(confInt["menuClock"]);
+	setBacklight(confInt["backlight"]);
+	setKbdBacklight(confInt["kbd_backlight"]);
 	//recover last session
 	readTmp();
 	if (lastSelectorElement>-1 && menu->selLinkApp()!=NULL && (!menu->selLinkApp()->getSelectorDir().empty() || !lastSelectorDir.empty()))
@@ -715,6 +717,8 @@ void GMenu2X::readConfig(string conffile) {
 				 cpuFreqMenuDefault, cpuFreqMin, cpuFreqSafeMax );
 	evalIntConf( &confInt["backlightTimeout"], 15, 0,120 );
 	evalIntConf( &confInt["videoBpp"], 32, 16, 32 );
+	evalIntConf( &confInt["backlight"], 75, 5, 100 );
+	evalIntConf( &confInt["kbd_backlight"], 75, 5, 100 );
 
 	if (confStr["tvoutEncoding"] != "PAL") confStr["tvoutEncoding"] = "NTSC";
 	resX = constrain( confInt["resolutionX"], 320,1920 );
@@ -938,7 +942,7 @@ void GMenu2X::ledOff() {
 void GMenu2X::setBacklight(int val)
 {
 	if (backlightHandle) {
-		fprintf(backlightHandle, "%d", (val * 255) / 100);
+		fprintf(backlightHandle, "%d", (val * 1023) / 100);
 		fflush(backlightHandle);
 		rewind(backlightHandle);
 	}
@@ -946,11 +950,32 @@ void GMenu2X::setBacklight(int val)
 
 int GMenu2X::getBackLight()
 {
-	int val = 255;
+	int val = 1023;
 	if (backlightHandle) {
 		fscanf(backlightHandle, "%d", &val);
 		rewind(backlightHandle);
-		val = (val * 100) / 255;
+		val = (val * 100) / 1023;
+		if (val < 0) val = 0; else if (val > 100) val = 100;
+	}
+	return val;
+}
+
+void GMenu2X::setKbdBacklight(int val)
+{
+	if (keyboardBacklightHandle) {
+		fprintf(keyboardBacklightHandle, "%d", (val * 1023) / 100);
+		fflush(keyboardBacklightHandle);
+		rewind(keyboardBacklightHandle);
+	}
+}
+
+int GMenu2X::getKbdBackLight()
+{
+	int val = 1023;
+	if (keyboardBacklightHandle) {
+		fscanf(keyboardBacklightHandle, "%d", &val);
+		rewind(keyboardBacklightHandle);
+		val = (val * 100) / 1023;
 		if (val < 0) val = 0; else if (val > 100) val = 100;
 	}
 	return val;
@@ -1269,8 +1294,8 @@ void GMenu2X::explorer() {
 
 void GMenu2X::options() {
 	int curMenuClock = confInt["menuClock"];
-	int oldBacklight = getBackLight();
-	int newBacklight = oldBacklight;
+	int curBacklight = getBackLight();
+	int curKbdBacklight = getKbdBackLight();
 	bool showRootFolder = fileExists(CARD_ROOT);
 
 	FileLister fl_tr(getHome() + "/translations");
@@ -1291,13 +1316,15 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Clock for GMenu2X"], tr["Set the cpu working frequency when running GMenu2X"], &confInt["menuClock"], cpuFreqMin, cpuFreqSafeMax, cpuFreqMultiple));
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Maximum overclock"], tr["Set the maximum overclock for launching links"], &confInt["maxClock"], cpuFreqMin, cpuFreqMax, cpuFreqMultiple));
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Output logs"], tr["Logs the output of the links. Use the Log Viewer to read them."], &confInt["outputLogs"]));
-	sd.addSetting(new MenuSettingInt(this, ts, tr["Lcd Backlight"], tr["Set Lcd Backlight value (default: 100)"], &newBacklight, 5, 100));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Lcd Backlight"], tr["Set Lcd Backlight value (default: 100)"], &confInt["backlight"], 5, 100));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Kbd Backlight"], tr["Set Kbd Backlight value (default: 100)"], &confInt["kbd_backlight"], 5, 100));
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Screen Timeout"], tr["Set screen's backlight timeout in seconds"], &confInt["backlightTimeout"], 0, 120));
 //	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Tv-Out encoding"], tr["Encoding of the tv-out signal"], &confStr["tvoutEncoding"], &encodings));
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Show root"], tr["Show root folder in the file selection dialogs"], &showRootFolder));
 
 	if (sd.exec() && sd.edited()) {
-		if (newBacklight != oldBacklight) setBacklight(newBacklight);
+		if (curBacklight != confInt["backlight"]) setBacklight(confInt["backlight"]);
+		if (curKbdBacklight != confInt["kbd_backlight"]) setKbdBacklight(confInt["kbd_backlight"]);
 		if (curMenuClock != confInt["menuClock"]) setClock(confInt["menuClock"]);
 
 		if (confInt["backlightTimeout"] == 0) {
@@ -2001,24 +2028,22 @@ unsigned short GMenu2X::getBatteryLevel() {
 
 #else
 	if (!batteryHandle) return 0;
-	int battval = 0;
-	fscanf(batteryHandle, "%d", &battval);
+	int volt_val = 0;
+	fscanf(batteryHandle, "%d", &volt_val);
 	rewind(batteryHandle);
-	if (battval>90) return 5;
-	if (battval>70) return 4;
-	if (battval>50) return 3;
-	if (battval>30) return 2;
-	if (battval>10) return 1;
+	if (volt_val>4000000) return 5;
+	if (volt_val>3900000) return 4;
+	if (volt_val>3750000) return 3;
+	if (volt_val>3650000) return 2;
+	if (volt_val>3550000) return 1;
 
-	if (!usbHandle) return 0;
-	int usbval = 0;
-	fscanf(usbHandle, "%d", &usbval);
-	rewind(usbHandle);
-	if (usbval==1) return 6;
+	if (!acHandle) return 0;
+	char acVal[32];
+	fread(acVal, 1, sizeof(acVal), acHandle);
+	rewind(acHandle);
+	if (strncmp(acVal, "Charging", sizeof("Charging")) == 0) return 6;
 
 	return 0;
-//#else
-//	return 6; //AC Power
 #endif
 }
 
