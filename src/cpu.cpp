@@ -27,7 +27,7 @@ void writeStringToFile(const char *path, const char *content)
 	}
 }
 
-void jz_cpuspeed(unsigned clockspeed)
+void cpufreq_cpuspeed(unsigned clockspeed)
 {
 	char freq[10];
 	sprintf(freq, "%d", clockspeed * 1000);

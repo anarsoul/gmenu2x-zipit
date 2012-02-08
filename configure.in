@@ -44,6 +44,11 @@ case "$GMENU2X_PLATFORM" in
 		PLATFORM="nanonote"
 		SCREEN_RES="320x240"
 	;;
+	zipitz2)
+		AC_DEFINE(PLATFORM_ZIPITZ2)
+		PLATFORM="zipitz2"
+		SCREEN_RES="320x240"
+	;;
 	pandora)
 		AC_DEFINE(PLATFORM_PANDORA)
 		PLATFORM="pandora"

@@ -236,12 +236,12 @@ void GMenu2X::initCPULimits() {
 	//       The NanoNote does not have cpufreq enabled in its kernel and
 	//       other devices are not actively maintained.
 	// TODO: Read min and max from sysfs.
-	cpuFreqMin = 30;
-	cpuFreqMax = 500;
-	cpuFreqSafeMax = 420;
-	cpuFreqMenuDefault = 200;
-	cpuFreqAppDefault = 384;
-	cpuFreqMultiple = 24;
+	cpuFreqMin = 104;
+	cpuFreqMax = 416;
+	cpuFreqSafeMax = 416;
+	cpuFreqMenuDefault = 208;
+	cpuFreqAppDefault = 312;
+	cpuFreqMultiple = 104;
 
 	// Round min and max values to the specified multiple.
 	cpuFreqMin = ((cpuFreqMin + cpuFreqMultiple - 1) / cpuFreqMultiple)
@@ -271,7 +271,7 @@ void GMenu2X::init() {
 #ifdef PLATFORM_NANONOTE
 		"/sys/class/lcd/ili8960-lcd/contrast",
 #else
-		"/sys/class/backlight/pwm-backlight/brightness",
+		"/sys/class/backlight/pwm-backlight.0/brightness",
 #endif
 		"w+");
 #endif
@@ -2066,8 +2066,8 @@ void GMenu2X::applyDefaultTimings() {
 
 void GMenu2X::setClock(unsigned mhz) {
 	mhz = constrain(mhz, cpuFreqMin, confInt["maxClock"]);
-#if defined(PLATFORM_DINGUX) || defined(PLATFORM_NANONOTE)
-	jz_cpuspeed(mhz);
+#if defined(PLATFORM_DINGUX) || defined(PLATFORM_NANONOTE) || defined(PLATFORM_ZIPITZ2)
+	cpufreq_cpuspeed(mhz);
 #endif
 }
 
