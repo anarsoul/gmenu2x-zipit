@@ -2027,6 +2027,13 @@ unsigned short GMenu2X::getBatteryLevel() {
 	}*/
 
 #else
+	if (!acHandle) return 0;
+	char acVal[32];
+	memset(acVal, 0, sizeof(acVal));
+	fread(acVal, 1, sizeof(acVal), acHandle);
+	rewind(acHandle);
+	if (strncmp(acVal, "Charging", strlen("Charging")) == 0) return 6;
+
 	if (!batteryHandle) return 0;
 	int volt_val = 0;
 	fscanf(batteryHandle, "%d", &volt_val);
@@ -2036,12 +2043,6 @@ unsigned short GMenu2X::getBatteryLevel() {
 	if (volt_val>3750000) return 3;
 	if (volt_val>3650000) return 2;
 	if (volt_val>3550000) return 1;
-
-	if (!acHandle) return 0;
-	char acVal[32];
-	fread(acVal, 1, sizeof(acVal), acHandle);
-	rewind(acHandle);
-	if (strncmp(acVal, "Charging", sizeof("Charging")) == 0) return 6;
 
 	return 0;
 #endif
