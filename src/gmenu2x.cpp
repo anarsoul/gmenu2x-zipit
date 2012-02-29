@@ -1719,7 +1719,7 @@ void GMenu2X::editLink() {
 	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Section"], tr["The section this link belongs to"], &newSection, &menu->getSections()));
 	sd.addSetting(new MenuSettingImage(this, ts, tr["Icon"], tr.translate("Select an icon for the link: $1", linkTitle.c_str(), NULL), &linkIcon, ".png,.bmp,.jpg,.jpeg"));
 	sd.addSetting(new MenuSettingFile(this, ts, tr["Manual"], tr["Select a graphic/textual manual or a readme"], &linkManual, ".man.png,.txt"));
-	sd.addSetting(new MenuSettingInt(this, ts, tr["Clock (default: 336)"], tr["Cpu clock frequency to set when launching this link"], &linkClock, cpuFreqMin, confInt["maxClock"], cpuFreqMultiple));
+	sd.addSetting(new MenuSettingInt(this, ts, tr["Clock (default: 312)"], tr["Cpu clock frequency to set when launching this link"], &linkClock, cpuFreqMin, confInt["maxClock"], cpuFreqMultiple));
 //	sd.addSetting(new MenuSettingBool(this, ts, tr["Tweak RAM Timings"], tr["This usually speeds up the application at the cost of stability"], &linkUseRamTimings));
 	sd.addSetting(new MenuSettingString(this, ts, tr["Parameters"], tr["Parameters to pass to the application"], &linkParams, diagTitle, diagIcon));
 	sd.addSetting(new MenuSettingDir(this, ts, tr["Selector Directory"], tr["Directory to scan for the selector"], &linkSelDir));
@@ -1866,14 +1866,6 @@ void GMenu2X::scanner() {
 #ifdef PLATFORM_PANDORA
 	//char *configpath = pnd_conf_query_searchpath();
 #else
-	if (confInt["menuClock"]<336) {
-		setClock(336);
-		scanbg.write(font,tr["Raising cpu clock to 336MHz"],5,lineY);
-		scanbg.blit(s,0,0);
-		s->flip();
-		lineY += 26;
-	}
-
 	scanbg.write(font,tr["Scanning SD filesystem..."],5,lineY);
 	scanbg.blit(s,0,0);
 	s->flip();
@@ -1933,14 +1925,6 @@ void GMenu2X::scanner() {
 	scanbg.blit(s,0,0);
 	s->flip();
 	lineY += 26;
-
-	if (confInt["menuClock"]<336) {
-		setClock(confInt["menuClock"]);
-		scanbg.write(font,tr["Decreasing cpu clock"],5,lineY);
-		scanbg.blit(s,0,0);
-		s->flip();
-		lineY += 26;
-	}
 
 	sync();
 	ledOff();
