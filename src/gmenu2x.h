@@ -63,6 +63,9 @@ typedef std::tr1::unordered_map<std::string, std::string, std::tr1::hash<std::st
 typedef std::tr1::unordered_map<std::string, int, std::tr1::hash<std::string> > ConfIntHash;
 
 class GMenu2X {
+	
+
+	
 private:
 	Touchscreen ts;
 	std::string path; //!< Contains the working directory of GMenu2X
@@ -85,7 +88,7 @@ private:
 	@return A number representing battery charge. 0 means fully discharged. 5 means fully charged. 6 represents a gp2x using AC power.
 	*/
 	unsigned short getBatteryLevel();
-	FILE* batteryHandle, *backlightHandle, *acHandle, *keyboardBacklightHandle;
+	FILE* batteryHandle, *backlightHandle, *keyboardBacklightHandle;
 	void browsePath(const std::string &path, std::vector<std::string>* directories, std::vector<std::string>* files);
 	/*!
 	Starts the scanning of the nand and sd filesystems, searching for dge and gpu files and creating the links in 2 dedicated sections.

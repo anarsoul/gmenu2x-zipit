@@ -18,10 +18,31 @@ Uint32 screenTimerCallback(Uint32 timeout, void *d) {
 		*old_ticks = new_ticks;
 		return timeout;
 	}
-
+	
+	if (PowerSaver::getPwrState() == DC_POWER)
+		PowerSaver::getInstance()->disableScreen();
+	
 	DEBUG("Disable Backlight Event\n");
-	PowerSaver::getInstance()->disableScreen();
 	return 0;
+}
+
+POWERSTATE PowerSaver::getPwrState() {
+
+	POWERSTATE pwrstate=DC_POWER;
+	FILE* acHandle = fopen("/sys/class/power_supply/Z2/status", "r");
+	
+	if (acHandle){
+		char acVal[32];
+		memset(acVal, 0, sizeof(acVal));
+		fread(acVal, 1, sizeof(acVal), acHandle);
+	
+		if (strncmp(acVal, "Charging", strlen("Charging")) == 0)
+			pwrstate=AC_POWER;
+			
+		fclose(acHandle);
+	}
+	
+	return pwrstate;
 }
 
 PowerSaver *PowerSaver::getInstance() {

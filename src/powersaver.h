@@ -2,9 +2,20 @@
 #define POWERSAVER_H
 
 #include <SDL.h>
+	
 
+enum POWERSTATE {
+		AC_POWER,
+		DC_POWER
+			};
+	
 class PowerSaver {
 public:
+
+
+	
+	static POWERSTATE getPwrState();
+
 	static PowerSaver *getInstance();
 	static bool isRunning();
 	~PowerSaver();
@@ -14,12 +25,12 @@ public:
 	void disableScreen();
 
 	void setScreenTimeout(unsigned int seconds);
-
+	void setScreenBlanking(bool state);
+	
 private:
 	PowerSaver();
 	void addScreenTimer();
-	void setScreenBlanking(bool state);
-
+	
 	static PowerSaver *instance;
 	bool screenState;
 	unsigned int screenTimeout;

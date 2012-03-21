@@ -47,6 +47,7 @@ LinkApp::LinkApp(GMenu2X *gmenu2x_, Touchscreen &ts, InputManager &inputMgr_,
 	file = linkfile;
 	wrapper = false;
 	dontleave = false;
+	setClock(312);
 	selectordir = "";
 	selectorfilter = "";
 	icon = iconPath = "";
@@ -214,6 +215,9 @@ void LinkApp::showManual() {
 	// Png manuals
 	string ext8 = manual.substr(manual.size()-8,8);
 	if (ext8==".man.png" || ext8==".man.bmp" || ext8==".man.jpg" || manual.substr(manual.size()-9,9)==".man.jpeg") {
+		//Raise the clock to speed-up the loading of the manual
+		gmenu2x->setClock(312);
+
 		Surface *pngman = Surface::loadImage(manual);
 		if (!pngman) {
 			return;
@@ -290,6 +294,7 @@ void LinkApp::showManual() {
 		string line;
 		ifstream infile(manual.c_str(), ios_base::in);
 		if (infile.is_open()) {
+			gmenu2x->setClock(312);
 			while (getline(infile, line, '\n')) txtman.push_back(line);
 			infile.close();
 
@@ -307,6 +312,7 @@ void LinkApp::showManual() {
 	string line;
 	ifstream infile(manual.c_str(), ios_base::in);
 	if (infile.is_open()) {
+		gmenu2x->setClock(312);
 		while (getline(infile, line, '\n')) readme.push_back(line);
 		infile.close();
 

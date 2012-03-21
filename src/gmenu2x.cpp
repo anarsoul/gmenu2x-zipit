@@ -256,7 +256,7 @@ void GMenu2X::init() {
 	batteryHandle = 0;
 	backlightHandle = 0;
 	keyboardBacklightHandle = 0;
-	acHandle = 0;
+	
 
 #ifdef PLATFORM_GP2X
 /*	gp2x_mem = open("/dev/mem", O_RDWR);
@@ -265,7 +265,6 @@ void GMenu2X::init() {
 	*/
 #else
 	batteryHandle = fopen("/sys/class/power_supply/Z2/voltage_now", "r");
-	acHandle = fopen("/sys/class/power_supply/Z2/status", "r");
 	backlightHandle = fopen(
 #ifdef PLATFORM_NANONOTE
 		"/sys/class/lcd/ili8960-lcd/contrast",
@@ -275,6 +274,7 @@ void GMenu2X::init() {
 		"w+");
 	keyboardBacklightHandle = fopen("/sys/class/backlight/pwm-backlight.1/brightness", "w+");
 #endif
+
 }
 
 void GMenu2X::deinit() {
@@ -289,7 +289,6 @@ void GMenu2X::deinit() {
 	if (batteryHandle) fclose(batteryHandle);
 	if (backlightHandle) fclose(backlightHandle);
 	if (keyboardBacklightHandle) fclose(keyboardBacklightHandle);
-	if (acHandle) fclose(acHandle);
 #endif
 }
 
@@ -1866,6 +1865,14 @@ void GMenu2X::scanner() {
 #ifdef PLATFORM_PANDORA
 	//char *configpath = pnd_conf_query_searchpath();
 #else
+	if (confInt["menuClock"]<312) {
+		setClock(312);
+		scanbg.write(font,tr["Raising cpu clock to 312MHz"],5,lineY);
+		scanbg.blit(s,0,0);
+		s->flip();
+		lineY += 26;
+	}
+
 	scanbg.write(font,tr["Scanning SD filesystem..."],5,lineY);
 	scanbg.blit(s,0,0);
 	s->flip();
@@ -1926,6 +1933,14 @@ void GMenu2X::scanner() {
 	s->flip();
 	lineY += 26;
 
+	if (confInt["menuClock"]<312) {
+		setClock(confInt["menuClock"]);
+		scanbg.write(font,tr["Decreasing cpu clock"],5,lineY);
+		scanbg.blit(s,0,0);
+		s->flip();
+		lineY += 26;
+	}
+
 	sync();
 	ledOff();
 #endif
@@ -1975,6 +1990,7 @@ typedef struct {
 	unsigned short remocon;
 } MMSP2ADC;
 
+
 unsigned short GMenu2X::getBatteryLevel() {
 #ifdef PLATFORM_GP2X
 /*	if (batteryHandle<=0) return 0;
@@ -2011,13 +2027,10 @@ unsigned short GMenu2X::getBatteryLevel() {
 	}*/
 
 #else
-	if (!acHandle) return 0;
-	char acVal[32];
-	memset(acVal, 0, sizeof(acVal));
-	fread(acVal, 1, sizeof(acVal), acHandle);
-	rewind(acHandle);
-	if (strncmp(acVal, "Charging", strlen("Charging")) == 0) return 6;
 
+	if (PowerSaver::getInstance()->getPwrState() == AC_POWER)
+		return 6;
+	
 	if (!batteryHandle) return 0;
 	int volt_val = 0;
 	fscanf(batteryHandle, "%d", &volt_val);

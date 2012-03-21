@@ -10,6 +10,7 @@
 #include "debug.h"
 
 #define SYSFS_CPUFREQ_DIR "/sys/devices/system/cpu/cpu0/cpufreq"
+#define SYSFS_CPUFREQ_MAX SYSFS_CPUFREQ_DIR "/scaling_max_freq"
 #define SYSFS_CPUFREQ_SET SYSFS_CPUFREQ_DIR "/scaling_setspeed"
 
 void writeStringToFile(const char *path, const char *content)
@@ -30,5 +31,6 @@ void cpufreq_cpuspeed(unsigned clockspeed)
 {
 	char freq[10];
 	sprintf(freq, "%d", clockspeed * 1000);
+	writeStringToFile(SYSFS_CPUFREQ_MAX, freq);
 	writeStringToFile(SYSFS_CPUFREQ_SET, freq);
 }
