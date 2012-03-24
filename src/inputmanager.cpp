@@ -21,7 +21,6 @@
 #include "debug.h"
 #include "inputmanager.h"
 #include "utilities.h"
-#include "powersaver.h"
 
 #include <iostream>
 #include <fstream>
@@ -179,6 +178,7 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 	}
 
 	if (source == KEYBOARD) {
+	//	fprintf(stdout,"Keypress %d: \n", event.key.keysym.sym);
 		for (i = 0; i < BUTTON_TYPE_SIZE; i++) {
 			if (buttonMap[i].source == KEYBOARD
 					&& (unsigned int)event.key.keysym.sym == buttonMap[i].code) {
@@ -200,10 +200,6 @@ bool InputManager::getEvent(ButtonEvent *bevent, bool wait) {
 
 	if (i == BUTTON_TYPE_SIZE)
 		return false;
-
-	if (wait && PowerSaver::isRunning()) {
-		PowerSaver::getInstance()->resetScreenTimer();
-	}
 
 	return true;
 }

@@ -40,7 +40,6 @@
 #include "menusettingrgba.h"
 #include "menusettingstring.h"
 #include "messagebox.h"
-#include "powersaver.h"
 #include "settingsdialog.h"
 #include "textdialog.h"
 #include "wallpaperdialog.h"
@@ -436,9 +435,6 @@ GMenu2X::GMenu2X()
 
 	input.init(input_file);
 
-	if (confInt["backlightTimeout"] > 0)
-        PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
-
 	setInputSpeed();
 	initServices();
 	applyDefaultTimings();
@@ -453,8 +449,7 @@ GMenu2X::GMenu2X()
 }
 
 GMenu2X::~GMenu2X() {
-	if (PowerSaver::isRunning())
-		delete PowerSaver::getInstance();
+
 	quit();
 
 	delete menu;
@@ -564,6 +559,7 @@ void GMenu2X::initMenu() {
 		//Add virtual links in the applications section
 		if (menu->getSections()[i]=="applications") {
 			menu->addActionLink(i,"Explorer",MakeDelegate(this,&GMenu2X::explorer),tr["Launch an application"],"skin:icons/explorer.png");
+			menu->addActionLink(i,tr["Network Status"],MakeDelegate(this,&GMenu2X::ipstatus),tr["Network Status"],"skin:icons/about.png");
 		}
 
 		//Add virtual links in the setting section
@@ -593,6 +589,32 @@ void GMenu2X::initMenu() {
 
 	//DEBUG
 	//menu->addLink( CARD_ROOT, "sample.pxml", "applications" );
+}
+
+void GMenu2X::ipstatus() {
+
+	#define LINE_BUFSIZE 128
+
+    char line[LINE_BUFSIZE];
+    
+    vector<string> scriptOutput;
+	
+    /* Get a pipe where the output from the scripts comes in */
+    FILE* pipe = popen("/usr/local/bin/ipstatus", "r");
+		if (pipe == NULL) return;        /* return with exit code indicating error */
+    
+
+    /* Read script output from the pipe line by line */
+    while (fgets(line, LINE_BUFSIZE, pipe) != NULL) {
+//        scriptOutput += line;
+		scriptOutput.push_back(line);
+    }
+    
+	pclose(pipe); /* Close the pipe */
+    
+	TextDialog td(this, tr["Network Status"], tr["Displays network status and IP"], "icons/ipstatus.png", &scriptOutput);
+	td.exec();
+	
 }
 
 void GMenu2X::about() {
@@ -1326,13 +1348,6 @@ void GMenu2X::options() {
 		if (curKbdBacklight != confInt["kbd_backlight"]) setKbdBacklight(confInt["kbd_backlight"]);
 		if (curMenuClock != confInt["menuClock"]) setClock(confInt["menuClock"]);
 
-		if (confInt["backlightTimeout"] == 0) {
-			if (PowerSaver::isRunning())
-				delete PowerSaver::getInstance();
-		} else {
-			PowerSaver::getInstance()->setScreenTimeout( confInt["backlightTimeout"] );
-		}
-
 		if (lang == "English") lang = "";
 		if (lang != tr.lang()) {
 			tr.setLang(lang);
@@ -1990,6 +2005,29 @@ typedef struct {
 	unsigned short remocon;
 } MMSP2ADC;
 
+enum POWERSTATE {
+		AC_POWER,
+		DC_POWER
+			};
+			
+POWERSTATE getPwrState() {
+
+	POWERSTATE pwrstate=DC_POWER;
+	FILE* acHandle = fopen("/sys/class/power_supply/Z2/status", "r");
+	
+	if (acHandle){
+		char acVal[32];
+		memset(acVal, 0, sizeof(acVal));
+		fread(acVal, 1, sizeof(acVal), acHandle);
+	
+		if (strncmp(acVal, "Charging", strlen("Charging")) == 0)
+			pwrstate=AC_POWER;
+			
+		fclose(acHandle);
+	}
+	
+	return pwrstate;
+}
 
 unsigned short GMenu2X::getBatteryLevel() {
 #ifdef PLATFORM_GP2X
@@ -2028,7 +2066,7 @@ unsigned short GMenu2X::getBatteryLevel() {
 
 #else
 
-	if (PowerSaver::getInstance()->getPwrState() == AC_POWER)
+	if (getPwrState() == AC_POWER)
 		return 6;
 	
 	if (!batteryHandle) return 0;
@@ -2157,7 +2195,7 @@ string GMenu2X::getDiskFree(const char *path) {
 			((unsigned long long)b.f_blocks * b.f_frsize) / 1048576;
 		ss << free << "/" << total << "MB";
 		ss >> df;
-	} else WARNING("statvfs failed with error '%s'.\n", strerror(errno));
+	} else {WARNING("statvfs failed with error '%s'.\n", strerror(errno));}
 	return df;
 }
 

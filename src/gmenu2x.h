@@ -212,6 +212,7 @@ public:
 	void viewLog();
 	void contextMenu();
 	void changeWallpaper();
+	void ipstatus();
 
 	void applyRamTimings();
 	void applyDefaultTimings();
