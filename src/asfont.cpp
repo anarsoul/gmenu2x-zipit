@@ -111,34 +111,30 @@ void ASFont::writeLine(Surface *s, const std::string &text, int x, int y) {
 	}
 }
 
-int ASFont::getTextWidth(const char *text) {
-	int maxWidth = 0, width = 0;
-	while (char ch = *text++) {
-		if (ch == '\n') {
-			// New line.
-			maxWidth = std::max(width, maxWidth);
-			width = 0;
-		} else {
-			std::string::size_type pos;
-			if (utf8Code(ch) && *text) {
-				// 2-byte character.
-				pos = characters.find(std::string(&text[-1], 2));
-				text++;
-			} else {
-				// 1-byte character.
-				pos = characters.find(ch);
-			}
-			if (pos == std::string::npos) {
-				pos = 0;
-			}
-			width += charpos[pos * 2 + 2] - charpos[pos * 2 + 1];
-		}
-	}
-	return std::max(width, maxWidth);
-}
 
 int ASFont::getTextWidth(const std::string& text) {
-	return getTextWidth(text.c_str());
+
+	int x=0;	
+	std::string::size_type pos;
+	SDL_Rect srcrect, dstrect;
+
+	for(unsigned i=0; i<text.length() && x<surface->w; i++) {
+		//Utf8 characters
+		if (utf8Code(text[i]) && i+1<text.length()) {
+			pos = characters.find(text.substr(i,2));
+			i++;
+		} else
+			pos = characters.find(text[i]);
+		if (pos == std::string::npos) {
+			x += charpos[2]-charpos[1];
+			continue;
+		}
+
+		pos *= 2;
+
+		x += charpos[pos+2] - charpos[pos+1];
+	}
+	return x;
 }
 
 void ASFont::writeLine(Surface* surface, const std::string& text, int x, int y, HAlign halign) {

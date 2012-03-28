@@ -45,9 +45,6 @@ void MenuSettingStringBase::draw(int y)
 bool MenuSettingStringBase::handleButtonPress(InputManager::Button button)
 {
 	switch (button) {
-		case InputManager::CANCEL:
-			clear();
-			break;
 		case InputManager::ACCEPT:
 			edit();
 			break;

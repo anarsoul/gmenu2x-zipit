@@ -1,7 +1,11 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Massimiliano Torromeo                           *
  *   massimiliano.torromeo@gmail.com                                       *
- *                                                                         *
+ *   
+      
+	 Copyright 2012 Mark Majeres (slug_)  mark@engine12.com		 
+
+	                                                                       *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
@@ -45,6 +49,7 @@
 #include "wallpaperdialog.h"
 #include "utilities.h"
 
+
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -85,11 +90,7 @@
 
 #include <sys/mman.h>
 
-typedef fastdelegate::FastDelegate0<> MenuAction;
-struct MenuOption {
-	std::string text;
-	MenuAction action;
-};
+#define LINE_BUFSIZE 128
 
 using namespace std;
 using namespace fastdelegate;
@@ -114,7 +115,7 @@ const char *CARD_ROOT = _CARD_ROOT;
 #elif defined(PLATFORM_DINGUX)
 const char *CARD_ROOT = "/media/";
 #else
-const char *CARD_ROOT = "/card/"; //Note: Add a trailing /!
+const char *CARD_ROOT = "/mnt/"; //Note: Add a trailing /!
 #endif
 const int CARD_ROOT_LEN = strlen(CARD_ROOT)-1;
 
@@ -407,7 +408,7 @@ GMenu2X::GMenu2X()
 		ERROR("Could not initialize SDL: %s\n", SDL_GetError());
 		quit();
 	}
-
+	
 	s = Surface::openOutputSurface(resX, resY, confInt["videoBpp"]);
 
 	bg = NULL;
@@ -446,10 +447,12 @@ GMenu2X::GMenu2X()
 	if (lastSelectorElement>-1 && menu->selLinkApp()!=NULL && (!menu->selLinkApp()->getSelectorDir().empty() || !lastSelectorDir.empty()))
 		menu->selLinkApp()->selector(lastSelectorElement,lastSelectorDir);
 
+	nwifilevel=0;
+	bRedraw=true;
 }
 
 GMenu2X::~GMenu2X() {
-
+		
 	quit();
 
 	delete menu;
@@ -559,7 +562,7 @@ void GMenu2X::initMenu() {
 		//Add virtual links in the applications section
 		if (menu->getSections()[i]=="applications") {
 			menu->addActionLink(i,"Explorer",MakeDelegate(this,&GMenu2X::explorer),tr["Launch an application"],"skin:icons/explorer.png");
-			menu->addActionLink(i,tr["Network Status"],MakeDelegate(this,&GMenu2X::ipstatus),tr["Network Status"],"skin:icons/about.png");
+
 		}
 
 		//Add virtual links in the setting section
@@ -578,7 +581,10 @@ void GMenu2X::initMenu() {
 #endif
 			if (fileExists(getHome()+"/log.txt"))
 				menu->addActionLink(i,tr["Log Viewer"],MakeDelegate(this,&GMenu2X::viewLog),tr["Displays last launched program's output"],"skin:icons/ebook.png");
-			menu->addActionLink(i,tr["About"],MakeDelegate(this,&GMenu2X::about),tr["Info about GMenu2X"],"skin:icons/about.png");
+//			menu->addActionLink(i,tr["About"],MakeDelegate(this,&GMenu2X::about),tr["Info about GMenu2X"],"skin:icons/about.png");
+			menu->addActionLink(i,tr["Net Status"],MakeDelegate(this,&GMenu2X::ipstatus),tr["Check Network status and IP"],"skin:icons/netstatus.png");
+			menu->addActionLink(i,tr["WiFi Setup"],MakeDelegate(this,&GMenu2X::wifiSetup),tr["Connect to WiFi Network"],"skin:icons/wifi.png");
+			menu->addActionLink(i,tr["USB Mode"],MakeDelegate(this,&GMenu2X::setUSBmode),tr["Configure USB Mode"],"skin:icons/usb.png");
 		}
 	}
 
@@ -591,9 +597,138 @@ void GMenu2X::initMenu() {
 	//menu->addLink( CARD_ROOT, "sample.pxml", "applications" );
 }
 
-void GMenu2X::ipstatus() {
 
-	#define LINE_BUFSIZE 128
+void GMenu2X::setUSBmode(){
+	vector<MenuOption> voices;	
+	string strCommand;
+	
+	voices.push_back(MenuOption(tr["Device Mode"], MakeDelegate(this, &GMenu2X::deadLink)));
+	voices.push_back(MenuOption(tr["Host Mode"], MakeDelegate(this, &GMenu2X::deadLink)));
+
+	int sel = listbox(&voices);	
+
+	if(sel == 0)
+		strCommand = "echo device >/sys/devices/platform/z2-usb-switch/usb_mode";
+	else
+		strCommand = "echo host >/sys/devices/platform/z2-usb-switch/usb_mode";
+
+	system(strCommand.c_str());
+}
+
+void GMenu2X::wifiAddNetwork() {
+
+    char line[LINE_BUFSIZE];
+    vector<string> scriptOutput;
+	vector<MenuOption> voices;	
+	
+    FILE* pipe = popen("/usr/local/sbin/wifi-scan wlan0", "r");
+		if (pipe == NULL) return; 
+
+    while (fgets(line, LINE_BUFSIZE, pipe) != NULL) 
+		scriptOutput.push_back(line);
+    
+	pclose(pipe); 
+
+	for (unsigned int i=0; i<scriptOutput.size(); i++) 
+		voices.push_back(MenuOption(scriptOutput[i], MakeDelegate(this, &GMenu2X::deadLink)));
+	
+	int sel = listbox(&voices);
+		
+	if(sel != -1)
+		wpaAdd(scriptOutput[sel]);
+}
+
+void GMenu2X::wpaAdd(string& SSID){
+	//need to ask for the password type
+	vector<MenuOption> voices;	
+	string strPassword;
+	string strCommand;
+	
+	//trim leading and trailing spaces
+	SSID.erase(remove_if(SSID.begin(), SSID.end(), ::isspace), SSID.end());
+	
+	voices.push_back(MenuOption(tr["WPA/WPA2"], MakeDelegate(this, &GMenu2X::deadLink)));
+	voices.push_back(MenuOption(tr["Hex WEP Key"], MakeDelegate(this, &GMenu2X::deadLink)));
+	voices.push_back(MenuOption(tr["ASCII WEP Key"], MakeDelegate(this, &GMenu2X::deadLink)));
+	voices.push_back(MenuOption(tr["none/open"], MakeDelegate(this, &GMenu2X::deadLink)));
+
+	int sel = listbox(&voices);
+	
+	if(sel == -1) return;
+	//enter the password
+	if(sel == 3)
+		strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=NONE\n}\" >> /etc/wpa.conf";
+	else{
+		InputDialog id(this, input, ts, tr["Enter passphrase"],"", tr["Setup"], "skin:icons/wifi.png");
+		if (id.exec() == false) 
+		return;
+
+		switch(sel) {
+				case 0:
+					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=WPA-PSK\n\tpsk=\\\"" + id.getInput() + "\\\"\n}\" >> /etc/wpa.conf";
+					break;
+				case 1:
+				case 2:	
+					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=NONE\n\twep_key0=\\\"" + id.getInput() + "\\\"\n}\" >> /etc/wpa.conf";
+					break;
+	
+				default:
+					break;
+			}
+	}
+	
+	system(strCommand.c_str());
+	
+//	if(MessageBox(this,tr["Connecting to wireless network..."],"skin:icons/wifi.png", &GMenu2X::wpaConnect).exec() == 1)
+	if(MessageBox(this,tr["Connecting to wireless network..."],"skin:icons/wifi.png", MakeDelegate(this, &GMenu2X::wpaConnect)).exec() == 1)
+		MessageBox(this,tr["Unable to connect with current settings."],"skin:icons/wifi.png").exec();
+		
+}
+
+void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& ret){
+	
+	ret = system("/usr/local/sbin/wpa-connect wlan0 /etc/wpa.conf");
+
+	if(ret == 0){
+		pMsgBox->setText("Connected...");
+		sleep(3);
+		
+		nwifilevel = getWiFiLevel();
+		bRedraw=true;
+	}
+	WEXITSTATUS(ret);
+	return ;
+}
+
+void GMenu2X::wifiOff() {
+	
+	system("ifconfig wlan0 down");
+	
+	nwifilevel = getWiFiLevel();
+	bRedraw=true;
+		
+	return;
+	
+}
+
+void GMenu2X::wifiConnect() {
+
+	if(MessageBox(this,tr["Connecting to wireless network..."],"skin:icons/wifi.png", MakeDelegate(this, &GMenu2X::wpaConnect)).exec() == 1)
+		wifiAddNetwork();
+
+}
+
+void GMenu2X::wifiSetup() {
+	vector<MenuOption> voices;
+
+	voices.push_back(MenuOption(tr["Connect"], MakeDelegate(this, &GMenu2X::wifiConnect)));
+	voices.push_back(MenuOption(tr["Add Network"], MakeDelegate(this, &GMenu2X::wifiAddNetwork)));
+	voices.push_back(MenuOption(tr["Turn Off"],    MakeDelegate(this, &GMenu2X::wifiOff)));
+	
+	listbox(&voices);
+}
+
+void GMenu2X::ipstatus() {
 
     char line[LINE_BUFSIZE];
     
@@ -612,8 +747,10 @@ void GMenu2X::ipstatus() {
     
 	pclose(pipe); /* Close the pipe */
     
-	TextDialog td(this, tr["Network Status"], tr["Displays network status and IP"], "icons/ipstatus.png", &scriptOutput);
+	TextDialog td(this, tr["Network Status"], tr["Displays network status and IP"], "skin:icons/netstatus.png", &scriptOutput);
 	td.exec();
+//	MessageBox mb(this, scriptOutput ,"skin:icons/wifi.png");
+//	mb.exec();
 	
 }
 
@@ -1016,8 +1153,12 @@ void GMenu2X::main() {
 	int helpBoxHeight = 154;
 #endif
 	uint i;
-	long tickBattery = -60000, tickNow;
-	string batteryIcon = "imgs/battery/0.png";
+	uint nloops=0;
+	
+//	long tickNow;
+	string batteryIcon;// = "imgs/battery/0.png";
+	string wifiIcon;
+	
 	stringstream ss;
 	uint sectionsCoordX = 24;
 	SDL_Rect re = {0,0,0,0};
@@ -1035,135 +1176,149 @@ void GMenu2X::main() {
 
 	if (!fileExists(CARD_ROOT))
 		CARD_ROOT = "/";
-
+	
+	bRedraw = true;
+	int nbattlevel = getBatteryLevel();
+	nwifilevel = getWiFiLevel();
+	
 	while (!quit) {
-		tickNow = SDL_GetTicks();
+//		tickNow = SDL_GetTicks();
 
-		//Background
-		sc["bgmain"]->blit(s,0,0);
+		if(bRedraw){
+			//Background
+			sc["bgmain"]->blit(s,0,0);
 
-		//Sections
-		sectionsCoordX = halfX - (constrain((uint)menu->getSections().size(), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
-		if (menu->firstDispSection()>0)
-			sc.skinRes("imgs/l_enabled.png")->blit(s,0,0);
-		else
-			sc.skinRes("imgs/l_disabled.png")->blit(s,0,0);
-		if (menu->firstDispSection()+linkColumns<menu->getSections().size())
-			sc.skinRes("imgs/r_enabled.png")->blit(s,resX-10,0);
-		else
-			sc.skinRes("imgs/r_disabled.png")->blit(s,resX-10,0);
-		for (i=menu->firstDispSection(); i<menu->getSections().size() && i<menu->firstDispSection()+linkColumns; i++) {
-			string sectionIcon = "skin:sections/"+menu->getSections()[i]+".png";
-			x = (i-menu->firstDispSection())*skinConfInt["linkWidth"]+sectionsCoordX;
-			if (menu->selSectionIndex()==(int)i)
-				s->box(x, 0, skinConfInt["linkWidth"],
-				skinConfInt["topBarHeight"], skinConfColors[COLOR_SELECTION_BG]);
-			x += skinConfInt["linkWidth"]/2;
-			if (sc.exists(sectionIcon))
-				sc[sectionIcon]->blit(s,x-16,sectionLinkPadding,32,32);
+			//Sections
+			sectionsCoordX = halfX - (constrain((uint)menu->getSections().size(), 0 , linkColumns) * skinConfInt["linkWidth"]) / 2;
+			if (menu->firstDispSection()>0)
+				sc.skinRes("imgs/l_enabled.png")->blit(s,0,0);
 			else
-				sc.skinRes("icons/section.png")->blit(s,x-16,sectionLinkPadding);
-			s->write( font, menu->getSections()[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, ASFont::HAlignCenter, ASFont::VAlignBottom );
-		}
-
-		//Links
-		s->setClipRect(offset,skinConfInt["topBarHeight"],resX-9,resY-74); //32*2+10
-		for (i=menu->firstDispRow()*linkColumns; i<(menu->firstDispRow()*linkColumns)+linksPerPage && i<menu->sectionLinks()->size(); i++) {
-			int ir = i-menu->firstDispRow()*linkColumns;
-			x = (ir%linkColumns)*(skinConfInt["linkWidth"]+linkSpacingX)+offset;
-			y = ir/linkColumns*(skinConfInt["linkHeight"]+linkSpacingY)+skinConfInt["topBarHeight"]+2;
-			menu->sectionLinks()->at(i)->setPosition(x,y);
-
-			if (i==(uint)menu->selLinkIndex())
-				menu->sectionLinks()->at(i)->paintHover();
-
-			menu->sectionLinks()->at(i)->paint();
-		}
-		s->clearClipRect();
-
-		drawScrollBar(linkRows,menu->sectionLinks()->size()/linkColumns + ((menu->sectionLinks()->size()%linkColumns==0) ? 0 : 1),menu->firstDispRow(),43,resY-81);
-
-        /*
-		switch(volumeMode) {
-			case VOLUME_MODE_MUTE:   sc.skinRes("imgs/mute.png")->blit(s,279,bottomBarIconY); break;
-			case VOLUME_MODE_PHONES: sc.skinRes("imgs/phones.png")->blit(s,279,bottomBarIconY); break;
-			default: sc.skinRes("imgs/volume.png")->blit(s,279,bottomBarIconY); break;
-		}
-        */
-
-		if (menu->selLink()!=NULL) {
-			s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, ASFont::HAlignCenter, ASFont::VAlignBottom );
-			if (menu->selLinkApp()!=NULL) {
-				s->write ( font, menu->selLinkApp()->clockStr(confInt["maxClock"]), cpuX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
-				//Manual indicator
-				if (!menu->selLinkApp()->getManual().empty())
-					sc.skinRes("imgs/manual.png")->blit(s,manualX,bottomBarIconY);
+				sc.skinRes("imgs/l_disabled.png")->blit(s,0,0);
+			if (menu->firstDispSection()+linkColumns<menu->getSections().size())
+				sc.skinRes("imgs/r_enabled.png")->blit(s,resX-10,0);
+			else
+				sc.skinRes("imgs/r_disabled.png")->blit(s,resX-10,0);
+			for (i=menu->firstDispSection(); i<menu->getSections().size() && i<menu->firstDispSection()+linkColumns; i++) {
+				string sectionIcon = "skin:sections/"+menu->getSections()[i]+".png";
+				x = (i-menu->firstDispSection())*skinConfInt["linkWidth"]+sectionsCoordX;
+				if (menu->selSectionIndex()==(int)i)
+					s->box(x, 0, skinConfInt["linkWidth"],
+					skinConfInt["topBarHeight"], skinConfColors[COLOR_SELECTION_BG]);
+				x += skinConfInt["linkWidth"]/2;
+				if (sc.exists(sectionIcon))
+					sc[sectionIcon]->blit(s,x-16,sectionLinkPadding,32,32);
+				else
+					sc.skinRes("icons/section.png")->blit(s,x-16,sectionLinkPadding);
+				s->write( font, menu->getSections()[i], x, skinConfInt["topBarHeight"]-sectionLinkPadding, ASFont::HAlignCenter, ASFont::VAlignBottom );
 			}
-		}
 
-		if (ts.available()) {
-			btnContextMenu.paint();
-		}
-		//check battery status every 60 seconds
-		if (tickNow-tickBattery >= 60000) {
-			tickBattery = tickNow;
-			unsigned short battlevel = getBatteryLevel();
-			if (battlevel>5) {
+			//Links
+			s->setClipRect(offset,skinConfInt["topBarHeight"],resX-9,resY-74); //32*2+10
+			for (i=menu->firstDispRow()*linkColumns; i<(menu->firstDispRow()*linkColumns)+linksPerPage && i<menu->sectionLinks()->size(); i++) {
+				int ir = i-menu->firstDispRow()*linkColumns;
+				x = (ir%linkColumns)*(skinConfInt["linkWidth"]+linkSpacingX)+offset;
+				y = ir/linkColumns*(skinConfInt["linkHeight"]+linkSpacingY)+skinConfInt["topBarHeight"]+2;
+				menu->sectionLinks()->at(i)->setPosition(x,y);
+
+				if (i==(uint)menu->selLinkIndex())
+					menu->sectionLinks()->at(i)->paintHover();
+
+				menu->sectionLinks()->at(i)->paint();
+			}
+			s->clearClipRect();
+
+			drawScrollBar(linkRows,menu->sectionLinks()->size()/linkColumns + ((menu->sectionLinks()->size()%linkColumns==0) ? 0 : 1),menu->firstDispRow(),43,resY-81);
+
+			/*
+			switch(volumeMode) {
+				case VOLUME_MODE_MUTE:   sc.skinRes("imgs/mute.png")->blit(s,279,bottomBarIconY); break;
+				case VOLUME_MODE_PHONES: sc.skinRes("imgs/phones.png")->blit(s,279,bottomBarIconY); break;
+				default: sc.skinRes("imgs/volume.png")->blit(s,279,bottomBarIconY); break;
+			}
+			*/
+
+			if (menu->selLink()!=NULL) {
+				s->write ( font, menu->selLink()->getDescription(), halfX, resY-19, ASFont::HAlignCenter, ASFont::VAlignBottom );
+				if (menu->selLinkApp()!=NULL) {
+					s->write ( font, menu->selLinkApp()->clockStr(confInt["maxClock"]), cpuX, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
+					//Manual indicator
+					if (!menu->selLinkApp()->getManual().empty())
+						sc.skinRes("imgs/manual.png")->blit(s,manualX,bottomBarIconY);
+				}
+			}
+
+			if (ts.available()) {
+				btnContextMenu.paint();
+			}
+			
+			//draw wifi status/signal level
+			if (nwifilevel == 0)
+				wifiIcon = "imgs/wifi/off.png";
+			else {
+				char wifilevel[3];
+				snprintf(wifilevel, sizeof(wifilevel), "%d", nwifilevel); 
+				wifiIcon = "imgs/wifi/"+string(wifilevel)+".png";
+			}
+			sc.skinRes(wifiIcon)->blit( s, resX-19*3, bottomBarIconY );
+			
+			
+			//draw the battery status
+			if (nbattlevel == 6)
 				batteryIcon = "imgs/battery/ac.png";
-			} else {
-				ss.clear();
-				ss << battlevel;
-				ss >> batteryIcon;
-				batteryIcon = "imgs/battery/"+batteryIcon+".png";
+			else {
+				char battlevel[3];
+				snprintf(battlevel, sizeof(battlevel), "%d", nbattlevel); 
+				batteryIcon = "imgs/battery/"+string(battlevel)+".png";
 			}
-		}
-		sc.skinRes(batteryIcon)->blit( s, resX-19, bottomBarIconY );
-		//s->write( font, tr[batstr.c_str()], 20, 170 );
-		//On Screen Help
+			sc.skinRes(batteryIcon)->blit( s, resX-19, bottomBarIconY );
+			//s->write( font, tr[batstr.c_str()], 20, 170 );
+			//On Screen Help
 
 
-		if (helpDisplayed) {
-			s->box(10,50,300,helpBoxHeight+4, skinConfColors[COLOR_MESSAGE_BOX_BG]);
-			s->rectangle( 12,52,296,helpBoxHeight,
-			skinConfColors[COLOR_MESSAGE_BOX_BORDER] );
-			s->write( font, tr["CONTROLS"], 20, 60 );
-#ifdef PLATFORM_DINGUX
-			s->write( font, tr["A: Launch link / Confirm action"], 20, 80 );
-			s->write( font, tr["B: Show this help menu"], 20, 95 );
-			s->write( font, tr["L, R: Change section"], 20, 110 );
-			s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
-			s->write( font, tr["START: Show options menu"], 20, 170 );
-#endif
-#ifdef PLATFORM_GP2X
-			s->write( font, tr["B, Stick press: Launch link / Confirm action"], 20, 80 );
-			s->write( font, tr["L, R: Change section"], 20, 95 );
-			s->write( font, tr["VOLUP, VOLDOWN: Change cpu clock"], 20, 125 );
-			s->write( font, tr["A+VOLUP, A+VOLDOWN: Change volume"], 20, 140 );
-			s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
-			s->write( font, tr["START: Show options menu"], 20, 170 );
-			if (fwType=="open2x") s->write( font, tr["X: Toggle speaker mode"], 20, 185 );
-#endif
+			if (helpDisplayed) {
+				s->box(10,50,300,helpBoxHeight+4, skinConfColors[COLOR_MESSAGE_BOX_BG]);
+				s->rectangle( 12,52,296,helpBoxHeight,
+				skinConfColors[COLOR_MESSAGE_BOX_BORDER] );
+				s->write( font, tr["CONTROLS"], 20, 60 );
+	#ifdef PLATFORM_DINGUX
+				s->write( font, tr["A: Launch link / Confirm action"], 20, 80 );
+				s->write( font, tr["B: Show this help menu"], 20, 95 );
+				s->write( font, tr["L, R: Change section"], 20, 110 );
+				s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
+				s->write( font, tr["START: Show options menu"], 20, 170 );
+	#endif
+	#ifdef PLATFORM_GP2X
+				s->write( font, tr["B, Stick press: Launch link / Confirm action"], 20, 80 );
+				s->write( font, tr["L, R: Change section"], 20, 95 );
+				s->write( font, tr["VOLUP, VOLDOWN: Change cpu clock"], 20, 125 );
+				s->write( font, tr["A+VOLUP, A+VOLDOWN: Change volume"], 20, 140 );
+				s->write( font, tr["SELECT: Show contextual menu"], 20, 155 );
+				s->write( font, tr["START: Show options menu"], 20, 170 );
+				if (fwType=="open2x") s->write( font, tr["X: Toggle speaker mode"], 20, 185 );
+	#endif
+				s->flip();
+				while (input.waitForPressedButton() != InputManager::CANCEL) {}
+				helpDisplayed=false;
+				continue;
+			}
+
+	#ifdef WITH_DEBUG
+			//framerate
+			drawn_frames++;
+			if (tickNow-tickFPS>=1000) {
+				ss.clear();
+				ss << drawn_frames*(tickNow-tickFPS+1)/1000;
+				ss >> fps;
+				tickFPS = tickNow;
+				drawn_frames = 0;
+			}
+			s->write( font, fps+" FPS", resX-1,1 ,ASFont::HAlignRight );
+	#endif
+
 			s->flip();
-			while (input.waitForPressedButton() != InputManager::CANCEL) {}
-			helpDisplayed=false;
-			continue;
-		}
-
-#ifdef WITH_DEBUG
-		//framerate
-		drawn_frames++;
-		if (tickNow-tickFPS>=1000) {
-			ss.clear();
-			ss << drawn_frames*(tickNow-tickFPS+1)/1000;
-			ss >> fps;
-			tickFPS = tickNow;
-			drawn_frames = 0;
-		}
-		s->write( font, fps+" FPS", resX-1,1 ,ASFont::HAlignRight );
-#endif
-
-		s->flip();
-
+			bRedraw = false;
+		}//end bRedraw
+		
 		//touchscreen
 		if (ts.available()) {
 			ts.poll();
@@ -1192,43 +1347,49 @@ void GMenu2X::main() {
 			}
 		}
 
-        switch (input.waitForPressedButton()) {
-            case InputManager::ACCEPT:
-                if (menu->selLink() != NULL) menu->selLink()->run();
-                break;
-            case InputManager::CANCEL:
-                helpDisplayed=true;
-                break;
-            case InputManager::SETTINGS:
-                options();
-                break;
-            case InputManager::MENU:
-                contextMenu();
-                break;
-            case InputManager::UP:
-                menu->linkUp();
-                break;
-            case InputManager::DOWN:
-                menu->linkDown();
-                break;
-            case InputManager::LEFT:
-                menu->linkLeft();
-                break;
-            case InputManager::RIGHT:
-                menu->linkRight();
-                break;
-            case InputManager::ALTLEFT:
-				menu->decSectionIndex();
-				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
-                break;
-            case InputManager::ALTRIGHT:
-				menu->incSectionIndex();
-				offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
-                break;
-            default:
-                break;
-        }
-
+		InputManager::ButtonEvent event;
+	
+		if (input.pollEvent(&event) && event.state == InputManager::PRESSED)
+		{	
+			switch (event.button) {
+				case InputManager::ACCEPT:
+					if (menu->selLink() != NULL) menu->selLink()->run();
+					break;
+				case InputManager::CANCEL:
+					helpDisplayed=true;
+					break;
+				case InputManager::SETTINGS:
+					options();
+					break;
+				case InputManager::MENU:
+					contextMenu();
+					break;
+				case InputManager::UP:
+					menu->linkUp();
+					break;
+				case InputManager::DOWN:
+					menu->linkDown();
+					break;
+				case InputManager::LEFT:
+					menu->linkLeft();
+					break;
+				case InputManager::RIGHT:
+					menu->linkRight();
+					break;
+				case InputManager::ALTLEFT:
+					menu->decSectionIndex();
+					offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
+					break;
+				case InputManager::ALTRIGHT:
+					menu->incSectionIndex();
+					offset = menu->sectionLinks()->size()>linksPerPage ? 2 : 6;
+					break;
+				default:
+					break;
+			}
+			bRedraw =true;
+		}
+		
         /*
 		while (!input.update())
 			usleep(LOOP_DELAY);
@@ -1285,6 +1446,25 @@ void GMenu2X::main() {
 			}
 		}
         */
+		
+		if(nloops++ > 200){
+			int nlevel = getBatteryLevel();
+			if(nlevel != nbattlevel){
+				nbattlevel = nlevel;	
+				bRedraw =true;
+			}
+			
+			nlevel = getWiFiLevel();
+			if(nlevel != nwifilevel){
+				nwifilevel = nlevel;
+				bRedraw =true;
+			}
+			
+			nloops=0;
+		}
+				
+		usleep(LOOP_DELAY);
+		
 	}
 }
 
@@ -1327,9 +1507,9 @@ void GMenu2X::options() {
 	fl_tr.insertFile("English");
 	string lang = tr.lang();
 
-	vector<string> encodings;
-	encodings.push_back("NTSC");
-	encodings.push_back("PAL");
+//	vector<string> encodings;
+//	encodings.push_back("NTSC");
+//	encodings.push_back("PAL");
 
 	SettingsDialog sd(this, input, ts, tr["Settings"]);
 	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Language"], tr["Set the language used by GMenu2X"], &lang, &fl_tr.getFiles()));
@@ -1339,7 +1519,7 @@ void GMenu2X::options() {
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Output logs"], tr["Logs the output of the links. Use the Log Viewer to read them."], &confInt["outputLogs"]));
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Lcd Backlight"], tr["Set Lcd Backlight value (default: 100)"], &confInt["backlight"], 5, 100));
 	sd.addSetting(new MenuSettingInt(this, ts, tr["Kbd Backlight"], tr["Set Kbd Backlight value (default: 100)"], &confInt["kbd_backlight"], 5, 100));
-	sd.addSetting(new MenuSettingInt(this, ts, tr["Screen Timeout"], tr["Set screen's backlight timeout in seconds"], &confInt["backlightTimeout"], 0, 120));
+//	sd.addSetting(new MenuSettingInt(this, ts, tr["Screen Timeout"], tr["Set screen's backlight timeout in seconds"], &confInt["backlightTimeout"], 0, 120));
 //	sd.addSetting(new MenuSettingMultiString(this, ts, tr["Tv-Out encoding"], tr["Encoding of the tv-out signal"], &confStr["tvoutEncoding"], &encodings));
 	sd.addSetting(new MenuSettingBool(this, ts, tr["Show root"], tr["Show root folder in the file selection dialogs"], &showRootFolder));
 
@@ -1541,57 +1721,18 @@ void GMenu2X::showManual() {
 	menu->selLinkApp()->showManual();
 }
 
-void GMenu2X::contextMenu() {
-	vector<MenuOption> voices;
-	{
-	MenuOption opt = {tr.translate("Add link in $1",menu->selSection().c_str(),NULL), MakeDelegate(this, &GMenu2X::addLink)};
-	voices.push_back(opt);
-	}
 
-	{
-		LinkApp* app = menu->selLinkApp();
-		if (app && fileExists(app->getManual())) {
-			MenuOption opt = {tr.translate("Show manual of $1",menu->selLink()->getTitle().c_str(),NULL),
-				MakeDelegate(this, &GMenu2X::showManual),
-			};
-			voices.push_back(opt);
-		}
-	}
-
-	if (menu->selLinkApp()!=NULL) {
-		{
-		MenuOption opt = {tr.translate("Edit $1",menu->selLink()->getTitle().c_str(),NULL), MakeDelegate(this, &GMenu2X::editLink)};
-		voices.push_back(opt);
-		}{
-		MenuOption opt = {tr.translate("Delete $1 link",menu->selLink()->getTitle().c_str(),NULL), MakeDelegate(this, &GMenu2X::deleteLink)};
-		voices.push_back(opt);
-		}
-	}
-
-	{
-	MenuOption opt = {tr["Add section"], MakeDelegate(this, &GMenu2X::addSection)};
-	voices.push_back(opt);
-	}{
-	MenuOption opt = {tr["Rename section"], MakeDelegate(this, &GMenu2X::renameSection)};
-	voices.push_back(opt);
-	}{
-	MenuOption opt = {tr["Delete section"], MakeDelegate(this, &GMenu2X::deleteSection)};
-	voices.push_back(opt);
-	}{
-	MenuOption opt = {tr["Scan for applications and games"], MakeDelegate(this, &GMenu2X::scanner)};
-	voices.push_back(opt);
-	}
-
+int GMenu2X::listbox(std::vector<MenuOption>* voices){
 	bool close = false;
 	uint i, fadeAlpha=0;
 	int sel = 0;
 
 	int h = font->getHeight();
 	SDL_Rect box;
-	box.h = (h+2)*voices.size()+8;
+	box.h = (h+2)*voices->size()+8;
 	box.w = 0;
-	for (i=0; i<voices.size(); i++) {
-		int w = font->getTextWidth(voices[i].text);
+	for (i=0; i<voices->size(); i++) {
+		int w = font->getTextWidth(voices->at(i).text);
 		if (w>box.w) box.w = w;
 	}
 	box.w += 23;
@@ -1622,8 +1763,8 @@ void GMenu2X::contextMenu() {
 
 		//draw selection rect
 		s->box( selbox.x, selbox.y, selbox.w, selbox.h, skinConfColors[COLOR_MESSAGE_BOX_SELECTION] );
-		for (i=0; i<voices.size(); i++)
-			s->write( font, voices[i].text, box.x+12, box.y+5+(h+2)*i, ASFont::HAlignLeft, ASFont::VAlignTop );
+		for (i=0; i<voices->size(); i++)
+			s->write( font, voices->at(i).text, box.x+12, box.y+5+(h+2)*i, ASFont::HAlignLeft, ASFont::VAlignTop );
 		s->flip();
 
 		//touchscreen
@@ -1634,22 +1775,22 @@ void GMenu2X::contextMenu() {
 					close = true;
 				else if (ts.getX() >= selbox.x
 					  && ts.getX() <= selbox.x + selbox.w)
-					for (i=0; i<voices.size(); i++) {
+					for (i=0; i<voices->size(); i++) {
 						selbox.y = box.y+4+(h+2)*i;
 						if (ts.getY() >= selbox.y
 						 && ts.getY() <= selbox.y + selbox.h) {
-							voices[i].action();
+							voices->at(i).action();
 							close = true;
-							i = voices.size();
+							i = voices->size();
 						}
 					}
 			} else if (ts.pressed() && ts.inRect(box)) {
-				for (i=0; i<voices.size(); i++) {
+				for (i=0; i<voices->size(); i++) {
 					selbox.y = box.y+4+(h+2)*i;
 					if (ts.getY() >= selbox.y
 					 && ts.getY() <= selbox.y + selbox.h) {
 						sel = i;
-						i = voices.size();
+						i = voices->size();
 					}
 				}
 			}
@@ -1663,23 +1804,54 @@ void GMenu2X::contextMenu() {
         }
 
         switch(event.button) {
+            case InputManager::CANCEL:
             case InputManager::MENU:
                 close = true;
+				sel=-1;
                 break;
             case InputManager::UP:
                 sel = std::max(0, sel-1);
                 break;
             case InputManager::DOWN:
-                sel = std::min((int)voices.size()-1, sel+1);
+                sel = std::min((int)voices->size()-1, sel+1);
                 break;
             case InputManager::ACCEPT:
-                voices[sel].action();
+				voices->at(sel).action();
                 close = true;
                 break;
             default:
                 break;
         }
 	}
+	
+	return sel;
+}	
+	
+void GMenu2X::contextMenu() {
+	vector<MenuOption> voices;
+	
+	voices.push_back(MenuOption(tr.translate("Add link in $1",menu->selSection().c_str(),NULL), 
+							MakeDelegate(this, &GMenu2X::addLink)));
+	
+	LinkApp* app = menu->selLinkApp();
+	if(app){
+		
+		if(fileExists(app->getManual()))
+			voices.push_back(MenuOption(tr.translate("Show manual of $1",menu->selLink()->getTitle().c_str(),NULL), 
+							MakeDelegate(this, &GMenu2X::showManual)));
+	
+		voices.push_back(MenuOption(tr.translate("Edit $1",menu->selLink()->getTitle().c_str(),NULL), 
+							MakeDelegate(this, &GMenu2X::editLink)));
+		voices.push_back(MenuOption(tr.translate("Delete $1 link",menu->selLink()->getTitle().c_str(),NULL), 
+							MakeDelegate(this, &GMenu2X::deleteLink)));
+	}
+
+	voices.push_back(MenuOption(tr["Add section"], MakeDelegate(this, &GMenu2X::addSection)));
+	voices.push_back(MenuOption(tr["Rename section"], MakeDelegate(this, &GMenu2X::renameSection)));
+	voices.push_back(MenuOption(tr["Delete section"], MakeDelegate(this, &GMenu2X::deleteSection)));
+	voices.push_back(MenuOption(tr["Scan for applications and games"], MakeDelegate(this, &GMenu2X::scanner)));
+	
+	listbox(&voices);
 }
 
 void GMenu2X::changeWallpaper() {
@@ -2029,6 +2201,41 @@ POWERSTATE getPwrState() {
 	return pwrstate;
 }
 
+
+unsigned short GMenu2X::getWiFiLevel() {
+
+    char line[LINE_BUFSIZE];
+    
+    vector<string> scriptOutput;
+	
+    /* Get a pipe where the output from the scripts comes in */
+// 	FILE* pipe = popen("iwconfig wlan0 | sed 's/ /\n/g' |grep Quality|sed 's/Quality=//g'|sed 's/\/70//g'", "r");
+    FILE* pipe = popen("/usr/local/bin/wifisignal", "r");
+		if (pipe == NULL) return 6;        /* return with exit code indicating error */
+    
+	//	strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=WPA-PSK\n\tpsk=\\\"" + id.getInput() + "\\\"\n}\" >> /etc/wpa.conf";
+
+    /* Read script output from the pipe... for this one there should only be one line */
+    while (fgets(line, LINE_BUFSIZE, pipe) != NULL) {
+//        scriptOutput += line;
+		scriptOutput.push_back(line);
+    }
+	
+	pclose(pipe); /* Close the pipe */
+
+
+	int nWiFi = 0;
+	if(scriptOutput.size())
+		nWiFi = atoi(scriptOutput[0].c_str());
+		
+	if 		(nWiFi==0) 	return 0;
+	else if (nWiFi>66) 	return 5;
+	else if (nWiFi>60) 	return 4;
+	else if (nWiFi>50) 	return 3;
+	else if (nWiFi>30)  return 2;
+	else 				return 1;
+}
+
 unsigned short GMenu2X::getBatteryLevel() {
 #ifdef PLATFORM_GP2X
 /*	if (batteryHandle<=0) return 0;
@@ -2069,17 +2276,17 @@ unsigned short GMenu2X::getBatteryLevel() {
 	if (getPwrState() == AC_POWER)
 		return 6;
 	
-	if (!batteryHandle) return 0;
+	if (!batteryHandle) return '0';
 	int volt_val = 0;
 	fscanf(batteryHandle, "%d", &volt_val);
 	rewind(batteryHandle);
-	if (volt_val>4000000) return 5;
-	if (volt_val>3900000) return 4;
-	if (volt_val>3750000) return 3;
-	if (volt_val>3650000) return 2;
-	if (volt_val>3550000) return 1;
-
-	return 0;
+	
+	if 		(volt_val>4000000) 	return 5;
+	else if (volt_val>3900000) 	return 4;
+	else if (volt_val>3750000) 	return 3;
+	else if (volt_val>3650000) 	return 2;
+	else if (volt_val>3550000) 	return 1;
+	else 	 					return 0;
 #endif
 }
 

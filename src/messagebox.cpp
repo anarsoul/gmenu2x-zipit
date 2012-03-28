@@ -2,6 +2,8 @@
  *   Copyright (C) 2006 by Massimiliano Torromeo                           *
  *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
+	 Copyright 2012 Mark Majeres (slug_)  mark@engine12.com		 
+
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
@@ -25,7 +27,7 @@
 
 using namespace std;
 
-MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon) {
+MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon, BlockingAction act):action(act) {
 	this->gmenu2x = gmenu2x;
 	this->text = text;
 	this->icon = icon;
@@ -36,6 +38,7 @@ MessageBox::MessageBox(GMenu2X *gmenu2x, const string &text, const string &icon)
 		buttonPositions[i].h = gmenu2x->font->getHeight();
 	}
 
+	if(action == 0)
 	//Default enabled button
 	buttons[InputManager::ACCEPT] = "OK";
 
@@ -58,7 +61,13 @@ void MessageBox::setButton(InputManager::Button button, const string &label) {
 	buttons[button] = label;
 }
 
-int MessageBox::exec() {
+void MessageBox::setText(const string &str){
+	text = str;
+	Draw();		
+}
+	
+void MessageBox::Draw(){
+		
 	Surface bg(gmenu2x->s);
 	//Darken background
 	bg.box(0, 0, gmenu2x->resX, gmenu2x->resY, 0,0,0,200);
@@ -95,9 +104,22 @@ int MessageBox::exec() {
 	bg.convertToDisplayFormat();
 	bg.blit(gmenu2x->s,0,0);
 	gmenu2x->s->flip();
+}
+
+
+int MessageBox::exec() {
+	
+	Draw();
 
 	int result = -1;
-	while (result < 0) {
+
+	if(action)
+		action(this, result);
+
+	else{
+		
+		while (result < 0) {
+
 
 #ifdef PLATFORM_GP2X
 		//touchscreen
@@ -118,8 +140,9 @@ int MessageBox::exec() {
 			result = event.button;
 		}
 
+
 		usleep(LOOP_DELAY);
 	}
-
+	}
 	return result;
 }

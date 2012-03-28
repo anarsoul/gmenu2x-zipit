@@ -142,7 +142,8 @@ void TextDialog::exec() {
 					firstRow = max(0u, text->size() - rowsPerPage);
 				}
 				break;
-			case InputManager::SETTINGS:
+
+			case InputManager::ACCEPT:
 			case InputManager::CANCEL:
 				close = true;
 				break;

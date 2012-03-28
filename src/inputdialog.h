@@ -2,6 +2,8 @@
  *   Copyright (C) 2006 by Massimiliano Torromeo                           *
  *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
+	 Copyright 2012 Mark Majeres (slug_)  mark@engine12.com		 
+
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
@@ -43,23 +45,32 @@ public:
 private:
 	void backspace();
 	void space();
+/*
 	void confirm();
 	void changeKeys();
 
 	void drawVirtualKeyboard();
 	void setKeyboard(int);
 
-	InputManager &inputMgr;
-	Touchscreen &ts;
-	int selRow, selCol;
-	bool close, ok;
-	std::string title, text, icon;
+	ButtonBox *buttonbox;
+	  
 	short curKeyboard;
+
 	std::vector< std::vector<std::string> > keyboard;
 	std::vector<std::string> *kb;
 	int kbLength, kbWidth, kbHeight, kbLeft;
 	SDL_Rect kbRect;
-	ButtonBox *buttonbox;
+ 	int selRow, selCol;
+ */
+
+	InputManager &inputMgr;
+	Touchscreen &ts;
+
+
+	std::string title, text, icon;
+
+
+
 	std::string input;
 };
 

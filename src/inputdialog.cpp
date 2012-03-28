@@ -2,6 +2,8 @@
  *   Copyright (C) 2006 by Massimiliano Torromeo                           *
  *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
+	 Copyright 2012 Mark Majeres (slug_)  mark@engine12.com		 
+
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
@@ -19,8 +21,8 @@
  ***************************************************************************/
 
 #include "inputdialog.h"
+#include <stdlib.h>
 
-#include "buttonbox.h"
 #include "gmenu2x.h"
 #include "iconbutton.h"
 #include "utilities.h"
@@ -29,10 +31,6 @@
 
 using namespace std;
 using namespace fastdelegate;
-
-#define KEY_WIDTH 20
-#define KEY_HEIGHT 20
-#define KB_TOP 90
 
 InputDialog::InputDialog(GMenu2X *gmenu2x, InputManager &inputMgr_,
 		Touchscreen &ts_, const string &text,
@@ -53,89 +51,21 @@ InputDialog::InputDialog(GMenu2X *gmenu2x, InputManager &inputMgr_,
 		this->icon = icon;
 	}
 
+	Surface bg(gmenu2x->s);
+	//Darken background
+	bg.box(0, 0, gmenu2x->resX, gmenu2x->resY, 0,0,0,200);
+	
 	input = startvalue;
-	selCol = 0;
-	selRow = 0;
-	keyboard.resize(7);
-
-	keyboard[0].push_back("abcdefghijklm");
-	keyboard[0].push_back("nopqrstuvwxyz");
-	keyboard[0].push_back("0123456789.  ");
-
-	keyboard[1].push_back("ABCDEFGHIJKLM");
-	keyboard[1].push_back("NOPQRSTUVWXYZ");
-	keyboard[1].push_back("_\"'`.,:;!?   ");
 
 
-	keyboard[2].push_back("¡¿*+-/\\&<=>|");
-	keyboard[2].push_back("()[]{}@#$%^~");
-	keyboard[2].push_back("_\"'`.,:;!?  ");
-
-
-	keyboard[3].push_back("àáèéìíòóùúýäõ");
-	keyboard[3].push_back("ëïöüÿâêîôûåãñ");
-	keyboard[3].push_back("čďěľĺňôřŕšťůž");
-	keyboard[3].push_back("ąćęłńśżź     ");
-
-	keyboard[4].push_back("ÀÁÈÉÌÍÒÓÙÚÝÄÕ");
-	keyboard[4].push_back("ËÏÖÜŸÂÊÎÔÛÅÃÑ");
-	keyboard[4].push_back("ČĎĚĽĹŇÔŘŔŠŤŮŽ");
-	keyboard[4].push_back("ĄĆĘŁŃŚŻŹ     ");
-
-
-	keyboard[5].push_back("æçабвгдеёжзий ");
-	keyboard[5].push_back("клмнопрстуфхцч");
-	keyboard[5].push_back("шщъыьэюяøðßÐÞþ");
-
-	keyboard[6].push_back("ÆÇАБВГДЕЁЖЗИЙ ");
-	keyboard[6].push_back("КЛМНОПРСТУФХЦЧ");
-	keyboard[6].push_back("ШЩЪЫЬЭЮЯØðßÐÞþ");
-
-	setKeyboard(0);
-
-	buttonbox = new ButtonBox(gmenu2x);
-	IconButton *btnBackspace = new IconButton(gmenu2x, ts,
-			"skin:imgs/buttons/l.png", gmenu2x->tr["Backspace"]);
-	btnBackspace->setAction(MakeDelegate(this, &InputDialog::backspace));
-	buttonbox->add(btnBackspace);
-
-	IconButton *btnSpace = new IconButton(gmenu2x, ts,
-			"skin:imgs/buttons/r.png", gmenu2x->tr["Space"]);
-	btnSpace->setAction(MakeDelegate(this, &InputDialog::space));
-	buttonbox->add(btnSpace);
-
+//	buttonbox = new ButtonBox(gmenu2x);
 	IconButton *btnConfirm = new IconButton(gmenu2x, ts,
 			"skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]);
-	btnConfirm->setAction(MakeDelegate(this, &InputDialog::confirm));
-	buttonbox->add(btnConfirm);
+//	btnConfirm->setAction(MakeDelegate(this, &InputDialog::confirm));
+//	buttonbox->add(btnConfirm);
 
-	IconButton *btnChangeKeys = new IconButton(gmenu2x, ts,
-			"skin:imgs/buttons/cancel.png", gmenu2x->tr["Change keys"]);
-	btnChangeKeys->setAction(MakeDelegate(this, &InputDialog::changeKeys));
-	buttonbox->add(btnChangeKeys);
 }
 
-void InputDialog::setKeyboard(int kb) {
-	kb = constrain(kb, 0, keyboard.size() - 1);
-	curKeyboard = kb;
-	this->kb = &(keyboard[kb]);
-	kbLength = this->kb->at(0).length();
-	for (int x = 0, l = kbLength; x < l; x++) {
-		if (gmenu2x->font->utf8Code(this->kb->at(0)[x])) {
-			kbLength--;
-			x++;
-		}
-	}
-
-	kbLeft = 160 - kbLength * KEY_WIDTH / 2;
-	kbWidth = kbLength * KEY_WIDTH + 3;
-	kbHeight = (this->kb->size() + 1) * KEY_HEIGHT + 3;
-
-	kbRect.x = kbLeft - 3;
-	kbRect.y = KB_TOP - 2;
-	kbRect.w = kbWidth;
-	kbRect.h = kbHeight;
-}
 
 bool InputDialog::exec() {
 	SDL_Rect box = { 0, 60, 0, gmenu2x->font->getHeight() + 4 };
@@ -143,15 +73,17 @@ bool InputDialog::exec() {
 	Uint32 caretTick = 0, curTick;
 	bool caretOn = true;
 
-	close = false;
-	ok = true;
+	SDL_EnableUNICODE(SDL_ENABLE);
+
+	bool close = false;
+	bool ok = true;
 	while (!close) {
 		gmenu2x->bg->blit(gmenu2x->s,0,0);
 		writeTitle(title);
 		writeSubTitle(text);
 		drawTitleIcon(icon);
 
-		buttonbox->paint(5);
+//		buttonbox->paint(5);
 
 		box.w = gmenu2x->font->getTextWidth(input) + 18;
 		box.x = 160 - box.w / 2;
@@ -175,43 +107,61 @@ bool InputDialog::exec() {
 		}
 
 		if (ts.available()) ts.poll();
-		drawVirtualKeyboard();
+		
 		gmenu2x->s->flip();
 
-		switch (inputMgr.waitForPressedButton()) {
-			case InputManager::SETTINGS:
-				ok = false;
-				close = true;
-				break;
-			case InputManager::UP:
-				selRow--;
-				break;
-			case InputManager::DOWN:
-				selRow++;
-				if (selRow == (int)kb->size()) selCol = selCol < 8 ? 0 : 1;
-				break;
-			case InputManager::LEFT:
-				selCol--;
-				break;
-			case InputManager::RIGHT:
-				selCol++;
-				break;
-			case InputManager::ACCEPT:
-				confirm();
-				break;
-			case InputManager::CANCEL:
-				changeKeys();
-				break;
-			case InputManager::ALTLEFT:
-				backspace();
-				break;
-			case InputManager::ALTRIGHT:
-				space();
-				break;
-			default:
-				break;
+
+		SDL_Event event;
+	
+		if (SDL_PollEvent(&event))
+		{
+			
+			if(event.type == SDL_KEYDOWN){
+				
+			//	SDLMod modifier = event.key.keysym.mod;
+			//	if( modifier & (KMOD_LCTRL | KMOD_LSHIFT | KMOD_LALT) )
+			//		continue;
+					
+				switch (event.key.keysym.sym)
+				{
+					case SDLK_ESCAPE:
+							ok = false;
+							close = true;
+							break;
+							
+					case SDLK_RETURN:
+							close = true;
+							break;
+
+					case SDLK_SPACE:
+							input += ' '; 
+							break;
+				   
+					case SDLK_BACKSPACE:
+							backspace();  
+							break;
+				   
+					case SDLK_LSHIFT:
+					case SDLK_LCTRL:
+					case SDLK_LALT:
+					case SDLK_HOME:
+					case SDLK_END:
+							break;
+							
+					default:
+							input += (wchar_t)event.key.keysym.unicode;
+						//	input += SDL_GetKeyName( event.key.keysym.sym );
+							break;
+
+				}
+			}
 		}
+		
+		usleep(LOOP_DELAY);
+		
 	}
+				
+	SDL_EnableUNICODE(SDL_DISABLE);
 
 	return ok;
 }
@@ -222,10 +172,7 @@ void InputDialog::backspace() {
 		- (gmenu2x->font->utf8Code(input[input.length() - 2]) ? 2 : 1));
 }
 
-void InputDialog::space() {
-	input += " ";
-}
-
+/*
 void InputDialog::confirm() {
 	if (selRow == (int)kb->size()) {
 		if (selCol == 0) {
@@ -240,14 +187,6 @@ void InputDialog::confirm() {
 			if (utf8) x++;
 			xc++;
 		}
-	}
-}
-
-void InputDialog::changeKeys() {
-	if (curKeyboard == 6) {
-		setKeyboard(0);
-	} else {
-		setKeyboard(curKeyboard + 1);
 	}
 }
 
@@ -329,3 +268,4 @@ void InputDialog::drawVirtualKeyboard() {
 			KB_TOP + kb->size() * KEY_HEIGHT + KEY_HEIGHT / 2,
 			ASFont::HAlignCenter, ASFont::VAlignMiddle);
 }
+*/
