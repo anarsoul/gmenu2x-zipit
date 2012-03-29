@@ -112,6 +112,8 @@ bool SettingsDialog::exec() {
 			switch (button) {
 				case InputManager::CANCEL:
 				case InputManager::SETTINGS:
+				case InputManager::MENU:
+				
 					close = true;
 					break;
 				case InputManager::UP:

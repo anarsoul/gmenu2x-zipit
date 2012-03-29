@@ -59,8 +59,8 @@ InputDialog::InputDialog(GMenu2X *gmenu2x, InputManager &inputMgr_,
 
 
 //	buttonbox = new ButtonBox(gmenu2x);
-	IconButton *btnConfirm = new IconButton(gmenu2x, ts,
-			"skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]);
+//	IconButton *btnConfirm = new IconButton(gmenu2x, ts,
+//			"skin:imgs/buttons/accept.png", gmenu2x->tr["Confirm"]);
 //	btnConfirm->setAction(MakeDelegate(this, &InputDialog::confirm));
 //	buttonbox->add(btnConfirm);
 
@@ -144,12 +144,15 @@ bool InputDialog::exec() {
 					case SDLK_LSHIFT:
 					case SDLK_LCTRL:
 					case SDLK_LALT:
+					case SDLK_RALT:
+					case SDLK_RSHIFT:
+					case SDLK_RCTRL:
 					case SDLK_HOME:
 					case SDLK_END:
 							break;
 							
 					default:
-							input += (wchar_t)event.key.keysym.unicode;
+							input += (char)(event.key.keysym.unicode & 0x7F);
 						//	input += SDL_GetKeyName( event.key.keysym.sym );
 							break;
 

@@ -48,7 +48,7 @@
 #include "textdialog.h"
 #include "wallpaperdialog.h"
 #include "utilities.h"
-
+#include <locale>
 
 #include <iostream>
 #include <sstream>
@@ -215,6 +215,8 @@ int main(int /*argc*/, char * /*argv*/[]) {
 		ERROR("Unable to find gmenu2x home directory. The $HOME variable is not defined.\n");
 		return 1;
 	}
+
+	locale::global(locale(""));
 
 	gmenu2x_home = (string)home + (string)"/.gmenu2x";
 	if (!fileExists(gmenu2x_home) && mkdir(gmenu2x_home.c_str(), 0770) < 0) {
@@ -663,13 +665,15 @@ void GMenu2X::wpaAdd(string& SSID){
 		if (id.exec() == false) 
 		return;
 
+		strPassword = id.getInput();
+		
 		switch(sel) {
 				case 0:
-					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=WPA-PSK\n\tpsk=\\\"" + id.getInput() + "\\\"\n}\" >> /etc/wpa.conf";
+					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=WPA-PSK\n\tpsk=\\\"" + strPassword.c_str() + "\\\"\n}\" >> /etc/wpa.conf";
 					break;
 				case 1:
 				case 2:	
-					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=NONE\n\twep_key0=\\\"" + id.getInput() + "\\\"\n}\" >> /etc/wpa.conf";
+					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=NONE\n\twep_key0=\\\"" + strPassword.c_str() + "\\\"\n}\" >> /etc/wpa.conf";
 					break;
 	
 				default:
@@ -685,9 +689,9 @@ void GMenu2X::wpaAdd(string& SSID){
 		
 }
 
-void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& ret){
+void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
 	
-	ret = system("/usr/local/sbin/wpa-connect wlan0 /etc/wpa.conf");
+	int ret = system("/usr/local/sbin/wpa-connect wlan0 /etc/wpa.conf");
 
 	if(ret == 0){
 		pMsgBox->setText("Connected...");
@@ -696,7 +700,7 @@ void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& ret){
 		nwifilevel = getWiFiLevel();
 		bRedraw=true;
 	}
-	WEXITSTATUS(ret);
+	retVal = WEXITSTATUS(ret);
 	return ;
 }
 

@@ -76,7 +76,7 @@ typedef std::tr1::unordered_map<std::string, std::string, std::tr1::hash<std::st
 typedef std::tr1::unordered_map<std::string, int, std::tr1::hash<std::string> > ConfIntHash;
 
 class GMenu2X {
-	
+
 private:
 	Touchscreen ts;
 	std::string path; //!< Contains the working directory of GMenu2X
