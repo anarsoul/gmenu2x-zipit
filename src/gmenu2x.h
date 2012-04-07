@@ -178,6 +178,8 @@ public:
 	*/
 	const std::string &getExePath();
 
+	void writePID();
+	
 	InputManager input;
 
 	//Configuration hashes

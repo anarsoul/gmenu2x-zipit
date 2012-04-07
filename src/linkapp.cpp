@@ -432,7 +432,7 @@ void LinkApp::launch(const string &selectedFile, const string &selectedDir) {
 		int pgid = tcgetpgrp(STDOUT_FILENO);
 		signal(SIGTTOU, SIG_IGN);
 		tcsetpgrp(STDOUT_FILENO, pgid);
-
+		gmenu2x->writePID();
 		execlp("/bin/sh","/bin/sh", "-c", command.c_str(), NULL);
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
 		//try relaunching gmenu2x

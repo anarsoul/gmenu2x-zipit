@@ -66,6 +66,10 @@
 
 #include <sys/fcntl.h> //for battery
 
+#define UNLOCK_VT
+#include <linux/vt.h>
+#include <linux/kd.h>
+
 #ifdef PLATFORM_DINGUX
 #	define UNLOCK_VT
 #	include <sys/ioctl.h>
@@ -631,6 +635,11 @@ void GMenu2X::wifiAddNetwork() {
     
 	pclose(pipe); 
 
+	if(scriptOutput.empty()){
+		MessageBox(this,tr["No Networks were found."],"skin:icons/wifi.png").exec();
+		return;
+	}
+	
 	for (unsigned int i=0; i<scriptOutput.size(); i++) 
 		voices.push_back(MenuOption(scriptOutput[i], MakeDelegate(this, &GMenu2X::deadLink)));
 	
@@ -1300,6 +1309,14 @@ void GMenu2X::main() {
 				s->write( font, tr["START: Show options menu"], 20, 170 );
 				if (fwType=="open2x") s->write( font, tr["X: Toggle speaker mode"], 20, 185 );
 	#endif
+
+				s->write( font, tr["Enter: Launch link / Confirm action"], 20, 80 );
+				s->write( font, tr["Esc: Close the current menu or dialog"], 20, 95 );
+				s->write( font, tr["Prev, Next: Change section"], 20, 110 );
+				s->write( font, tr["M: Show contextual menu"], 20, 155 );
+				s->write( font, tr["S: Show settings menu"], 20, 170 );
+
+
 				s->flip();
 				while (input.waitForPressedButton() != InputManager::CANCEL) {}
 				helpDisplayed=false;
@@ -1487,6 +1504,7 @@ void GMenu2X::explorer() {
 		chdir(fd.getPath().c_str());
 		quit();
 		setClock(cpuFreqAppDefault);
+		writePID();
 		execlp("/bin/sh","/bin/sh","-c",command.c_str(),NULL);
 
 		//if execution continues then something went wrong and as we already called SDL_Quit we cannot continue
@@ -1725,6 +1743,14 @@ void GMenu2X::showManual() {
 	menu->selLinkApp()->showManual();
 }
 
+void GMenu2X::writePID() {
+	ofstream inf("/tmp/run/gmenu.pid");
+	if (inf.is_open()) {
+		inf << getpid()<< endl;
+		inf.close();
+		sync();
+	}
+}
 
 int GMenu2X::listbox(std::vector<MenuOption>* voices){
 	bool close = false;
