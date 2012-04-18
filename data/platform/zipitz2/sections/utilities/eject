@@ -1,0 +1,4 @@
+title= eject
+icon=skin:icons/sd.png
+exec=/usr/local/sbin/eject
+

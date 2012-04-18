@@ -81,6 +81,12 @@ void InputManager::readConfFile(const string &conffile) {
 		else if (name == "voldown")  button = VOLDOWN;
 		else if (name == "power")    button = POWER;
 		else if (name == "lock")     button = LOCK;
+		else if (name == "ipaddress")		button = IPSTATUS;
+		else if (name == "wifi")  			button = WIFI_CONNECT;
+		else if (name == "shell")			button = BASH_SHELL;
+		else if (name == "eject")			button = EJECT;
+		else if (name == "usbmode")			button = USBMODE;
+		
 		else {
 			WARNING("InputManager: Ignoring unknown button name \"%s\"\n",
 					name.c_str());

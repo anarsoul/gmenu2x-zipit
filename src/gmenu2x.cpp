@@ -1152,6 +1152,13 @@ int GMenu2X::getKbdBackLight()
 	return val;
 }
 
+void GMenu2X::getTime(char* strTime)
+{
+	time_t t = time(NULL);
+	struct tm theLocalTime = *localtime(&t);
+	snprintf(strTime, sizeof(strTime), "%2d:%02d", theLocalTime.tm_hour, theLocalTime.tm_min); 
+}
+			
 void GMenu2X::main() {
 	uint linksPerPage = linkColumns*linkRows;
 	int linkSpacingX = (resX-10 - linkColumns*skinConfInt["linkWidth"])/linkColumns;
@@ -1193,6 +1200,9 @@ void GMenu2X::main() {
 	bRedraw = true;
 	int nbattlevel = getBatteryLevel();
 	nwifilevel = getWiFiLevel();
+	bIsOverlayMounted = getOverlayStatus();
+	char strTime[10];
+	getTime(strTime);
 	
 	while (!quit) {
 //		tickNow = SDL_GetTicks();
@@ -1264,6 +1274,13 @@ void GMenu2X::main() {
 				btnContextMenu.paint();
 			}
 			
+			//draw the time
+			s->write ( font, strTime, manualX+19*2, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
+			
+			//draw overlayfs icon
+			if(bIsOverlayMounted)
+				sc.skinRes("imgs/overlayfs.png")->blit( s, resX-19*2, bottomBarIconY );
+			
 			//draw wifi status/signal level
 			if (nwifilevel == 0)
 				wifiIcon = "imgs/wifi/off.png";
@@ -1313,9 +1330,10 @@ void GMenu2X::main() {
 				s->write( font, tr["Enter: Launch link / Confirm action"], 20, 80 );
 				s->write( font, tr["Esc: Close the current menu or dialog"], 20, 95 );
 				s->write( font, tr["Prev, Next: Change section"], 20, 110 );
-				s->write( font, tr["M: Show contextual menu"], 20, 155 );
-				s->write( font, tr["S: Show settings menu"], 20, 170 );
-
+				s->write( font, tr["M: contextual menu "], 20, 140 );     s->write( font, tr["S: settings menu"], 160, 140 );
+				s->write( font, tr["A: ip address/status"], 20, 155 );    s->write( font, tr["B: bash prompt"], 160, 155 );
+				s->write( font, tr["W: wifi menu"], 20, 170 );            s->write( font, tr["U: usb menu"], 160, 170 );
+				s->write( font, tr["E: unmount SD card"], 20, 185);			
 
 				s->flip();
 				while (input.waitForPressedButton() != InputManager::CANCEL) {}
@@ -1372,7 +1390,27 @@ void GMenu2X::main() {
 	
 		if (input.pollEvent(&event) && event.state == InputManager::PRESSED)
 		{	
+			Link* pLink=0;
+			
 			switch (event.button) {
+				case InputManager::IPSTATUS:
+					ipstatus();
+					break;
+				case InputManager::WIFI_CONNECT:
+					wifiSetup();
+					break;
+				case InputManager::BASH_SHELL:
+					pLink = menu->getLink(std::string("bash"));
+					if(pLink) pLink->run();
+					break;
+				case InputManager::EJECT:
+					pLink = menu->getLink(std::string("eject"));
+					if(pLink) pLink->run();
+					break;
+				case InputManager::USBMODE:
+					setUSBmode();
+					break;
+				
 				case InputManager::ACCEPT:
 					if (menu->selLink() != NULL) menu->selLink()->run();
 					break;
@@ -1469,18 +1507,27 @@ void GMenu2X::main() {
         */
 		
 		if(nloops++ > 200){
-			int nlevel = getBatteryLevel();
-			if(nlevel != nbattlevel){
-				nbattlevel = nlevel;	
+			int nVal = getBatteryLevel();
+			if(nVal != nbattlevel){
+				nbattlevel = nVal;	
 				bRedraw =true;
 			}
 			
-			nlevel = getWiFiLevel();
-			if(nlevel != nwifilevel){
-				nwifilevel = nlevel;
+			nVal = getWiFiLevel();
+			if(nVal != nwifilevel){
+				nwifilevel = nVal;
 				bRedraw =true;
 			}
 			
+			nVal = getOverlayStatus();
+			if(nVal != bIsOverlayMounted){
+				bIsOverlayMounted = nVal;
+				bRedraw =true;
+			}
+			
+			
+			getTime(strTime); 
+
 			nloops=0;
 		}
 				
@@ -2231,6 +2278,18 @@ POWERSTATE getPwrState() {
 	return pwrstate;
 }
 
+int GMenu2X::getOverlayStatus() {
+	static const char file[] = "/tmp/overlay/status";
+	FILE *fd = fopen(file, "r+");
+	int status=0;
+	if (fd != NULL) {
+		char buf [5];
+		status = atoi(fgets(buf, sizeof buf, fd));
+	
+		fclose(fd);
+	}
+	return status;
+}
 
 unsigned short GMenu2X::getWiFiLevel() {
 
@@ -2421,16 +2480,21 @@ const string &GMenu2X::getExePath() {
 string GMenu2X::getDiskFree(const char *path) {
 	stringstream ss;
 	string df = "";
+	string units = "";
 	struct statvfs b;
 
 	int ret = statvfs(path, &b);
 	if (ret==0) {
 		// Make sure that the multiplication happens in 64 bits.
-		unsigned long long free =
-			((unsigned long long)b.f_bfree * b.f_bsize) / 1048576;
+		unsigned long long free = ((unsigned long long)b.f_bfree * b.f_bsize) / 1084;
+		if(free>1084)
+			free /= 1084;
+		else
+			units="KB";
+			
 		unsigned long long total =
 			((unsigned long long)b.f_blocks * b.f_frsize) / 1048576;
-		ss << free << "/" << total << "MB";
+		ss << free << units << "/" << total << "MB";
 		ss >> df;
 	} else {WARNING("statvfs failed with error '%s'.\n", strerror(errno));}
 	return df;

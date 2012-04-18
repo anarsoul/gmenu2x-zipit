@@ -446,6 +446,18 @@ void Menu::readLinksOfSection(std::string path, std::vector<std::string> &linkfi
 	closedir(dirp);
 }
 
+Link* Menu::getLink(const std::string &title)
+{
+	for (vector< vector<Link*> >::iterator section = links.begin(); section<links.end(); section++){
+		for (vector<Link*>::iterator link = section->begin(); link<section->end(); link++){
+			if(title.compare((*link)->getTitle()) == 0)
+				return *link;
+		}
+	}
+	
+	return 0;
+}
+
 void Menu::readLinks() {
 	vector<string> linkfiles;
 
