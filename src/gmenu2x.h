@@ -104,7 +104,6 @@ private:
 	
 	int nwifilevel;
 	bool bRedraw;
-	bool bIsOverlayMounted;
 	
 	FILE* batteryHandle, *backlightHandle, *keyboardBacklightHandle;
 	void browsePath(const std::string &path, std::vector<std::string>* directories, std::vector<std::string>* files);
@@ -240,7 +239,7 @@ public:
 	void wifiOff();
 	void wpaAdd(std::string& SSID);
 	void setUSBmode();
-	void getTime(char* strTime);
+	void getTime(char* strTime, int len);
  
 	int listbox(std::vector<MenuOption>* voices);
 	void deadLink(){}

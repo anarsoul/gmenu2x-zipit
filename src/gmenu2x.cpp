@@ -1152,11 +1152,23 @@ int GMenu2X::getKbdBackLight()
 	return val;
 }
 
-void GMenu2X::getTime(char* strTime)
+void GMenu2X::getTime(char* strTime, int len)
 {
+	char am_pm[10]="AM";
 	time_t t = time(NULL);
 	struct tm theLocalTime = *localtime(&t);
-	snprintf(strTime, sizeof(strTime), "%2d:%02d", theLocalTime.tm_hour, theLocalTime.tm_min); 
+	int nHr = theLocalTime.tm_hour;	
+
+	if(theLocalTime.tm_hour >= 12)
+	{
+		am_pm[0]='P';
+		nHr %=12;	
+	}
+	
+	if(nHr == 0)
+		nHr = 12;
+		
+	snprintf(strTime, len, "%2d:%02d %s", nHr, theLocalTime.tm_min, am_pm); 
 }
 			
 void GMenu2X::main() {
@@ -1200,9 +1212,9 @@ void GMenu2X::main() {
 	bRedraw = true;
 	int nbattlevel = getBatteryLevel();
 	nwifilevel = getWiFiLevel();
-	bIsOverlayMounted = getOverlayStatus();
-	char strTime[10];
-	getTime(strTime);
+
+	char strTime[20];
+	getTime(strTime, sizeof(strTime));
 	
 	while (!quit) {
 //		tickNow = SDL_GetTicks();
@@ -1276,9 +1288,10 @@ void GMenu2X::main() {
 			
 			//draw the time
 			s->write ( font, strTime, manualX+19*2, bottomBarTextY, ASFont::HAlignLeft, ASFont::VAlignMiddle );
+			sc.skinRes("imgs/clock.png")->blit( s, manualX+19, bottomBarIconY );
 			
 			//draw overlayfs icon
-			if(bIsOverlayMounted)
+			if(getOverlayStatus() != 0)
 				sc.skinRes("imgs/overlayfs.png")->blit( s, resX-19*2, bottomBarIconY );
 			
 			//draw wifi status/signal level
@@ -1506,28 +1519,13 @@ void GMenu2X::main() {
 		}
         */
 		
-		if(nloops++ > 200){
-			int nVal = getBatteryLevel();
-			if(nVal != nbattlevel){
-				nbattlevel = nVal;	
+		if(nloops++ > 200){  // about every ten seconds
+			
+			nbattlevel = getBatteryLevel();
+			nwifilevel = getWiFiLevel();
+				
+			getTime(strTime, sizeof(strTime)); 
 				bRedraw =true;
-			}
-			
-			nVal = getWiFiLevel();
-			if(nVal != nwifilevel){
-				nwifilevel = nVal;
-				bRedraw =true;
-			}
-			
-			nVal = getOverlayStatus();
-			if(nVal != bIsOverlayMounted){
-				bIsOverlayMounted = nVal;
-				bRedraw =true;
-			}
-			
-			
-			getTime(strTime); 
-
 			nloops=0;
 		}
 				
