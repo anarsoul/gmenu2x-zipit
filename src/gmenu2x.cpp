@@ -455,6 +455,7 @@ GMenu2X::GMenu2X()
 
 	nwifilevel=0;
 	bRedraw=true;
+	nOverlayStatus=0;
 }
 
 GMenu2X::~GMenu2X() {
@@ -563,6 +564,8 @@ void GMenu2X::initFont() {
 
 void GMenu2X::initMenu() {
 	//Menu structure handler
+	if(menu) delete menu;
+	
 	menu = new Menu(this, ts);
 	for (uint i=0; i<menu->getSections().size(); i++) {
 		//Add virtual links in the applications section
@@ -1212,6 +1215,7 @@ void GMenu2X::main() {
 	bRedraw = true;
 	int nbattlevel = getBatteryLevel();
 	nwifilevel = getWiFiLevel();
+	nOverlayStatus = getOverlayStatus();
 
 	char strTime[20];
 	getTime(strTime, sizeof(strTime));
@@ -2283,8 +2287,13 @@ int GMenu2X::getOverlayStatus() {
 	if (fd != NULL) {
 		char buf [5];
 		status = atoi(fgets(buf, sizeof buf, fd));
-	
 		fclose(fd);
+
+		if(status != nOverlayStatus){
+			//reload icons
+			initMenu();
+			nOverlayStatus = status;
+		}
 	}
 	return status;
 }

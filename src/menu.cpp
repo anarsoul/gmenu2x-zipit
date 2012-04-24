@@ -480,9 +480,11 @@ void Menu::readLinks() {
 		sort(linkfiles.begin(), linkfiles.end(),case_less());
 		for (uint x=0; x<linkfiles.size(); x++) {
 			LinkApp *link = new LinkApp(gmenu2x, ts, gmenu2x->input, linkfiles[x].c_str());
-			link->setSize(gmenu2x->skinConfInt["linkWidth"], gmenu2x->skinConfInt["linkHeight"]);
-			if (link->targetExists())
+			if (link->targetExists()){
+				
+				link->setSize(gmenu2x->skinConfInt["linkWidth"], gmenu2x->skinConfInt["linkHeight"]);
 				links[i].push_back(link);
+			}
 			else
 				delete link;
 		}

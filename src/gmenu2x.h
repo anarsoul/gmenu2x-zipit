@@ -104,6 +104,7 @@ private:
 	
 	int nwifilevel;
 	bool bRedraw;
+	int nOverlayStatus;
 	
 	FILE* batteryHandle, *backlightHandle, *keyboardBacklightHandle;
 	void browsePath(const std::string &path, std::vector<std::string>* directories, std::vector<std::string>* files);
