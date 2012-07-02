@@ -2299,7 +2299,7 @@ unsigned short GMenu2X::getWiFiLevel() {
 	}
 	pclose(pipe); /* Close the pipe */
 
-	int nWiFi = 0;
+	int nWiFi = 110;
 	if(scriptOutput.size())
 		nWiFi = atoi(scriptOutput[0].c_str());
 	/* -40dBm is good, -110dBm is bad */
