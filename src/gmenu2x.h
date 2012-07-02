@@ -2,6 +2,8 @@
  *   Copyright (C) 2006 by Massimiliano Torromeo                           *
  *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
+	 Copyright 2012 Mark Majeres (slug_)  mark@engine12.com		 
+
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
@@ -23,7 +25,6 @@
 
 #include "surfacecollection.h"
 #include "translator.h"
-#include "FastDelegate.h"
 #include "touchscreen.h"
 #include "inputmanager.h"
 #include "surface.h"
@@ -33,16 +34,28 @@
 #include <vector>
 #include <tr1/unordered_map>
 
+#include "FastDelegate.h"
+
+typedef fastdelegate::FastDelegate0<> MenuAction;
+
+struct MenuOption {
+	std::string text;
+	MenuAction action;
+
+	MenuOption(std::string s, MenuAction a):text(s), action(a){}
+};
+
 class ASFont;
 class Button;
 class Menu;
 class Surface;
+class MessageBox;
 
 #ifndef GMENU2X_SYSTEM_DIR
 #define GMENU2X_SYSTEM_DIR "/usr/share/gmenu2x"
 #endif
 
-const int LOOP_DELAY = 30000;
+const int LOOP_DELAY = 50000; //.05sec
 
 extern const char *CARD_ROOT;
 extern const int CARD_ROOT_LEN;
@@ -63,10 +76,11 @@ typedef std::tr1::unordered_map<std::string, std::string, std::tr1::hash<std::st
 typedef std::tr1::unordered_map<std::string, int, std::tr1::hash<std::string> > ConfIntHash;
 
 class GMenu2X {
+
 private:
 	Touchscreen ts;
 	std::string path; //!< Contains the working directory of GMenu2X
-
+	
 	/*!
 	Retrieves the free disk space on the sd
 	@return String containing a human readable representation of the free disk space
@@ -85,7 +99,14 @@ private:
 	@return A number representing battery charge. 0 means fully discharged. 5 means fully charged. 6 represents a gp2x using AC power.
 	*/
 	unsigned short getBatteryLevel();
-	FILE* batteryHandle, *backlightHandle, *acHandle, *keyboardBacklightHandle;
+	unsigned short getWiFiLevel();
+	int getOverlayStatus();
+	
+	int nwifilevel;
+	bool bRedraw;
+	int nOverlayStatus;
+	
+	FILE* batteryHandle, *backlightHandle, *keyboardBacklightHandle;
 	void browsePath(const std::string &path, std::vector<std::string>* directories, std::vector<std::string>* files);
 	/*!
 	Starts the scanning of the nand and sd filesystems, searching for dge and gpu files and creating the links in 2 dedicated sections.
@@ -160,6 +181,8 @@ public:
 	*/
 	const std::string &getExePath();
 
+	void writePID();
+	
 	InputManager input;
 
 	//Configuration hashes
@@ -170,7 +193,7 @@ public:
 	//Configuration settings
 	bool useSelectionPng;
 	void setSkin(const std::string &skin, bool setWallpaper = true);
-
+	
 #ifdef PLATFORM_GP2X
 	//firmware type and version
 	std::string fwType, fwVersion;
@@ -209,7 +232,19 @@ public:
 	void viewLog();
 	void contextMenu();
 	void changeWallpaper();
-
+	void ipstatus();
+	void wifiConnect();
+	void wifiSetup();
+	void wifiAddNetwork();
+	void wpaConnect(MessageBox* pMsgBox, int& ret);
+	void wifiOff();
+	void wpaAdd(std::string& SSID);
+	void setUSBmode();
+	void getTime(char* strTime, int len);
+ 
+	int listbox(std::vector<MenuOption>* voices);
+	void deadLink(){}
+ 
 	void applyRamTimings();
 	void applyDefaultTimings();
 

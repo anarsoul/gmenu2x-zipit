@@ -86,6 +86,8 @@ public:
 	void linkDown();
 	void setLinkIndex(int i);
 
+	Link* getLink(const std::string &title);
+	
 	const std::vector<std::string> &getSections() { return sections; }
 	void renameSection(int index, const std::string &name);
 };

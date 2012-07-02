@@ -110,7 +110,10 @@ bool SettingsDialog::exec() {
 		InputManager::Button button = inputMgr.waitForPressedButton();
 		if (!voices[sel]->handleButtonPress(button)) {
 			switch (button) {
+				case InputManager::CANCEL:
 				case InputManager::SETTINGS:
+				case InputManager::MENU:
+				
 					close = true;
 					break;
 				case InputManager::UP:

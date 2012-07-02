@@ -446,6 +446,18 @@ void Menu::readLinksOfSection(std::string path, std::vector<std::string> &linkfi
 	closedir(dirp);
 }
 
+Link* Menu::getLink(const std::string &title)
+{
+	for (vector< vector<Link*> >::iterator section = links.begin(); section<links.end(); section++){
+		for (vector<Link*>::iterator link = section->begin(); link<section->end(); link++){
+			if(title.compare((*link)->getTitle()) == 0)
+				return *link;
+		}
+	}
+	
+	return 0;
+}
+
 void Menu::readLinks() {
 	vector<string> linkfiles;
 
@@ -468,9 +480,11 @@ void Menu::readLinks() {
 		sort(linkfiles.begin(), linkfiles.end(),case_less());
 		for (uint x=0; x<linkfiles.size(); x++) {
 			LinkApp *link = new LinkApp(gmenu2x, ts, gmenu2x->input, linkfiles[x].c_str());
-			link->setSize(gmenu2x->skinConfInt["linkWidth"], gmenu2x->skinConfInt["linkHeight"]);
-			if (link->targetExists())
+			if (link->targetExists()){
+				
+				link->setSize(gmenu2x->skinConfInt["linkWidth"], gmenu2x->skinConfInt["linkHeight"]);
 				links[i].push_back(link);
+			}
 			else
 				delete link;
 		}

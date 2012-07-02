@@ -27,14 +27,16 @@
 class InputManager {
 public:
 	enum Button {
-		UP, DOWN, LEFT, RIGHT,
+		UP=0, DOWN, LEFT, RIGHT,
 		ACCEPT, CANCEL,
 		ALTLEFT, ALTRIGHT,
 		MENU, SETTINGS,
 		VOLUP, VOLDOWN,
-		POWER, LOCK
+		POWER, LOCK, 
+		IPSTATUS, WIFI_CONNECT, BASH_SHELL, EJECT, USBMODE,
+		ENDOF_BTN_ENUM
 	};
-	#define BUTTON_TYPE_SIZE 14
+	#define BUTTON_TYPE_SIZE InputManager::ENDOF_BTN_ENUM
 
 	enum ButtonState { PRESSED, RELEASED };
 	struct ButtonEvent {

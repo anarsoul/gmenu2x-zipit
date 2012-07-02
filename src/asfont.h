@@ -22,7 +22,6 @@ public:
 
 	bool utf8Code(unsigned char c);
 
-	int getTextWidth(const char *text);
 	int getTextWidth(const std::string& text);
 
 	int getHeight() {

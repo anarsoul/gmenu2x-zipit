@@ -1,0 +1,5 @@
+title= suspend
+icon=skin:icons/suspend.png
+exec=/usr/local/sbin/suspend
+params = >/dev/null
+dontleave = true
