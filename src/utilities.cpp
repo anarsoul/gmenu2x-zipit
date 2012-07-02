@@ -32,6 +32,7 @@
 #include <fstream>
 #include <iostream>
 #include <strings.h>
+#include <unistd.h>
 
 using namespace std;
 

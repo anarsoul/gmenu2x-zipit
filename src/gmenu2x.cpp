@@ -1,11 +1,8 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Massimiliano Torromeo                           *
  *   massimiliano.torromeo@gmail.com                                       *
- *   
-      
-	 Copyright 2012 Mark Majeres (slug_)  mark@engine12.com		 
-
-	                                                                       *
+ *   Copyright 2012 Mark Majeres (slug_)  mark@engine12.com                *
+ *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
@@ -591,7 +588,7 @@ void GMenu2X::initMenu() {
 			if (fileExists(getHome()+"/log.txt"))
 				menu->addActionLink(i,tr["Log Viewer"],MakeDelegate(this,&GMenu2X::viewLog),tr["Displays last launched program's output"],"skin:icons/ebook.png");
 //			menu->addActionLink(i,tr["About"],MakeDelegate(this,&GMenu2X::about),tr["Info about GMenu2X"],"skin:icons/about.png");
-			menu->addActionLink(i,tr["Net Status"],MakeDelegate(this,&GMenu2X::ipstatus),tr["Check Network status and IP"],"skin:icons/netstatus.png");
+			menu->addActionLink(i,tr["Net Status"],MakeDelegate(this,&GMenu2X::ipStatus),tr["Check Network status and IP"],"skin:icons/netstatus.png");
 			menu->addActionLink(i,tr["WiFi Setup"],MakeDelegate(this,&GMenu2X::wifiSetup),tr["Connect to WiFi Network"],"skin:icons/wifi.png");
 			menu->addActionLink(i,tr["USB Mode"],MakeDelegate(this,&GMenu2X::setUSBmode),tr["Configure USB Mode"],"skin:icons/usb.png");
 		}
@@ -607,14 +604,14 @@ void GMenu2X::initMenu() {
 }
 
 
-void GMenu2X::setUSBmode(){
-	vector<MenuOption> voices;	
+void GMenu2X::setUSBmode() {
+	vector<MenuOption> voices;
 	string strCommand;
 	
 	voices.push_back(MenuOption(tr["Device Mode"], MakeDelegate(this, &GMenu2X::deadLink)));
 	voices.push_back(MenuOption(tr["Host Mode"], MakeDelegate(this, &GMenu2X::deadLink)));
 
-	int sel = listbox(&voices);	
+	int sel = listbox(&voices);
 
 	if(sel == 0)
 		strCommand = "echo device >/sys/devices/platform/z2-usb-switch/usb_mode";
@@ -626,16 +623,15 @@ void GMenu2X::setUSBmode(){
 
 void GMenu2X::wifiAddNetwork() {
 
-    char line[LINE_BUFSIZE];
-    vector<string> scriptOutput;
-	vector<MenuOption> voices;	
-	
-    FILE* pipe = popen("/usr/local/sbin/wifi-scan wlan0", "r");
+	char line[LINE_BUFSIZE];
+	vector<string> scriptOutput;
+	vector<MenuOption> voices;
+
+	FILE* pipe = popen("iw dev wlan0 scan | grep SSID | sed 's/[\\t ]*SSID: //'", "r");
 		if (pipe == NULL) return; 
 
-    while (fgets(line, LINE_BUFSIZE, pipe) != NULL) 
+	while (fgets(line, LINE_BUFSIZE, pipe) != NULL) 
 		scriptOutput.push_back(line);
-    
 	pclose(pipe); 
 
 	if(scriptOutput.empty()){
@@ -647,63 +643,63 @@ void GMenu2X::wifiAddNetwork() {
 		voices.push_back(MenuOption(scriptOutput[i], MakeDelegate(this, &GMenu2X::deadLink)));
 	
 	int sel = listbox(&voices);
-		
 	if(sel != -1)
 		wpaAdd(scriptOutput[sel]);
 }
 
 void GMenu2X::wpaAdd(string& SSID){
 	//need to ask for the password type
-	vector<MenuOption> voices;	
+	vector<MenuOption> voices;
 	string strPassword;
 	string strCommand;
-	
+
 	//trim leading and trailing spaces
 	SSID.erase(remove_if(SSID.begin(), SSID.end(), ::isspace), SSID.end());
-	
-	voices.push_back(MenuOption(tr["WPA/WPA2"], MakeDelegate(this, &GMenu2X::deadLink)));
-	voices.push_back(MenuOption(tr["Hex WEP Key"], MakeDelegate(this, &GMenu2X::deadLink)));
-	voices.push_back(MenuOption(tr["ASCII WEP Key"], MakeDelegate(this, &GMenu2X::deadLink)));
+
 	voices.push_back(MenuOption(tr["none/open"], MakeDelegate(this, &GMenu2X::deadLink)));
+	voices.push_back(MenuOption(tr["WEP"], MakeDelegate(this, &GMenu2X::deadLink)));
+	voices.push_back(MenuOption(tr["WPA"], MakeDelegate(this, &GMenu2X::deadLink)));
+	voices.push_back(MenuOption(tr["WPA2"], MakeDelegate(this, &GMenu2X::deadLink)));
 
 	int sel = listbox(&voices);
-	
+
 	if(sel == -1) return;
+
+	strCommand = "uci set wireless.@wifi-iface[0].ssid='" + SSID + "'";
+	system(strCommand.c_str());
+	switch (sel) {
+		case 0:
+			strCommand = "uci set wireless.@wifi-iface[0].encryption=none";
+			break;
+		case 1:
+			strCommand = "uci set wireless.@wifi-iface[0].encryption=wep";
+			break;
+		case 2:
+			strCommand = "uci set wireless.@wifi-iface[0].encryption=psk";
+			break;
+		case 3:
+			strCommand = "uci set wireless.@wifi-iface[0].encryption=psk2";
+			break;
+	}
+	system(strCommand.c_str());
+
 	//enter the password
-	if(sel == 3)
-		strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=NONE\n}\" >> /etc/wpa.conf";
-	else{
+	if(sel != 0) {
 		InputDialog id(this, input, ts, tr["Enter passphrase"],"", tr["Setup"], "skin:icons/wifi.png");
-		if (id.exec() == false) 
-		return;
+		if (id.exec() == false)
+			return;
 
 		strPassword = id.getInput();
-		
-		switch(sel) {
-				case 0:
-					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=WPA-PSK\n\tpsk=\\\"" + strPassword.c_str() + "\\\"\n}\" >> /etc/wpa.conf";
-					break;
-				case 1:
-				case 2:	
-					strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=NONE\n\twep_key0=\\\"" + strPassword.c_str() + "\\\"\n}\" >> /etc/wpa.conf";
-					break;
-	
-				default:
-					break;
-			}
 	}
-	
+	strCommand = "uci set wireless.@wifi-iface[0].key='" + strPassword + "'";
 	system(strCommand.c_str());
-	
-//	if(MessageBox(this,tr["Connecting to wireless network..."],"skin:icons/wifi.png", &GMenu2X::wpaConnect).exec() == 1)
-	if(MessageBox(this,tr["Connecting to wireless network..."],"skin:icons/wifi.png", MakeDelegate(this, &GMenu2X::wpaConnect)).exec() == 1)
-		MessageBox(this,tr["Unable to connect with current settings."],"skin:icons/wifi.png").exec();
-		
+	system("uci commit");
 }
 
 void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
-	
-	int ret = system("/usr/local/sbin/wpa-connect wlan0 /etc/wpa.conf");
+	system("uci set wireless.radio.enabled=1");
+	system("uci commit");
+	int ret = system("ifup wlan");
 
 	if(ret == 0){
 		pMsgBox->setText("Connected...");
@@ -713,61 +709,55 @@ void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
 		bRedraw=true;
 	}
 	retVal = WEXITSTATUS(ret);
-	return ;
+	return;
 }
 
 void GMenu2X::wifiOff() {
-	
-	system("ifconfig wlan0 down");
+	system("ifdown wlan");
+	system("uci set wireless.radio.disabled=1");
+	system("uci commit");
 	
 	nwifilevel = getWiFiLevel();
 	bRedraw=true;
-		
+
 	return;
-	
 }
 
-void GMenu2X::wifiConnect() {
+void GMenu2X::wifiOn() {
+	system("uci set wireless.radio.disabled=0");
+	system("ifup wlan");
 
-	if(MessageBox(this,tr["Connecting to wireless network..."],"skin:icons/wifi.png", MakeDelegate(this, &GMenu2X::wpaConnect)).exec() == 1)
-		wifiAddNetwork();
+	nwifilevel = getWiFiLevel();
+	bRedraw=true;
 
+	return;
 }
 
 void GMenu2X::wifiSetup() {
 	vector<MenuOption> voices;
 
-	voices.push_back(MenuOption(tr["Connect"], MakeDelegate(this, &GMenu2X::wifiConnect)));
-	voices.push_back(MenuOption(tr["Add Network"], MakeDelegate(this, &GMenu2X::wifiAddNetwork)));
-	voices.push_back(MenuOption(tr["Turn Off"],    MakeDelegate(this, &GMenu2X::wifiOff)));
-	
+	voices.push_back(MenuOption(tr["Turn On"], MakeDelegate(this, &GMenu2X::wifiOn)));
+	voices.push_back(MenuOption(tr["Turn Off"], MakeDelegate(this, &GMenu2X::wifiOff)));
+	voices.push_back(MenuOption(tr["Configure Network"], MakeDelegate(this, &GMenu2X::wifiAddNetwork)));
+
 	listbox(&voices);
 }
 
-void GMenu2X::ipstatus() {
+void GMenu2X::ipStatus() {
 
-    char line[LINE_BUFSIZE];
-    
-    vector<string> scriptOutput;
-	
-    /* Get a pipe where the output from the scripts comes in */
-    FILE* pipe = popen("/usr/local/bin/ipstatus", "r");
-		if (pipe == NULL) return;        /* return with exit code indicating error */
-    
+	char line[LINE_BUFSIZE];
+	vector<string> ifconfigOutput;
+	/* Get a pipe where the output from the scripts comes in */
+	FILE* pipe = popen("ifconfig wlan0 | grep inet | sed -e 's/  /\\n/g' | sed -e '/^$/d'", "r");
+	if (pipe == NULL) return;
 
     /* Read script output from the pipe line by line */
-    while (fgets(line, LINE_BUFSIZE, pipe) != NULL) {
-//        scriptOutput += line;
-		scriptOutput.push_back(line);
-    }
-    
+	while (fgets(line, LINE_BUFSIZE, pipe) != NULL) {
+		ifconfigOutput.push_back(line);
+	}
 	pclose(pipe); /* Close the pipe */
-    
-	TextDialog td(this, tr["Network Status"], tr["Displays network status and IP"], "skin:icons/netstatus.png", &scriptOutput);
+	TextDialog td(this, tr["Network Status"], tr["Displays network status and IP"], "skin:icons/netstatus.png", &ifconfigOutput);
 	td.exec();
-//	MessageBox mb(this, scriptOutput ,"skin:icons/wifi.png");
-//	mb.exec();
-	
 }
 
 void GMenu2X::about() {
@@ -1411,7 +1401,7 @@ void GMenu2X::main() {
 			
 			switch (event.button) {
 				case InputManager::IPSTATUS:
-					ipstatus();
+					ipStatus();
 					break;
 				case InputManager::WIFI_CONNECT:
 					wifiSetup();
@@ -2300,36 +2290,40 @@ int GMenu2X::getOverlayStatus() {
 
 unsigned short GMenu2X::getWiFiLevel() {
 
-    char line[LINE_BUFSIZE];
-    
-    vector<string> scriptOutput;
-	
-    /* Get a pipe where the output from the scripts comes in */
-// 	FILE* pipe = popen("iwconfig wlan0 | sed 's/ /\n/g' |grep Quality|sed 's/Quality=//g'|sed 's/\/70//g'", "r");
-    FILE* pipe = popen("/usr/local/bin/wifisignal", "r");
+	char line[LINE_BUFSIZE];
+	vector<string> scriptOutput;
+	/* Get a pipe where the output from the scripts comes in */
+	FILE *pipe = popen("iw wlan0 link | grep signal | sed 's/[^0-9]//g'", "r");
 		if (pipe == NULL) return 6;        /* return with exit code indicating error */
-    
-	//	strCommand = "echo -e \"\nnetwork={\n\tssid=\\\"" + SSID + "\\\"\n\tkey_mgmt=WPA-PSK\n\tpsk=\\\"" + id.getInput() + "\\\"\n}\" >> /etc/wpa.conf";
 
-    /* Read script output from the pipe... for this one there should only be one line */
-    while (fgets(line, LINE_BUFSIZE, pipe) != NULL) {
-//        scriptOutput += line;
+	/* Read script output from the pipe... for this one there should only be one line */
+	while (fgets(line, LINE_BUFSIZE, pipe) != NULL) {
 		scriptOutput.push_back(line);
-    }
-	
+	}
 	pclose(pipe); /* Close the pipe */
-
 
 	int nWiFi = 0;
 	if(scriptOutput.size())
 		nWiFi = atoi(scriptOutput[0].c_str());
-		
-	if 		(nWiFi==0) 	return 0;
-	else if (nWiFi>66) 	return 5;
-	else if (nWiFi>60) 	return 4;
-	else if (nWiFi>50) 	return 3;
-	else if (nWiFi>30)  return 2;
-	else 				return 1;
+	/* -40dBm is good, -110dBm is bad */
+	if (nWiFi < 40)
+		nWiFi = 40;
+	if (nWiFi > 110)
+		nWiFi = 110;
+	nWiFi = 110 - nWiFi;
+
+	if (nWiFi==0)
+		return 0;
+	else if (nWiFi>66)
+		return 5;
+	else if (nWiFi>60)
+		return 4;
+	else if (nWiFi>50)
+		return 3;
+	else if (nWiFi>30)
+		return 2;
+	else
+		return 1;
 }
 
 unsigned short GMenu2X::getBatteryLevel() {

@@ -22,6 +22,7 @@
 
 #include "inputdialog.h"
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "gmenu2x.h"
 #include "iconbutton.h"

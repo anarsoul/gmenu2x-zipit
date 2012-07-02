@@ -232,12 +232,12 @@ public:
 	void viewLog();
 	void contextMenu();
 	void changeWallpaper();
-	void ipstatus();
-	void wifiConnect();
+	void ipStatus();
 	void wifiSetup();
 	void wifiAddNetwork();
 	void wpaConnect(MessageBox* pMsgBox, int& ret);
 	void wifiOff();
+	void wifiOn();
 	void wpaAdd(std::string& SSID);
 	void setUSBmode();
 	void getTime(char* strTime, int len);
