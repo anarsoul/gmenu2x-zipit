@@ -45,7 +45,6 @@
 #include "textdialog.h"
 #include "wallpaperdialog.h"
 #include "utilities.h"
-#include <locale>
 
 #include <iostream>
 #include <sstream>
@@ -216,8 +215,6 @@ int main(int /*argc*/, char * /*argv*/[]) {
 		ERROR("Unable to find gmenu2x home directory. The $HOME variable is not defined.\n");
 		return 1;
 	}
-
-	locale::global(locale(""));
 
 	gmenu2x_home = (string)home + (string)"/.gmenu2x";
 	if (!fileExists(gmenu2x_home) && mkdir(gmenu2x_home.c_str(), 0770) < 0) {
