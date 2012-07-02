@@ -694,7 +694,7 @@ void GMenu2X::wpaAdd(string& SSID){
 }
 
 void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
-	system("uci set wireless.radio.enabled=1");
+	system("uci set wireless.radio.disabled=0");
 	system("uci commit");
 	int ret = system("ifup wlan");
 
