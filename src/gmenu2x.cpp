@@ -694,7 +694,7 @@ void GMenu2X::wpaAdd(string& SSID){
 }
 
 void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
-	system("uci set wireless.radio.disabled=0");
+	system("uci set wireless.radio0.disabled=0");
 	system("uci commit");
 	int ret = system("ifup wlan");
 
@@ -711,7 +711,7 @@ void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
 
 void GMenu2X::wifiOff() {
 	system("ifdown wlan");
-	system("uci set wireless.radio.disabled=1");
+	system("uci set wireless.radio0.disabled=1");
 	system("uci commit");
 	
 	nwifilevel = getWiFiLevel();
@@ -721,7 +721,8 @@ void GMenu2X::wifiOff() {
 }
 
 void GMenu2X::wifiOn() {
-	system("uci set wireless.radio.disabled=0");
+	system("uci set wireless.radio0.disabled=0");
+	system("uci commit");
 	system("ifup wlan");
 
 	nwifilevel = getWiFiLevel();
