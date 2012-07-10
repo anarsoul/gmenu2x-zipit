@@ -1,4 +1,4 @@
 title=lynx
 icon=skin:icons/lynx.png
-exec=/bin/sh
-params=--login -c /usr/bin/lynx
+exec=/usr/bin/lynx
+params=
