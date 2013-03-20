@@ -139,7 +139,7 @@ void TextDialog::exec() {
 				if (firstRow + rowsPerPage*2 -1 < text->size()) {
 					firstRow += rowsPerPage-1;
 				} else {
-					firstRow = max(0u, text->size() - rowsPerPage);
+					firstRow = ((text->size() - rowsPerPage) > 0) ? (text->size() - rowsPerPage) : 0;
 				}
 				break;
 
