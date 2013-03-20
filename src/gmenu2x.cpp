@@ -693,10 +693,32 @@ void GMenu2X::wpaAdd(string& SSID){
 	system("uci commit");
 }
 
+int GMenu2X::wlanUpDown(bool up)
+{
+	int r = 0;
+	if (up) {
+		r = system("ifstatus wlan | grep -q '\"up\": false'");
+	} else {
+		r = system("ifstatus wlan | grep -q '\"up\": true'");
+	}
+
+	/* Interface is already in necessary state */
+	if (WEXITSTATUS(r) != 0)
+		return 0;
+
+	if (up) {
+		r = system("ifup wlan");
+	} else {
+		r = system("ifdown wlan");
+	}
+
+	return r;
+}
+
 void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
 	system("uci set wireless.radio0.disabled=0");
 	system("uci commit");
-	int ret = system("ifup wlan");
+	int ret = wlanUpDown(true);
 
 	if(ret == 0){
 		pMsgBox->setText("Connected...");
@@ -710,7 +732,7 @@ void GMenu2X::wpaConnect(MessageBox* pMsgBox, int& retVal){
 }
 
 void GMenu2X::wifiOff() {
-	system("ifdown wlan");
+	wlanUpDown(false);
 	system("uci set wireless.radio0.disabled=1");
 	system("uci commit");
 	
@@ -723,7 +745,7 @@ void GMenu2X::wifiOff() {
 void GMenu2X::wifiOn() {
 	system("uci set wireless.radio0.disabled=0");
 	system("uci commit");
-	system("ifup wlan");
+	wlanUpDown(true);
 
 	nwifilevel = getWiFiLevel();
 	bRedraw=true;

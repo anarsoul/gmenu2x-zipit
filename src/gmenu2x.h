@@ -238,6 +238,7 @@ public:
 	void wpaConnect(MessageBox* pMsgBox, int& ret);
 	void wifiOff();
 	void wifiOn();
+	int wlanUpDown(bool up);
 	void wpaAdd(std::string& SSID);
 	void setUSBmode();
 	void getTime(char* strTime, int len);
