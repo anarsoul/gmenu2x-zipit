@@ -710,6 +710,8 @@ int GMenu2X::wlanUpDown(bool up)
 		r = system("ifup wlan");
 	} else {
 		r = system("ifdown wlan");
+		r += system("killall wpa_supplicant");
+		r += system("ifconfig wlan0 down");
 	}
 
 	return r;
